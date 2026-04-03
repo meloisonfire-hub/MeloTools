@@ -1,0 +1,18 @@
+[Unit]
+Description=OCR Web Tools
+After=network.target
+
+[Service]
+Type=simple
+User=ocrweb
+Group=ocrweb
+WorkingDirectory=/srv/ocr-web
+Environment=TMPDIR=/srv/ocr-web/tmp
+Environment=TEMP=/srv/ocr-web/tmp
+Environment=TMP=/srv/ocr-web/tmp
+ExecStart=/srv/ocr-web/venv/bin/python /srv/ocr-web/app.py
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
