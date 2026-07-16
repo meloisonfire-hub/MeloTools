@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1680 948" preserveAspectRatio="none">
+  <defs>
+    <radialGradient id="glowL" cx="0.06" cy="0.24" r="0.44">
+      <stop offset="0%" stop-color="#ebf3ff" stop-opacity="0.88"/>
+      <stop offset="36%" stop-color="#86a9ec" stop-opacity="0.46"/>
+      <stop offset="100%" stop-color="#5f83dc" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowR" cx="0.74" cy="0.24" r="0.40">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.14"/>
+      <stop offset="100%" stop-color="#5f83dc" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="topBar" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0d3aa2"/>
+      <stop offset="100%" stop-color="#0a2f90"/>
+    </linearGradient>
+    <linearGradient id="bottomBar" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2449b9"/>
+      <stop offset="58%" stop-color="#1038a8"/>
+      <stop offset="100%" stop-color="#072f9a"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1680" height="948" fill="#5f83dc"/>
+  <rect x="0" y="0" width="1680" height="92" fill="url(#topBar)"/>
+  <rect x="0" y="92" width="1680" height="2" fill="#98b8eb"/>
+  <rect x="0" y="806" width="1680" height="2" fill="#ef982f"/>
+  <rect x="0" y="808" width="1680" height="140" fill="url(#bottomBar)"/>
+
+  <rect width="1680" height="948" fill="url(#glowL)"/>
+  <rect width="1680" height="948" fill="url(#glowR)"/>
+</svg>

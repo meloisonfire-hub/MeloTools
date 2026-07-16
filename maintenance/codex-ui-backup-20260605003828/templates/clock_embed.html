@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% if mode == 'timer' %}Timer{% else %}Cron?metro{% endif %} - MeloTools</title>
+  <style>
+    :root { --clock-color: #39ff14; }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      color: var(--clock-color);
+      overflow: hidden;
+      font-family: 'Digital7Mono', 'Courier New', monospace;
+    }
+    @font-face {
+      font-family: 'Digital7Mono';
+      src: url('/static/fonts/digital-7-mono.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    .clock-wrap {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 20px;
+      padding: 20px;
+    }
+    .clock-display {
+      font-size: clamp(48px, 14vw, 220px);
+      line-height: 1;
+      letter-spacing: 0.06em;
+      text-shadow: 0 0 6px var(--clock-color), 0 0 20px var(--clock-color), 0 0 46px var(--clock-color);
+      user-select: none;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+    .actions {
+      position: fixed;
+      left: 50%;
+      bottom: 26px;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .btn {
+      border: 1px solid #1f2937;
+      background: #0b0b0b;
+      color: #f5f5f5;
+      padding: 10px 16px;
+      font: 700 14px/1 'Segoe UI', Tahoma, sans-serif;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .btn:hover { background: #161616; }
+    .toolbar {
+      position: fixed;
+      top: 14px;
+      right: 14px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    select, input[type='color'] {
+      background: #0b0b0b;
+      color: #f5f5f5;
+      border: 1px solid #1f2937;
+      border-radius: 6px;
+      padding: 6px 8px;
+      font: 600 12px 'Segoe UI', Tahoma, sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <div class="clock-wrap">
+    <div id="display" class="clock-display">00:00:00:00</div>
+  </div>
+
+  <div class="toolbar">
+    <select id="presetColor" aria-label="Cor">
+      <option value="#39ff14">Verde neon</option>
+      <option value="#ff2b2b">Vermelho</option>
+      <option value="#2f7dff">Azul</option>
+      <option value="#ffad1f">?mbar/laranja</option>
+      <option value="#f8fafc">Branco</option>
+    </select>
+    <input id="customColor" type="color" value="#39ff14" aria-label="Cor personalizada">
+  </div>
+
+  <div class="actions">
+    <button class="btn" id="startBtn" type="button">Iniciar</button>
+    <button class="btn" id="pauseBtn" type="button">Pausar</button>
+    <button class="btn" id="stopBtn" type="button">Parar</button>
+    <button class="btn" id="resetBtn" type="button">Zerar</button>
+  </div>
+
+  <script>
+    (function(){
+      var mode = {{ mode|tojson }};
+      var baseSeconds = {{ seconds|int }};
+      var display = document.getElementById('display');
+      var tickRef = null;
+      var timerEndAt = 0;
+      var timerRemainingMs = baseSeconds * 1000;
+      var timerTotalMs = baseSeconds * 1000;
+      var swStartedAt = 0;
+      var swElapsedMs = 0;
+
+      function pad2(n){ return String(Math.max(0, Math.floor(n))).padStart(2, '0'); }
+      function formatClock(ms){
+        ms = Math.max(0, Math.floor(Number(ms) || 0));
+        var cs = Math.floor((ms % 1000) / 10);
+        var totalSeconds = Math.floor(ms / 1000);
+        var ss = totalSeconds % 60;
+        var mm = Math.floor(totalSeconds / 60) % 60;
+        var hh = Math.floor(totalSeconds / 3600);
+        return pad2(hh)+':'+pad2(mm)+':'+pad2(ss)+':'+pad2(cs);
+      }
+      function currentTimerMs(){
+        if(tickRef && mode === 'timer') return Math.max(0, timerEndAt - performance.now());
+        return timerRemainingMs;
+      }
+      function currentSwMs(){
+        if(tickRef && mode === 'stopwatch') return swElapsedMs + (performance.now() - swStartedAt);
+        return swElapsedMs;
+      }
+      function paint(){
+        display.textContent = mode === 'timer' ? formatClock(currentTimerMs()) : formatClock(currentSwMs());
+      }
+      function start(){
+        if(mode === 'timer'){
+          clearInterval(tickRef);
+          timerRemainingMs = timerRemainingMs > 0 ? timerRemainingMs : timerTotalMs;
+          timerEndAt = performance.now() + timerRemainingMs;
+          tickRef = setInterval(function(){
+            timerRemainingMs = currentTimerMs();
+            paint();
+            if(timerRemainingMs <= 0){ clearInterval(tickRef); tickRef = null; }
+          }, 31);
+          paint();
+          return;
+        }
+        if(tickRef) return;
+        swStartedAt = performance.now();
+        tickRef = setInterval(paint, 31);
+        paint();
+      }
+      function pause(){
+        if(mode === 'timer') timerRemainingMs = currentTimerMs();
+        if(mode === 'stopwatch') swElapsedMs = currentSwMs();
+        clearInterval(tickRef); tickRef = null; paint();
+      }
+      function stop(){
+        clearInterval(tickRef); tickRef = null;
+        if(mode === 'timer') timerRemainingMs = timerTotalMs;
+        else { swElapsedMs = 0; swStartedAt = 0; }
+        paint();
+      }
+      function reset(){
+        clearInterval(tickRef); tickRef = null;
+        if(mode === 'timer') timerRemainingMs = timerTotalMs;
+        else { swElapsedMs = 0; swStartedAt = 0; }
+        paint();
+      }
+
+      document.getElementById('startBtn').addEventListener('click', start);
+      document.getElementById('pauseBtn').addEventListener('click', pause);
+      document.getElementById('stopBtn').addEventListener('click', stop);
+      document.getElementById('resetBtn').addEventListener('click', reset);
+
+      var preset = document.getElementById('presetColor');
+      var custom = document.getElementById('customColor');
+      function applyColor(value){
+        var v = value || '#39ff14';
+        document.documentElement.style.setProperty('--clock-color', v);
+        preset.value = v;
+        custom.value = v;
+      }
+      preset.addEventListener('change', function(){ applyColor(preset.value); });
+      custom.addEventListener('input', function(){ applyColor(custom.value); });
+
+      paint();
+    })();
+  </script>
+</body>
+</html>

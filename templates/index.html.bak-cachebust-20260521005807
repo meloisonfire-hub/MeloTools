@@ -1,0 +1,1893 @@
+<!doctype html>
+<html lang="{{ current_lang }}">
+<head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9686460887343092"
+     crossorigin="anonymous"></script>
+<meta charset="utf-8">
+<title>Melotools | Sem propagandas, sem limites.</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/favicon.ico">
+<link rel="manifest" href="/static/manifest.json">
+<style>:root{ --brand: {{ brand }}; }</style>
+<style id="mt-critical-loading-style">
+body.mt-ui-loading .nav-shell,
+body.mt-ui-loading .section{
+  visibility:hidden !important;
+}
+body.mt-ui-loading #mtToolsSkeleton{
+  display:block !important;
+}
+body:not(.mt-ui-ready) #mtToolsSkeleton{
+  display:block;
+}
+body.mt-ui-ready #mtToolsSkeleton{
+  display:none !important;
+}
+</style>
+<script>
+(function(){
+  try{
+    var saved = localStorage.getItem('melotools-ui-theme') || 'saas';
+    document.documentElement.setAttribute('data-ui-theme', saved === 'xp' ? 'xp' : 'saas');
+    document.documentElement.setAttribute('data-slogan-style','soft');
+  }catch(_e){
+    document.documentElement.setAttribute('data-ui-theme', 'saas');
+  }
+})();
+</script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/app.min.css', v='accentfix-20260504-164603') }}">
+<link id="themeStylesXp" rel="stylesheet" href="{{ url_for('static', filename='css/xp-luna.min.css', v='xp-luna-20260505-theme-003') }}">
+<link id="themeStylesSaas" rel="stylesheet" href="{{ url_for('static', filename='css/theme-saas.min.css', v='theme-switch-20260505-023') }}">
+
+<style id="theme-critical-fixes">
+html[data-ui-theme="saas"] .tool-tabs .tabbtn,
+html[data-ui-theme="saas"] .tool-tabs .tool-tab,
+html[data-ui-theme="saas"] .tool-tab{
+  min-height:42px !important;
+  height:42px !important;
+  line-height:42px !important;
+  padding-top:0 !important;
+  padding-bottom:0 !important;
+  overflow:visible !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+html[data-ui-theme="xp"] .tool-tabs .tabbtn,
+html[data-ui-theme="xp"] .tool-tabs .tool-tab,
+html[data-ui-theme="xp"] .tool-tab{
+  min-height:30px !important;
+  height:30px !important;
+  line-height:28px !important;
+  padding-top:0 !important;
+  padding-bottom:0 !important;
+  overflow:visible !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+
+html[data-ui-theme="saas"] .tool-tabs .tool-tab.is-hidden,
+html[data-ui-theme="saas"] .tool-tabs .tabbtn.is-hidden,
+html[data-ui-theme="xp"] .tool-tabs .tool-tab.is-hidden,
+html[data-ui-theme="xp"] .tool-tabs .tabbtn.is-hidden{
+  display:none !important;
+  height:0 !important;
+  min-height:0 !important;
+  padding:0 !important;
+  margin:0 !important;
+  border:0 !important;
+}
+</style>
+</head>
+<body data-lang="{{ current_lang }}" class="mt-ui-loading">
+<a class="skip-link" href="#mainContent">Pular para as ferramentas</a>
+<canvas id="confettiCanvas"></canvas>
+<div class="header">
+  <div class="header-top">
+    <div class="saas-header-spacer" aria-hidden="true"></div>
+    <div class="saas-brand" aria-label="MeloTools">
+      <img class="saas-brand-logo" src="{{ url_for('static', filename='logo-saas.png') }}" alt="MeloTools">
+      <span class="mt-tools-badge-dot mt-tools-badge-dot-saas" aria-label="78 ferramentas totalmente grátis" title="78 ferramentas totalmente grátis">78</span>
+    </div>
+    <div class="theme-switcher" role="group" aria-label="Escolher tema do site">
+      <button class="theme-option" type="button" data-theme-choice="xp" aria-pressed="false">Retr&ocirc;</button>
+      <button class="theme-option" type="button" data-theme-choice="saas" aria-pressed="true">Padr&atilde;o</button>
+    </div>
+    <button id="installAppBtn" class="btn hidden">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+      Baixar App
+    </button>
+    <div class="lang-picker" id="langPicker">
+      <button class="lang-current" id="langToggle" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Selecionar idioma">
+        {% for item in languages %}
+          {% if item.code == current_lang %}
+          <img class="lang-flag-img" src="{{ item.flag_url }}" alt="{{ item.label }}" loading="lazy">
+          {% endif %}
+
+              {% endfor %}
+      </button>
+      <div class="lang-menu hidden" id="langMenu">
+        {% for item in languages %}
+        <button class="lang-option{% if item.code == current_lang %} active{% endif %}" type="button" data-lang-option="{{ item.code }}" aria-label="{{ item.label }}">
+          <img class="lang-flag-img" src="{{ item.flag_url }}" alt="{{ item.label }}" loading="lazy">
+        </button>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+<meta name="google-adsense-account" content="ca-pub-9686460887343092">
+<main class="wrap" id="mainContent" tabindex="-1">
+  <div class="card">
+    <div class="xp-window-titlebar" aria-hidden="true">
+      <div class="xp-window-title"><span class="xp-window-icon"></span><span>MeloTools - Painel de Ferramentas</span></div>
+    </div>
+    {% if has_logo %}
+    <div class="logo-wrap">
+      <img src="/logo" class="logo logo-xp" alt="MeloTools">
+      <img src="{{ url_for('static', filename='logo-saas.png') }}" class="logo logo-saas" alt="MeloTools">
+      <span class="mt-tools-badge-dot" aria-label="78 ferramentas totalmente grátis" title="78 ferramentas totalmente grátis">78</span>
+    </div>
+        {% endif %}
+    <div class="tool-search" id="toolSearchWrap">
+      <label class="tool-search-label" for="toolSearchInput">Pesquisar</label>
+      <div class="tool-search-row">
+        <button type="button" class="tool-search-submit" id="toolSearchToggle" aria-label="Pesquisar" title="Pesquisar">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M11 4a7 7 0 1 0 4.49 12.37l3.57 3.57a1 1 0 0 0 1.41-1.41l-3.57-3.57A7 7 0 0 0 11 4Zm0 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10Z"/>
+          </svg>
+        </button>
+        <input id="toolSearchInput" type="search" placeholder="Pesquisar" autocomplete="off" spellcheck="false">
+      </div>
+    </div>
+    <nav class="nav-shell" aria-label="Navega&ccedil;&atilde;o de ferramentas">
+      <div class="main-tabs tabs" id="mainTabs">
+        <button class="main-tab tabbtn active" type="button" data-category="media">
+          <span class="main-tab-label" data-i18n="nav_media">YouTube, Instagram e TikTok</span>
+        </button>
+        <button class="main-tab tabbtn" type="button" data-category="image">
+          <span class="main-tab-label" data-i18n="nav_image">Imagem</span>
+        </button>
+        <button class="main-tab tabbtn" type="button" data-category="pdf">
+          <span class="main-tab-label" data-i18n="nav_pdf">PDF</span>
+        </button>
+        <button class="main-tab tabbtn" type="button" data-category="video">
+          <span class="main-tab-label" data-i18n="nav_video">V&iacute;deos</span>
+        </button>
+        <button class="main-tab tabbtn" type="button" data-category="text">
+          <span class="main-tab-label">Texto</span>
+        </button>
+        <button class="main-tab tabbtn" type="button" data-category="dev">
+          <span class="main-tab-label">TI e Dev</span>
+        </button>
+        <button class="main-tab tabbtn" type="button" data-category="random">
+          <span class="main-tab-label">Sorteadores</span>
+        </button>
+        <button class="main-tab tabbtn" type="button" data-category="calc">
+          <span class="main-tab-label">Calculadoras</span>
+        </button>
+        <button class="main-tab tabbtn" type="button" data-category="wellness">
+          <span class="main-tab-label">Bem-estar e sa&uacute;de</span>
+        </button>
+        <button class="main-tab tabbtn" type="button" data-category="clock">
+          <span class="main-tab-label">Rel&oacute;gio</span>
+        </button>
+        <button class="main-tab tabbtn" type="button" data-category="links">
+          <span class="main-tab-label">Links e QR Code</span>
+        </button>
+      </div>
+      <div class="tool-tabs tabs" id="toolTabs">
+        <button class="tool-tab tabbtn active" type="button" data-category="media" data-tab="tab-youtube" data-i18n="tab_youtube">Processar v&iacute;deos</button>
+        <button class="tool-tab tabbtn" type="button" data-category="media" data-tab="tab-youtube-clip">Clipar v&iacute;deos</button>
+        <button class="tool-tab tabbtn" type="button" data-category="media" data-tab="tab-instagram-tools">Ferramentas Instagram</button>
+        <button class="tool-tab tabbtn" type="button" data-category="image" data-tab="tab-removebg" data-i18n="tab_removebg">Remover fundo</button>
+        <button class="tool-tab tabbtn" type="button" data-category="image" data-tab="tab-pdf2png">PDF para PNG</button>
+        <button class="tool-tab tabbtn" type="button" data-category="pdf" data-tab="tab-ocr" data-i18n="tab_ocr">OCR PDF</button>
+        <button class="tool-tab tabbtn" type="button" data-category="pdf" data-tab="tab-merge" data-i18n="tab_merge">Organizar PDF</button>
+        <button class="tool-tab tabbtn" type="button" data-category="pdf" data-tab="tab-rotate" data-i18n="tab_rotate">Girar PDF</button>
+        <button class="tool-tab tabbtn" type="button" data-category="pdf" data-tab="tab-split" data-i18n="tab_split">Particionar PDF</button>
+        <button class="tool-tab tabbtn" type="button" data-category="pdf" data-tab="tab-compress" data-i18n="tab_compress">Comprimir PDF</button>
+        <button class="tool-tab tabbtn" type="button" data-category="pdf" data-tab="tab-protect" data-i18n="tab_protect">Proteger PDF</button>
+        <button class="tool-tab tabbtn" type="button" data-category="pdf" data-tab="tab-word2pdf">Word para PDF</button>
+        <button class="tool-tab tabbtn" type="button" data-category="video" data-tab="tab-video" data-i18n="tab_video">Dividir v&iacute;deos</button>
+        <button class="tool-tab tabbtn" type="button" data-category="text" data-tab="tab-text-chars">Contador de caracteres</button>
+        <button class="tool-tab tabbtn" type="button" data-category="text" data-tab="tab-text-words">Contador de palavras</button>
+        <button class="tool-tab tabbtn" type="button" data-category="text" data-tab="tab-text-trimlines">Remover quebras de linha</button>
+        <button class="tool-tab tabbtn" type="button" data-category="text" data-tab="tab-text-trimspaces">Remover espa&ccedil;os extras</button>
+        <button class="tool-tab tabbtn" type="button" data-category="text" data-tab="tab-text-upper">MAI&Uacute;SCULAS</button>
+        <button class="tool-tab tabbtn" type="button" data-category="text" data-tab="tab-text-lower">min&uacute;sculas</button>
+        <button class="tool-tab tabbtn" type="button" data-category="text" data-tab="tab-text-cap">Capitalizar texto</button>
+        <button class="tool-tab tabbtn" type="button" data-category="text" data-tab="tab-text-sort">Ordenar lista</button>
+        <button class="tool-tab tabbtn" type="button" data-category="text" data-tab="tab-text-dedupe">Remover duplicados</button>
+        <button class="tool-tab tabbtn" type="button" data-category="text" data-tab="tab-text-lorem">Gerador de Lorem Ipsum</button>
+        <button class="tool-tab tabbtn" type="button" data-category="text" data-tab="tab-text-regex">Testador Regex</button>
+        <button class="tool-tab tabbtn" type="button" data-category="text" data-tab="tab-text-diff">Comparar textos</button>
+
+        <button class="tool-tab tabbtn" type="button" data-category="dev" data-tab="tab-dev-password">Gerador de senha</button>
+        <button class="tool-tab tabbtn" type="button" data-category="dev" data-tab="tab-dev-ipcalc">Calculadora IP/sub-rede</button>
+        <button class="tool-tab tabbtn" type="button" data-category="dev" data-tab="tab-dev-port">Testador de porta</button>
+        <button class="tool-tab tabbtn" type="button" data-category="dev" data-tab="tab-dev-dns">DNS lookup</button>
+        <button class="tool-tab tabbtn" type="button" data-category="dev" data-tab="tab-dev-whois">Whois</button>
+        <button class="tool-tab tabbtn" type="button" data-category="dev" data-tab="tab-dev-linux-cmds">Dicionário Linux</button>
+        <button class="tool-tab tabbtn" type="button" data-category="dev" data-tab="tab-dev-json">Formatador JSON</button>
+        <button class="tool-tab tabbtn" type="button" data-category="dev" data-tab="tab-dev-base64">Base64</button>
+        <button class="tool-tab tabbtn" type="button" data-category="dev" data-tab="tab-dev-urlcodec">URL encode/decode</button>
+        <button class="tool-tab tabbtn" type="button" data-category="dev" data-tab="tab-dev-hash">Gerador de hash</button>
+        <button class="tool-tab tabbtn" type="button" data-category="dev" data-tab="tab-dev-uuid">UUID v4</button>
+        <button class="tool-tab tabbtn" type="button" data-category="dev" data-tab="tab-dev-timestamp">Unix timestamp</button>
+        <button class="tool-tab tabbtn" type="button" data-category="dev" data-tab="tab-dev-jwt">Decodificador JWT</button>
+
+        <button class="tool-tab tabbtn" type="button" data-category="random" data-tab="tab-random-names">Sorteador de nomes</button>
+        <button class="tool-tab tabbtn" type="button" data-category="random" data-tab="tab-random-numbers">Sorteador de n&uacute;meros</button>
+        <button class="tool-tab tabbtn" type="button" data-category="random" data-tab="tab-random-pick">Escolher item aleat&oacute;rio</button>
+        <button class="tool-tab tabbtn" type="button" data-category="random" data-tab="tab-random-shuffle">Embaralhar lista</button>
+        <button class="tool-tab tabbtn" type="button" data-category="random" data-tab="tab-random-roulette">Roleta de op&ccedil;&otilde;es</button>
+        <button class="tool-tab tabbtn" type="button" data-category="random" data-tab="tab-random-coin">Cara ou coroa</button>
+        <button class="tool-tab tabbtn" type="button" data-category="random" data-tab="tab-random-dice">Dado virtual</button>
+
+        <button class="tool-tab tabbtn" type="button" data-category="calc" data-tab="tab-calc-simple">Calculadora simples</button>
+        <button class="tool-tab tabbtn" type="button" data-category="calc" data-tab="tab-calc-percent">Porcentagem</button>
+        <button class="tool-tab tabbtn" type="button" data-category="calc" data-tab="tab-calc-rule3">Regra de tr&ecirc;s</button>
+        <button class="tool-tab tabbtn" type="button" data-category="calc" data-tab="tab-calc-convert">Conversor de unidades</button>
+        <button class="tool-tab tabbtn" type="button" data-category="calc" data-tab="tab-calc-temp">Conversor de temperatura</button>
+        <button class="tool-tab tabbtn" type="button" data-category="calc" data-tab="tab-calc-weight">Conversor de peso</button>
+        <button class="tool-tab tabbtn" type="button" data-category="calc" data-tab="tab-calc-distance">Conversor de dist&acirc;ncia</button>
+        <button class="tool-tab tabbtn" type="button" data-category="calc" data-tab="tab-calc-filesize">Conversor de tamanho de arquivo</button>
+        <button class="tool-tab tabbtn" type="button" data-category="calc" data-tab="tab-calc-days">Dias entre datas</button>
+        <button class="tool-tab tabbtn" type="button" data-category="calc" data-tab="tab-calc-age">Calculadora de idade</button>
+        <button class="tool-tab tabbtn" type="button" data-category="wellness" data-tab="tab-calc-cycle">Ciclo menstrual (para homens)</button>
+        <button class="tool-tab tabbtn" type="button" data-category="wellness" data-tab="tab-calc-cycle-women">Ciclo menstrual (para mulheres)</button>
+        <button class="tool-tab tabbtn" type="button" data-category="wellness" data-tab="tab-wellness-bmi">IMC</button>
+        <button class="tool-tab tabbtn" type="button" data-category="wellness" data-tab="tab-wellness-breath">Respira&ccedil;&atilde;o guiada</button>
+        <button class="tool-tab tabbtn" type="button" data-category="clock" data-tab="tab-calc-timer">Temporizador</button>
+        <button class="tool-tab tabbtn" type="button" data-category="clock" data-tab="tab-calc-stopwatch">Cron&ocirc;metro</button>
+
+        <button class="tool-tab tabbtn" type="button" data-category="media" data-tab="tab-online-qr">Converter link em QR Code</button>
+        <button class="tool-tab tabbtn" type="button" data-category="image" data-tab="tab-img-resize">Redimensionar imagem</button>
+        <button class="tool-tab tabbtn" type="button" data-category="image" data-tab="tab-img-compress">Comprimir imagem</button>
+        <button class="tool-tab tabbtn" type="button" data-category="image" data-tab="tab-img-convert">Converter imagem</button>
+        <button class="tool-tab tabbtn" type="button" data-category="image" data-tab="tab-img-crop">Cortar imagem</button>
+        <button class="tool-tab tabbtn" type="button" data-category="image" data-tab="tab-img-rotate">Girar imagem</button>
+        <button class="tool-tab tabbtn" type="button" data-category="image" data-tab="tab-img-favicon">Criar favicon</button>
+        <button class="tool-tab tabbtn" type="button" data-category="image" data-tab="tab-img-pixelate">Pixelar dados sens&iacute;veis</button>
+        <button class="tool-tab tabbtn" type="button" data-category="pdf" data-tab="tab-pdf-image-to-pdf">Imagem para PDF</button>
+        <button class="tool-tab tabbtn" type="button" data-category="pdf" data-tab="tab-pdf-to-image">PDF para imagem</button>
+        <button class="tool-tab tabbtn" type="button" data-category="pdf" data-tab="tab-pdf-number">Numerar p&aacute;ginas</button>
+        <button class="tool-tab tabbtn" type="button" data-category="pdf" data-tab="tab-pdf-remove">Remover p&aacute;ginas</button>
+        <button class="tool-tab tabbtn" type="button" data-category="pdf" data-tab="tab-pdf-extract">Extrair p&aacute;ginas</button>
+        <button class="tool-tab tabbtn" type="button" data-category="video" data-tab="tab-video-cut">Cortar v&iacute;deo</button>
+        <button class="tool-tab tabbtn" type="button" data-category="video" data-tab="tab-video-join">Juntar v&iacute;deos</button>
+        <button class="tool-tab tabbtn" type="button" data-category="video" data-tab="tab-video-compress">Comprimir v&iacute;deo</button>
+        <button class="tool-tab tabbtn" type="button" data-category="video" data-tab="tab-video-convert">Converter v&iacute;deo</button>
+        <button class="tool-tab tabbtn" type="button" data-category="video" data-tab="tab-video-extract-audio">Extrair &aacute;udio</button>
+        <button class="tool-tab tabbtn" type="button" data-category="video" data-tab="tab-video-remove-audio">Remover &aacute;udio</button>
+        <button class="tool-tab tabbtn" type="button" data-category="video" data-tab="tab-video-gif">Gerar GIF</button>
+        <button class="tool-tab tabbtn" type="button" data-category="links" data-tab="tab-links-qr-generate">Gerador de QR Code</button>
+        <button class="tool-tab tabbtn" type="button" data-category="links" data-tab="tab-links-qr-read">Leitor de QR Code</button>
+      </div>
+    </nav>
+    <div class="mt-tools-skeleton" id="mtToolsSkeleton" aria-hidden="true">
+      <div class="mt-sk-row mt-sk-main"></div>
+      <div class="mt-sk-row mt-sk-sub"></div>
+      <div class="mt-sk-card"></div>
+      <div class="mt-sk-card"></div>
+    </div>
+
+    <section id="tab-ocr" class="section" data-category="pdf">
+      <h2 class="title" data-i18n="ocr_title">Converta PDFs e imagens em documentos pesquis&aacute;veis (OCR)
+  </h2>
+      <p class="sub" data-i18n="ocr_sub" data-i18n-vars='{{ {"max_mb": max_mb}|tojson }}'>Tamanho m&aacute;ximo de {{max_mb}} MB por arquivo</p>
+      <div id="drop" class="drop">
+        <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 16l4-5h-3V4h-2v7H8l4 5zM5 18h14v2H5z"/></svg>
+        <form class="inline" enctype="multipart/form-data">
+          <input type="file" id="file" multiple accept=".pdf,.jpg,.jpeg,.png,.tif,.tiff" hidden>
+          <button class="btn" type="button" id="choose" data-i18n="upload_cta">Selecione arquivos, arraste para esta área ou cole aqui</button>
+        </form>
+        <div id="ocrErr" class="errmsg hidden"></div>
+      </div>
+      <div id="list"></div>
+      <div id="batchActions" class="inputs hidden" style="margin-top:10px; gap:10px;">
+        <button class="btn" id="dlAll" data-i18n="download_all">Baixar todos</button>
+      </div>
+      <p class="note" data-i18n="ocr_note">Formatos suportados: PDF, PNG, JPG, JPEG, TIFF</p>
+    </section>
+
+    <section id="tab-merge" class="section" data-category="pdf">
+      <h2 class="title" data-i18n="merge_title">Organize PDFs e imagens em um &uacute;nico PDF</h2>
+      <p class="sub" data-i18n="merge_sub">Adicione, una, remova e arraste para reordenar antes de gerar o arquivo final</p>
+      <div id="dropMerge" class="drop">
+        <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M3 7h8v2H3V7zm0 4h8v2H3v-2zm0 4h8v2H3v-2zM13 7h8v8h-8V7zm2 2v4h4V9h-4z"/></svg>
+        <form class="inline" enctype="multipart/form-data">
+          <input type="file" id="filesMerge" multiple accept=".pdf,.jpg,.jpeg,.png,.tif,.tiff" hidden>
+          <button class="btn" type="button" id="chooseMerge" data-i18n="upload_cta">Selecione arquivos, arraste para esta área ou cole aqui</button>
+        </form>
+        <div id="mergeErr" class="errmsg hidden"></div>
+      </div>
+      <div id="mergeList"></div>
+      <div class="inputs" style="margin-top:10px">
+        <button class="btn" id="runMerge" data-i18n="generate_pdf">Gerar PDF</button>
+        <span id="mergeStatus" class="small"></span>
+      </div>
+      <p id="mergeResult" class="note hidden"></p>
+    </section>
+
+    <section id="tab-rotate" class="section" data-category="pdf">
+      <h2 class="title" data-i18n="rotate_title">Girar PDFs/Imagens</h2>
+      <p class="sub" data-i18n="rotate_sub">Rotacione aqui seus arquivos</p>
+      <div id="dropRotate" class="drop">
+        <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 6V3L8 7l4 4V8c2.76 0 5 2.24 5 5a5 5 0 11-9.9-1H5.02a7 7 0 1013.96-1A7 7 0 0012 6z"/></svg>
+        <form class="inline" enctype="multipart/form-data">
+          <input type="file" id="filesRotate" multiple accept=".pdf,.jpg,.jpeg,.png,.tif,.tiff" hidden>
+          <button class="btn" type="button" id="chooseRotate" data-i18n="upload_cta">Selecione arquivos, arraste para esta área ou cole aqui</button>
+        </form>
+        <div id="rotateErr" class="errmsg hidden"></div>
+      </div>
+      <div id="rotateList"></div>
+      <div class="inputs" style="margin-top:10px">
+        <button class="btn" id="runRotate" data-i18n="rotate_now">Girar agora</button>
+        <span id="rotateStatus" class="small"></span>
+      </div>
+      <div id="rotateOut" class="note hidden"></div>
+      <div id="rotateBatch" class="inputs hidden" style="margin-top:10px">
+        <button class="btn" id="rotateDlAll" data-i18n="download_all">Baixar todos</button>
+      </div>
+    </section>
+
+    <section id="tab-split" class="section" data-category="pdf">
+      <h2 class="title" data-i18n="split_title">Particionar PDF/Imagens</h2>
+      <p class="sub" data-i18n="split_sub">Envie seus PDFs ou imagens e escolha o modo de particionamento</p>
+      <div id="dropSplit" class="drop">
+        <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M10 3h4v2h-4V3zM3 10h2v4H3v-4zm16 0h2v4h-2v-4zM10 19h4v2h-4v-2zM7 7h10v10H7V7z"/></svg>
+        <form class="inline" enctype="multipart/form-data">
+          <input type="file" id="fileSplit" multiple accept=".pdf,.jpg,.jpeg,.png,.tif,.tiff" hidden>
+          <button class="btn" type="button" id="chooseSplit" data-i18n="upload_cta">Selecione arquivos, arraste para esta área ou cole aqui</button>
+        </form>
+        <div id="splitErr" class="errmsg hidden"></div>
+      </div>
+      <div class="inputs">
+        <label><input type="radio" name="mode" value="size" checked> <span data-i18n="split_mode_size">por tamanho (MB)</span></label>
+        <input type="number" id="maxmb" min="1" step="1" placeholder="ex.: 6" data-i18n-placeholder="example_size">
+      </div>
+      <div class="inputs">
+        <label><input type="radio" name="mode" value="every"> <span data-i18n="split_mode_every">intervalo fixo</span></label>
+        <input type="number" id="every" min="1" step="1" placeholder="ex.: 5" data-i18n-placeholder="example_every">
+      </div>
+      <div class="inputs">
+        <label><input type="radio" name="mode" value="ranges"> <span data-i18n="split_mode_ranges">intervalo personalizado</span></label>
+        <input type="text" id="ranges" placeholder="ex.: 1-3,7,10-12" data-i18n-placeholder="example_ranges">
+      </div>
+      <div class="inputs">
+        <button class="btn" id="runSplit" data-i18n="split_action">Particionar</button>
+        <span id="splitStatus" class="small"></span>
+      </div>
+      <div id="splitList"></div>
+      <div id="splitBatch" class="inputs hidden" style="margin-top:10px">
+        <button class="btn" id="splitDlAll" data-i18n="download_all">Baixar todos</button>
+      </div>
+    </section>
+
+    <section id="tab-compress" class="section" data-category="pdf">
+      <h2 class="title" data-i18n="compress_title">Comprimir PDFs</h2>
+      <p class="sub" data-i18n="compress_sub">Escolha o n&iacute;vel e envie um ou mais arquivos</p>
+      <div id="dropCompress" class="drop">
+        <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M7 3h10v2H7V3zm-2 4h14v2H5V7zm2 4h10v10H7V11z"/></svg>
+        <form class="inline" enctype="multipart/form-data">
+          <input type="file" id="filesCompress" multiple accept=".pdf" hidden>
+          <button class="btn" type="button" id="chooseCompress" data-i18n="upload_cta">Selecione arquivos, arraste para esta área ou cole aqui</button>
+        </form>
+        <div id="compressErr" class="errmsg hidden"></div>
+      </div>
+      <div class="inputs" style="margin-top:10px; align-items:center; gap:10px;">
+        <label data-i18n="compress_level">N&iacute;vel de compress&atilde;o:</label>
+        <select id="compressQuality">
+          <option value="screen" data-i18n="compress_max">M&aacute;xima</option>
+          <option value="ebook" selected data-i18n="compress_high">Alta</option>
+          <option value="printer" data-i18n="compress_medium">M&eacute;dia</option>
+          <option value="prepress" data-i18n="compress_low">Baixa</option>
+        </select>
+        <button class="btn" id="runCompress" data-i18n="compress_now">Comprimir agora</button>
+        <span id="compressStatus" class="small"></span>
+      </div>
+      <div id="compressList"></div>
+      <div id="compressBatch" class="inputs hidden" style="margin-top:10px">
+        <button class="btn" id="compressDlAll" data-i18n="download_all">Baixar todos</button>
+      </div>
+      <p class="note" data-i18n="compress_tip">Dica: quanto maior o n&iacute;vel de compress&atilde;o, mais qualidade o arquivo perde.</p>
+    </section>
+
+
+
+    <section id="tab-word2pdf" class="section" data-category="pdf">
+      <h2 class="title">Converter Word para PDF</h2>
+      <p class="sub">Envie arquivos DOC ou DOCX para converter em PDF</p>
+      <div id="dropWord2Pdf" class="drop">
+        <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M6 2h7l5 5v15H6zM13 3.5V8h4.5M8 12h8v2H8zm0 4h8v2H8z"/></svg>
+        <form class="inline" enctype="multipart/form-data">
+          <input type="file" id="filesWord2Pdf" multiple accept=".doc,.docx" hidden>
+          <button class="btn" type="button" id="chooseWord2Pdf">Selecione arquivos, arraste para esta área ou cole aqui</button>
+        </form>
+        <div id="word2pdfErr" class="errmsg hidden"></div>
+      </div>
+      <div class="inputs" style="margin-top:10px; align-items:center; gap:10px;">
+        <button class="btn" id="runWord2Pdf">Converter agora</button>
+        <span id="word2pdfStatus" class="small"></span>
+      </div>
+      <div id="word2pdfList"></div>
+      <div id="word2pdfBatch" class="inputs hidden" style="margin-top:10px">
+        <button class="btn" id="word2pdfDlAll">Baixar todos</button>
+      </div>
+    </section>
+
+    <section id="tab-protect" class="section" data-category="pdf">
+      <h2 class="title" data-i18n="protect_title">Proteger PDFs com senha</h2>
+      <p class="sub" data-i18n="protect_sub">Envie um ou mais PDFs e defina uma senha para todos os arquivos selecionados</p>
+      <div id="dropProtect" class="drop">
+        <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1a5 5 0 00-5 5v3H6a2 2 0 00-2 2v9a2 2 0 002 2h12a2 2 0 002-2v-9a2 2 0 00-2-2h-1V6a5 5 0 00-5-5zm-3 8V6a3 3 0 116 0v3H9zm3 3a2 2 0 012 2 2 2 0 01-1 1.73V18h-2v-2.27A2 2 0 0110 14a2 2 0 012-2z"/></svg>
+        <form class="inline" enctype="multipart/form-data">
+          <input type="file" id="filesProtect" multiple accept=".pdf" hidden>
+          <button class="btn" type="button" id="chooseProtect" data-i18n="upload_cta">Selecione arquivos, arraste para esta área ou cole aqui</button>
+        </form>
+        <div id="protectErr" class="errmsg hidden"></div>
+      </div>
+      <div class="inputs" style="margin-top:10px; align-items:center; gap:10px;">
+        <label data-i18n="password">Senha:</label>
+        <input type="password" id="protectPassword" placeholder="m&iacute;nimo de 4 caracteres" style="max-width:220px" data-i18n-placeholder="password_placeholder">
+        <label data-i18n="password_confirm">Confirmar:</label>
+        <input type="password" id="protectPassword2" placeholder="repita a senha" style="max-width:220px" data-i18n-placeholder="password_repeat_placeholder">
+        <button class="btn" id="runProtect" data-i18n="protect_now">Proteger agora</button>
+        <span id="protectStatus" class="small"></span>
+      </div>
+      <div id="protectList"></div>
+      <div id="protectBatch" class="inputs hidden" style="margin-top:10px">
+        <button class="btn" id="protectDlAll" data-i18n="download_all">Baixar todos</button>
+      </div>
+      <p class="note" data-i18n="protect_note">A mesma senha ser&aacute; aplicada a todos os PDFs enviados nesta opera&ccedil;&atilde;o.</p>
+    </section>
+
+
+
+    <section id="tab-pdf2png" class="section" data-category="image">
+      <h2 class="title">Converter PDF para PNG</h2>
+      <p class="sub">Envie um ou mais PDFs para gerar imagens PNG de cada página</p>
+      <div id="dropPdf2Png" class="drop">
+        <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M6 2h7l5 5v15H6zM13 3.5V8h4.5M8 15h8v2H8zm0-4h8v2H8z"/></svg>
+        <form class="inline" enctype="multipart/form-data">
+          <input type="file" id="filesPdf2Png" multiple accept=".pdf" hidden>
+          <button class="btn" type="button" id="choosePdf2Png">Selecione arquivos, arraste para esta área ou cole aqui</button>
+        </form>
+        <div id="pdf2pngErr" class="errmsg hidden"></div>
+      </div>
+      <div class="inputs" style="margin-top:10px; align-items:center; gap:10px;">
+        <button class="btn" id="runPdf2Png">Converter agora</button>
+        <span id="pdf2pngStatus" class="small"></span>
+      </div>
+      <div id="pdf2pngList"></div>
+      <div id="pdf2pngBatch" class="inputs hidden" style="margin-top:10px">
+        <button class="btn" id="pdf2pngDlAll">Baixar todos</button>
+      </div>
+      
+    </section>
+
+    <section id="tab-removebg" class="section" data-category="image">
+      <h2 class="title" data-i18n="removebg_title">Remover fundo de imagens</h2>
+      <p class="sub" data-i18n="removebg_sub">Envie uma ou mais imagens para gerar PNGs com fundo transparente</p>
+      <div id="dropRemoveBg" class="drop">
+        <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 6 .9-4.5 4.4 1.1 6.2L12 16.9 6.4 19.5l1.1-6.2L3 8.9 9 8z"/></svg>
+        <form class="inline" enctype="multipart/form-data">
+          <input type="file" id="filesRemoveBg" multiple accept=".jpg,.jpeg,.png,.tif,.tiff" hidden>
+          <button class="btn" type="button" id="chooseRemoveBg" data-i18n="upload_cta">Selecione arquivos, arraste para esta área ou cole aqui</button>
+        </form>
+        <div id="removeBgErr" class="errmsg hidden"></div>
+      </div>
+      <div id="removeBgPreviewWrap" class="removebg-preview-wrap hidden">
+        <div class="removebg-strength">
+          <div class="removebg-strength-top">
+            <label for="removeBgStrength" data-i18n="removebg_strength">Intensidade do recorte</label>
+            <strong id="removeBgStrengthValue">50%</strong>
+          </div>
+          <input type="range" id="removeBgStrength" min="0" max="100" step="1" value="50">
+          <p class="note removebg-note" data-i18n="removebg_note">Ajuste a barra e veja ao vivo uma pr&eacute;via aproximada do PNG final.</p>
+        </div>
+        <div class="removebg-preview-card">
+          <div class="removebg-preview-head">
+            <span data-i18n="removebg_preview">Pr&eacute;-visualiza&ccedil;&atilde;o</span>
+            <small id="removeBgPreviewHint" data-i18n="removebg_preview_hint">A primeira imagem enviada aparece aqui.</small>
+          </div>
+          <div class="removebg-preview-stage checkerboard">
+            <canvas id="removeBgPreviewCanvas"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="inputs" style="margin-top:10px; align-items:center; gap:10px;">
+        <button class="btn" id="runRemoveBg" data-i18n="removebg_action">Remover fundo</button>
+        <span id="removeBgStatus" class="small"></span>
+      </div>
+      <div id="removeBgList"></div>
+      <div id="removeBgBatch" class="inputs hidden" style="margin-top:10px">
+        <button class="btn" id="removeBgDlAll" data-i18n="download_all">Baixar todos</button>
+      </div>
+      <p class="note" data-i18n="removebg_formats">Formatos suportados: PNG, JPG, JPEG e TIFF. O resultado sai em PNG transparente.</p>
+    </section>
+
+
+<section id="tab-youtube" class="section show" data-category="media">
+  <h2 class="title media-brand-title" aria-label="YouTube, Instagram, Facebook e Threads">
+    <img src="https://cdn.simpleicons.org/youtube" alt="YouTube" width="28" height="28" style="display:inline-block;vertical-align:middle;" loading="lazy">
+    <img src="https://cdn.simpleicons.org/instagram" alt="Instagram" width="28" height="28" style="display:inline-block;vertical-align:middle;" loading="lazy">
+    <img src="https://cdn.simpleicons.org/facebook" alt="Facebook" width="28" height="28" style="display:inline-block;vertical-align:middle;" loading="lazy">
+    <img src="https://cdn.simpleicons.org/threads" alt="Threads" width="28" height="28" style="display:inline-block;vertical-align:middle;" loading="lazy">
+  </h2>
+  <div class="media-tool-shell media-tool-shell-narrow">
+    <div class="youtube-panel media-download-card media-panel-clean">
+      <h3 class="media-tool-title">YouTube / TikTok / Threads</h3>
+      <p class="note youtube-batch-hint" data-i18n="youtube_batch_hint">Cole links do YouTube, TikTok ou Threads abaixo (um por linha ou com espaços).</p>
+      <div class="media-field-stack">
+        <textarea id="youtubeUrl" rows="4" placeholder="Cole aqui links do YouTube, TikTok ou Threads" class="youtube-url-textarea" data-i18n-placeholder="youtube_placeholder"></textarea>
+        <span id="youtubeStatus" class="small"></span>
+      </div>
+      <div id="youtubeErr" class="errmsg hidden youtube-err"></div>
+      <div id="youtubeMeta" class="youtube-meta hidden"></div>
+      <div class="media-action-strip youtube-mode-row">
+        <label><input type="radio" name="youtubeMode" value="video" checked> <span data-i18n="youtube_mode_video">V&iacute;deo</span></label>
+        <label><input type="radio" name="youtubeMode" value="mp3"> <span data-i18n="youtube_mode_audio">&Aacute;udio</span></label>
+        <button class="btn" id="runYoutube" data-i18n="youtube_action">Executar</button>
+      </div>
+      <div id="youtubeOptions" class="youtube-options hidden media-options-panel">
+        <div id="youtubeVideoOptions" class="inputs youtube-inline-row hidden">
+          <label for="youtubeQuality" data-i18n="youtube_quality">Qualidade:</label>
+          <select id="youtubeQuality"></select>
+        </div>
+        <div id="youtubeAudioOptions" class="inputs youtube-inline-row hidden">
+          <label for="youtubeBitrate" data-i18n="youtube_bitrate">Qualidade do &aacute;udio:</label>
+          <select id="youtubeBitrate">
+            <option value="128">128 kbps</option>
+            <option value="192" selected>192 kbps</option>
+            <option value="256">256 kbps</option>
+            <option value="320">320 kbps</option>
+          </select>
+        </div>
+      </div>
+      <div id="youtubeProgressRow" class="row hidden youtube-progress-row">
+        <div class="name"><span id="youtubeProgressText" data-i18n="youtube_progress">Preparando download...</span></div>
+        <div class="progress youtube-progress-bar"><div></div></div>
+      </div>
+      <div id="youtubeResult" class="note hidden youtube-result"></div>
+      <div id="youtubeBatchList" class="youtube-batch-list hidden"></div>
+    </div>
+  </div>
+</section>
+
+<section id="tab-youtube-clip" class="section" data-category="media">
+  <h2 class="title">Clipar v&iacute;deos</h2>
+  <p class="sub">Informe o link, ajuste início e fim, depois clique em Processar.</p>
+  <div class="media-tool-shell media-tool-shell-narrow">
+    <div class="youtube-panel media-download-card media-panel-clean">
+      <div class="media-field-stack media-field-stack-compact">
+        <input type="url" id="youtubeClipUrl" class="clip-url-input" placeholder="Cole aqui o link do YouTube/TikTok">
+        <span id="youtubeClipStatus" class="small"></span>
+      </div>
+      <div id="youtubeClipErr" class="errmsg hidden"></div>
+      <div id="youtubeClipMeta" class="youtube-meta hidden"></div>
+      <div class="clip-control-grid">
+        <label for="youtubeClipQuality" class="clip-quality-control hidden">Qualidade do v&iacute;deo:</label>
+        <select id="youtubeClipQuality" class="clip-quality-control hidden"></select>
+        <label for="youtubeClipStart">In&iacute;cio</label>
+        <input id="youtubeClipStart" type="text" placeholder="00:00">
+        <label for="youtubeClipEnd">Fim</label>
+        <input id="youtubeClipEnd" type="text" placeholder="00:30">
+      </div>
+      <div class="media-command-row">
+        <button class="btn" id="runYoutubeClip">Processar clipe</button>
+      </div>
+      <div id="youtubeClipProgressRow" class="row hidden youtube-progress-row">
+        <div class="name"><span id="youtubeClipProgressText">Preparando...</span></div>
+        <div class="progress youtube-progress-bar"><div></div></div>
+      </div>
+      <div id="youtubeClipResult" class="note hidden youtube-result"></div>
+    </div>
+  </div>
+</section>
+
+<section id="tab-instagram-tools" class="section" data-category="media">
+  <h2 class="title">Ferramentas Instagram</h2>
+  
+  <p class="sub">Informe um link do Instagram e selecione uma ação.</p>
+  <div class="media-tool-shell media-tool-shell-narrow">
+    <div class="youtube-panel instagram-card media-panel-clean">
+      <div class="media-field-stack media-field-stack-compact">
+        <input type="url" id="instagramUrl" class="social-url-input" placeholder="Cole aqui o link do Instagram">
+        <span id="instagramStatus" class="small"></span>
+      </div>
+      <div id="instagramErr" class="errmsg hidden youtube-err"></div>
+      <div id="instagramMeta" class="youtube-meta hidden"></div>
+      <div class="instagram-action-grid">
+        <button class="btn alt" id="runInstagramVideo">Processar vídeo</button>
+        <button class="btn alt" id="runInstagramVideos">Processar carrossel</button>
+        <button class="btn alt" id="runInstagramTranscript">Processar transcrição</button>
+        <button class="btn alt" id="runInstagramImages">Processar imagens</button>
+        <button class="btn" id="runInstagramOcr">Executar OCR das imagens</button>
+      </div>
+      <div id="instagramProgressRow" class="row hidden youtube-progress-row">
+        <div class="name"><span id="instagramProgressText">Preparando...</span></div>
+        <div class="progress youtube-progress-bar"><div></div></div>
+      </div>
+      <div id="instagramResult" class="note hidden youtube-result"></div>
+    </div>
+  </div>
+</section>
+
+    <section id="tab-video" class="section" data-category="video">
+      <h2 class="title" data-i18n="video_title">Dividir v&iacute;deos por tamanho</h2>
+      <p class="sub" data-i18n="video_sub">Envie um v&iacute;deo e escolha o tamanho (MB) de cada parte.</p>
+      <div id="dropVideo" class="drop">
+        <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6h12v12H4zM20 8l-4 3 4 3z"/></svg>
+        <form class="inline" enctype="multipart/form-data">
+          <input type="file" id="fileVideo" accept=".mp4,.mov,.mkv,.avi,.webm" hidden>
+          <button class="btn" type="button" id="chooseVideo" data-i18n="video_upload">Voc&ecirc; pode arrastar e soltar seu v&iacute;deo aqui, colar ou clicar para fazer o upload</button>
+        </form>
+        <div id="videoErr" class="errmsg hidden"></div>
+      </div>
+      <div class="inputs" style="margin-top:10px; align-items:center; gap:10px;">
+        <label data-i18n="video_size">Tamanho por parte (MB):</label>
+        <input type="number" id="sizeMb" min="1" step="1" placeholder="ex.: 100" style="max-width:140px" data-i18n-placeholder="example_video_size">
+        <button class="btn" id="runVideo" data-i18n="video_action">Dividir v&iacute;deo</button>
+        <span id="videoStatus" class="small"></span>
+      </div>
+      <div class="row hidden" id="videoProgressRow">
+        <div class="name"><span class="spinner"></span> <span id="videoProgressText" data-i18n="video_progress">Processando&hellip;</span></div>
+        <div class="progress indet" style="width:260px"></div>
+      </div>
+      <div id="videoList"></div>
+      <div id="videoBatch" class="inputs hidden" style="margin-top:10px">
+        <button class="btn" id="videoDlAll" data-i18n="video_download_all">Baixar todas as partes</button>
+      </div>
+    </section>
+
+
+<!-- MELOTOOLS_EXTRA_SECTIONS_START -->
+<section id="tab-online-qr" class="section" data-category="media">
+  <h2 class="title">Converter link em QR Code</h2>
+  <p class="sub">Transforme qualquer link de v&iacute;deo ou perfil em um QR Code pronto para compartilhar.</p>
+  <div class="drop mt-drop">
+    <form class="mt-extra-form mt-card-form" data-endpoint="/api/links/qr-generate">
+      <div class="inputs mt-form-grid">
+        <div class="mt-field mt-field-wide">
+          <label for="online_qr_text">Link do v&iacute;deo ou perfil</label>
+          <input id="online_qr_text" type="text" name="text" placeholder="Ex.: https://instagram.com/... ou https://youtube.com/...">
+          <small>Cole o link completo para gerar o QR Code corretamente.</small>
+        </div>
+        <div class="mt-action-row"><button class="btn" type="submit">Gerar QR Code</button></div>
+      </div>
+    </form>
+  </div>
+  <div class="note mt-extra-result" role="status"></div>
+  <p class="note">Cole um link completo para gerar o c&oacute;digo em PNG.</p>
+</section>
+
+<section id="tab-img-resize" class="section" data-category="image">
+  <h2 class="title">Redimensionar imagem</h2>
+  <p class="sub">Ajuste largura e altura com campos mais claros e organizados.</p>
+  <div class="drop mt-drop">
+    <form class="mt-extra-form mt-card-form" data-endpoint="/api/image/resize">
+      <div class="inputs mt-form-grid">
+        <div class="mt-field mt-field-wide">
+          <label for="img_resize_file">Imagem</label>
+          <input id="img_resize_file" type="file" name="file" accept="image/*">
+          <small>Envie uma imagem PNG, JPG, WEBP, BMP ou GIF.</small>
+        </div>
+        <div class="mt-field"><label for="img_resize_width">Largura final (px)</label><input id="img_resize_width" type="number" name="width" value="800" min="1"></div>
+        <div class="mt-field"><label for="img_resize_height">Altura final (px)</label><input id="img_resize_height" type="number" name="height" value="600" min="1"></div>
+        <div class="mt-action-row"><button class="btn" type="submit">Redimensionar</button></div>
+      </div>
+    </form>
+  </div>
+  <div class="note mt-extra-result" role="status"></div>
+  <p class="note">Defina largura e altura em pixels antes de processar.</p>
+</section>
+
+<section id="tab-img-compress" class="section" data-category="image">
+  <h2 class="title">Comprimir imagem</h2>
+  <p class="sub">Reduza o tamanho do arquivo usando um controle de qualidade mais intuitivo.</p>
+  <div class="drop mt-drop">
+    <form class="mt-extra-form mt-card-form" data-endpoint="/api/image/compress">
+      <div class="inputs mt-form-grid">
+        <div class="mt-field mt-field-wide">
+          <label for="img_compress_file">Imagem</label>
+          <input id="img_compress_file" type="file" name="file" accept="image/*">
+        </div>
+        <div class="mt-field mt-field-range mt-field-wide">
+          <label for="img_compress_quality">Qualidade final</label>
+          <input id="img_compress_quality" type="range" name="quality" min="20" max="95" value="75" data-output="img_compress_quality_value">
+          <div class="mt-range-value"><span id="img_compress_quality_value">75</span><small>Quanto maior o valor, melhor a qualidade e maior o arquivo.</small></div>
+        </div>
+        <div class="mt-action-row"><button class="btn" type="submit">Comprimir</button></div>
+      </div>
+    </form>
+  </div>
+  <div class="note mt-extra-result" role="status"></div>
+  <p class="note">A faixa ideal costuma ficar entre 65 e 85.</p>
+</section>
+
+<section id="tab-img-convert" class="section" data-category="image">
+  <h2 class="title">Converter imagem</h2>
+  <p class="sub">Converta entre formatos comuns de imagem com poucos cliques.</p>
+  <div class="drop mt-drop">
+    <form class="mt-extra-form mt-card-form" data-endpoint="/api/image/convert">
+      <div class="inputs mt-form-grid">
+        <div class="mt-field mt-field-wide"><label for="img_convert_file">Imagem</label><input id="img_convert_file" type="file" name="file" accept="image/*"><small>Envie uma imagem para converter.</small></div>
+        <div class="mt-field"><label for="img_convert_format">Formato final</label><select id="img_convert_format" name="format"><option value="png">PNG</option><option value="jpg">JPG</option><option value="webp">WEBP</option><option value="bmp">BMP</option></select></div>
+        <div class="mt-action-row"><button class="btn" type="submit">Converter</button></div>
+      </div>
+    </form>
+  </div>
+  <div class="note mt-extra-result" role="status"></div>
+  <p class="note">Suporta PNG, JPG, WEBP e BMP.</p>
+</section>
+
+<section id="tab-img-crop" class="section" data-category="image">
+  <h2 class="title">Cortar imagem</h2>
+  <p class="sub">Defina claramente a &aacute;rea do recorte usando posi&ccedil;&atilde;o e tamanho.</p>
+  <div class="drop mt-drop">
+    <form class="mt-extra-form mt-card-form" data-endpoint="/api/image/crop">
+      <div class="inputs mt-form-grid">
+        <div class="mt-field mt-field-wide">
+          <label for="img_crop_file">Imagem</label>
+          <input id="img_crop_file" type="file" name="file" accept="image/*">
+        </div>
+        <div class="mt-field"><label for="img_crop_x">Posi&ccedil;&atilde;o X</label><input id="img_crop_x" type="number" name="x" value="0"></div>
+        <div class="mt-field"><label for="img_crop_y">Posi&ccedil;&atilde;o Y</label><input id="img_crop_y" type="number" name="y" value="0"></div>
+        <div class="mt-field"><label for="img_crop_width">Largura do recorte</label><input id="img_crop_width" type="number" name="width" value="400" min="1"></div>
+        <div class="mt-field"><label for="img_crop_height">Altura do recorte</label><input id="img_crop_height" type="number" name="height" value="300" min="1"></div>
+        <div class="mt-action-row"><button class="btn" type="submit">Cortar</button></div>
+      </div>
+    </form>
+  </div>
+  <div class="note mt-extra-result" role="status"></div>
+  <p class="note">Use X/Y para o ponto inicial e largura/altura para o tamanho do recorte.</p>
+</section>
+
+<section id="tab-img-rotate" class="section" data-category="image">
+  <h2 class="title">Girar imagem</h2>
+  <p class="sub">Rotacione imagens com as op&ccedil;&otilde;es mais usadas no dia a dia.</p>
+  <div class="drop mt-drop">
+    <form class="mt-extra-form mt-card-form" data-endpoint="/api/image/rotate">
+      <div class="inputs mt-form-grid">
+        <div class="mt-field mt-field-wide"><label for="img_rotate_file">Imagem</label><input id="img_rotate_file" type="file" name="file" accept="image/*"><small>Escolha a imagem que deve ser girada.</small></div>
+        <div class="mt-field"><label for="img_rotate_degrees">&Acirc;ngulo</label><select id="img_rotate_degrees" name="degrees"><option value="90">90&deg;</option><option value="180">180&deg;</option><option value="270">270&deg;</option></select></div>
+        <div class="mt-action-row"><button class="btn" type="submit">Girar</button></div>
+      </div>
+    </form>
+  </div>
+  <div class="note mt-extra-result" role="status"></div>
+  <p class="note">Escolha o &acirc;ngulo antes de processar o arquivo.</p>
+</section>
+
+<section id="tab-img-favicon" class="section" data-category="image">
+  <h2 class="title">Criar favicon</h2>
+  <p class="sub">Gere um favicon `.ico` a partir de uma imagem enviada.</p>
+  <div class="drop mt-drop">
+    <form class="mt-extra-form mt-card-form" data-endpoint="/api/image/favicon">
+      <div class="inputs mt-form-grid">
+        <div class="mt-field mt-field-wide"><label for="img_favicon_file">Imagem base</label><input id="img_favicon_file" type="file" name="file" accept="image/*"><small>Use uma imagem quadrada sempre que poss&iacute;vel.</small></div>
+        <div class="mt-action-row"><button class="btn" type="submit">Criar favicon</button></div>
+      </div>
+    </form>
+  </div>
+  <div class="note mt-extra-result" role="status"></div>
+  <p class="note">Ideal para sites, sistemas internos e landing pages.</p>
+</section>
+
+<section id="tab-img-pixelate" class="section" data-category="image">
+  <h2 class="title">Pixelar dados sens&iacute;veis</h2>
+  <p class="sub">Controle a for&ccedil;a da pixeliza&ccedil;&atilde;o com uma barra deslizante.</p>
+  <div class="drop mt-drop">
+    <form class="mt-extra-form mt-card-form" data-endpoint="/api/image/pixelate">
+      <div class="inputs mt-form-grid">
+        <div class="mt-field mt-field-wide">
+          <label for="img_pixelate_file">Imagem</label>
+          <input id="img_pixelate_file" type="file" name="file" accept="image/*">
+        </div>
+        <div class="mt-field mt-field-range mt-field-wide">
+          <label for="img_pixelate_strength">Intensidade da pixeliza&ccedil;&atilde;o</label>
+          <input id="img_pixelate_strength" type="range" name="strength" min="2" max="80" value="12" data-output="img_pixelate_strength_value">
+          <div class="mt-range-value"><span id="img_pixelate_strength_value">12</span><small>Valores maiores escondem mais o conte&uacute;do.</small></div>
+        </div>
+        <div class="mt-action-row"><button class="btn" type="submit">Pixelar</button></div>
+      </div>
+    </form>
+  </div>
+  <div class="note mt-extra-result" role="status"></div>
+  <p class="note">Ajuste a barra at&eacute; encontrar o n&iacute;vel de privacidade desejado.</p>
+</section>
+
+<section id="tab-pdf-image-to-pdf" class="section" data-category="pdf">
+  <h2 class="title">Imagem para PDF</h2>
+  <p class="sub">Junte uma ou mais imagens em um &uacute;nico PDF.</p>
+  <div class="drop mt-drop">
+    <form class="mt-extra-form mt-card-form" data-endpoint="/api/documents/image-to-pdf">
+      <div class="inputs mt-form-grid">
+        <div class="mt-field mt-field-wide"><label for="pdf_images_files">Imagens</label><input id="pdf_images_files" type="file" name="files" accept="image/*" multiple="multiple"><small>Selecione uma ou mais imagens.</small></div>
+        <div class="mt-action-row"><button class="btn" type="submit">Gerar PDF</button></div>
+      </div>
+    </form>
+  </div>
+  <div class="note mt-extra-result" role="status"></div>
+  <p class="note">Envie uma ou v&aacute;rias imagens para montar o PDF final.</p>
+</section>
+
+<section id="tab-pdf-to-image" class="section" data-category="pdf">
+  <h2 class="title">PDF para imagem</h2>
+  <p class="sub">Extraia p&aacute;ginas de um PDF como imagens separadas.</p>
+  <div class="drop mt-drop">
+    <form class="mt-extra-form mt-card-form" data-endpoint="/api/documents/pdf-to-image">
+      <div class="inputs mt-form-grid">
+        <div class="mt-field mt-field-wide"><label for="pdf_to_image_file">PDF</label><input id="pdf_to_image_file" type="file" name="file" accept=".pdf"><small>Envie o PDF que ser&aacute; convertido em imagens.</small></div>
+        <div class="mt-action-row"><button class="btn" type="submit">Converter</button></div>
+      </div>
+    </form>
+  </div>
+  <div class="note mt-extra-result" role="status"></div>
+  <p class="note">Gera um arquivo compactado com as p&aacute;ginas convertidas.</p>
+</section>
+
+<section id="tab-pdf-number" class="section" data-category="pdf">
+  <h2 class="title">Numerar p&aacute;ginas</h2>
+  <p class="sub">Aplique numera&ccedil;&atilde;o nas p&aacute;ginas do documento.</p>
+  <div class="drop mt-drop">
+    <form class="mt-extra-form mt-card-form" data-endpoint="/api/documents/number-pages">
+      <div class="inputs mt-form-grid">
+        <div class="mt-field mt-field-wide"><label for="pdf_number_file">PDF</label><input id="pdf_number_file" type="file" name="file" accept=".pdf"><small>Escolha o documento que receber&aacute; a numera&ccedil;&atilde;o.</small></div>
+        <div class="mt-field"><label for="pdf_number_position">Posi&ccedil;&atilde;o</label><select id="pdf_number_position" name="position"><option value="footer-right">Rodap&eacute; direito</option><option value="footer-center">Rodap&eacute; central</option><option value="footer-left">Rodap&eacute; esquerdo</option></select></div>
+        <div class="mt-action-row"><button class="btn" type="submit">Numerar</button></div>
+      </div>
+    </form>
+  </div>
+  <div class="note mt-extra-result" role="status"></div>
+  <p class="note">Escolha a posi&ccedil;&atilde;o da numera&ccedil;&atilde;o antes de gerar o PDF.</p>
+</section>
+
+<section id="tab-pdf-remove" class="section" data-category="pdf">
+  <h2 class="title">Remover p&aacute;ginas</h2>
+  <p class="sub">Exclua p&aacute;ginas espec&iacute;ficas sem alterar o restante do PDF.</p>
+  <div class="drop mt-drop">
+    <form class="mt-extra-form mt-card-form" data-endpoint="/api/documents/remove-pages">
+      <div class="inputs mt-form-grid">
+        <div class="mt-field mt-field-wide"><label for="pdf_remove_file">PDF</label><input id="pdf_remove_file" type="file" name="file" accept=".pdf"><small>Escolha o documento original.</small></div>
+        <div class="mt-field"><label for="pdf_remove_pages">P&aacute;ginas</label><input id="pdf_remove_pages" type="text" name="pages" placeholder="Ex.: 1,3,5"><small>Separe por v&iacute;rgula.</small></div>
+        <div class="mt-action-row"><button class="btn" type="submit">Remover</button></div>
+      </div>
+    </form>
+  </div>
+  <div class="note mt-extra-result" role="status"></div>
+  <p class="note">Informe as p&aacute;ginas separadas por v&iacute;rgula.</p>
+</section>
+
+<section id="tab-pdf-extract" class="section" data-category="pdf">
+  <h2 class="title">Extrair p&aacute;ginas</h2>
+  <p class="sub">Separe apenas as p&aacute;ginas desejadas em um novo PDF.</p>
+  <div class="drop mt-drop">
+    <form class="mt-extra-form mt-card-form" data-endpoint="/api/documents/extract-pages">
+      <div class="inputs mt-form-grid">
+        <div class="mt-field mt-field-wide"><label for="pdf_extract_file">PDF</label><input id="pdf_extract_file" type="file" name="file" accept=".pdf"><small>Escolha o documento original.</small></div>
+        <div class="mt-field"><label for="pdf_extract_pages">P&aacute;ginas</label><input id="pdf_extract_pages" type="text" name="pages" placeholder="Ex.: 1,3,5"><small>Separe por v&iacute;rgula.</small></div>
+        <div class="mt-action-row"><button class="btn" type="submit">Extrair</button></div>
+      </div>
+    </form>
+  </div>
+  <div class="note mt-extra-result" role="status"></div>
+  <p class="note">Use a mesma sintaxe de p&aacute;ginas separadas por v&iacute;rgula.</p>
+</section>
+
+<section id="tab-video-cut" class="section" data-category="video">
+  <h2 class="title">Cortar v&iacute;deo</h2>
+  <p class="sub">Informe claramente o trecho inicial e final em segundos.</p>
+  <div class="drop mt-drop">
+    <form class="mt-extra-form mt-card-form" data-endpoint="/api/videos/cut">
+      <div class="inputs mt-form-grid">
+        <div class="mt-field mt-field-wide"><label for="video_cut_file">Arquivo de v&iacute;deo</label><input id="video_cut_file" type="file" name="file" accept="video/*"></div>
+        <div class="mt-field"><label for="video_cut_start">In&iacute;cio (segundos)</label><input id="video_cut_start" type="number" name="start" value="0" step="0.1"></div>
+        <div class="mt-field"><label for="video_cut_end">Fim (segundos)</label><input id="video_cut_end" type="number" name="end" value="10" step="0.1"></div>
+        <div class="mt-action-row"><button class="btn" type="submit">Cortar</button></div>
+      </div>
+    </form>
+  </div>
+  <div class="note mt-extra-result" role="status"></div>
+  <p class="note">Defina o tempo inicial e final do trecho que deve permanecer.</p>
+</section>
+
+<section id="tab-video-join" class="section" data-category="video">
+  <h2 class="title">Juntar v&iacute;deos</h2>
+  <p class="sub">Combine v&aacute;rios v&iacute;deos em uma &uacute;nica sa&iacute;da.</p>
+  <div class="drop mt-drop">
+    <form class="mt-extra-form mt-card-form" data-endpoint="/api/videos/join">
+      <div class="inputs mt-form-grid">
+        <div class="mt-field mt-field-wide"><label for="video_join_files">V&iacute;deos</label><input id="video_join_files" type="file" name="files" accept="video/*" multiple="multiple"><small>Selecione dois ou mais arquivos.</small></div>
+        <div class="mt-action-row"><button class="btn" type="submit">Juntar</button></div>
+      </div>
+    </form>
+  </div>
+  <div class="note mt-extra-result" role="status"></div>
+  <p class="note">Envie dois ou mais arquivos para concatenar.</p>
+</section>
+
+<section id="tab-video-compress" class="section" data-category="video">
+  <h2 class="title">Comprimir v&iacute;deo</h2>
+  <p class="sub">Ajuste o n&iacute;vel de compress&atilde;o com uma barra em vez de um n&uacute;mero solto.</p>
+  <div class="drop mt-drop">
+    <form class="mt-extra-form mt-card-form" data-endpoint="/api/videos/compress">
+      <div class="inputs mt-form-grid">
+        <div class="mt-field mt-field-wide"><label for="video_compress_file">Arquivo de v&iacute;deo</label><input id="video_compress_file" type="file" name="file" accept="video/*"></div>
+        <div class="mt-field mt-field-range mt-field-wide">
+          <label for="video_compress_crf">N&iacute;vel de compress&atilde;o (CRF)</label>
+          <input id="video_compress_crf" type="range" name="crf" min="18" max="36" value="28" data-output="video_compress_crf_value">
+          <div class="mt-range-value"><span id="video_compress_crf_value">28</span><small>Menor valor = mais qualidade. Maior valor = arquivo menor.</small></div>
+        </div>
+        <div class="mt-action-row"><button class="btn" type="submit">Comprimir</button></div>
+      </div>
+    </form>
+  </div>
+  <div class="note mt-extra-result" role="status"></div>
+  <p class="note">Use a barra para escolher o equil&iacute;brio entre qualidade e tamanho.</p>
+</section>
+
+<section id="tab-video-convert" class="section" data-category="video">
+  <h2 class="title">Converter v&iacute;deo</h2>
+  <p class="sub">Converta para formatos comuns diretamente pela interface.</p>
+  <div class="drop mt-drop">
+    <form class="mt-extra-form mt-card-form" data-endpoint="/api/videos/convert">
+      <div class="inputs mt-form-grid">
+        <div class="mt-field mt-field-wide"><label for="video_convert_file">V&iacute;deo</label><input id="video_convert_file" type="file" name="file" accept="video/*"><small>Envie o arquivo que ser&aacute; convertido.</small></div>
+        <div class="mt-field"><label for="video_convert_format">Formato final</label><select id="video_convert_format" name="format"><option value="mp4">MP4</option><option value="webm">WEBM</option><option value="mov">MOV</option><option value="avi">AVI</option></select></div>
+        <div class="mt-action-row"><button class="btn" type="submit">Converter</button></div>
+      </div>
+    </form>
+  </div>
+  <div class="note mt-extra-result" role="status"></div>
+  <p class="note">Escolha o formato final antes de iniciar.</p>
+</section>
+
+<section id="tab-video-extract-audio" class="section" data-category="video">
+  <h2 class="title">Extrair &aacute;udio</h2>
+  <p class="sub">Separe a trilha de &aacute;udio de um v&iacute;deo enviado.</p>
+  <div class="drop mt-drop">
+    <form class="mt-extra-form mt-card-form" data-endpoint="/api/videos/extract-audio">
+      <div class="inputs mt-form-grid">
+        <div class="mt-field mt-field-wide"><label for="video_extract_audio_file">V&iacute;deo</label><input id="video_extract_audio_file" type="file" name="file" accept="video/*"><small>O resultado ser&aacute; um arquivo de &aacute;udio.</small></div>
+        <div class="mt-action-row"><button class="btn" type="submit">Extrair &aacute;udio</button></div>
+      </div>
+    </form>
+  </div>
+  <div class="note mt-extra-result" role="status"></div>
+  <p class="note">Gera um arquivo de &aacute;udio e mostra o player quando poss&iacute;vel.</p>
+</section>
+
+<section id="tab-video-remove-audio" class="section" data-category="video">
+  <h2 class="title">Remover &aacute;udio</h2>
+  <p class="sub">Crie uma vers&atilde;o silenciosa do v&iacute;deo.</p>
+  <div class="drop mt-drop">
+    <form class="mt-extra-form mt-card-form" data-endpoint="/api/videos/remove-audio">
+      <div class="inputs mt-form-grid">
+        <div class="mt-field mt-field-wide"><label for="video_remove_audio_file">V&iacute;deo</label><input id="video_remove_audio_file" type="file" name="file" accept="video/*"><small>O resultado ser&aacute; uma vers&atilde;o sem som.</small></div>
+        <div class="mt-action-row"><button class="btn" type="submit">Remover &aacute;udio</button></div>
+      </div>
+    </form>
+  </div>
+  <div class="note mt-extra-result" role="status"></div>
+  <p class="note">Mant&eacute;m a imagem e remove a trilha sonora.</p>
+</section>
+
+<section id="tab-video-gif" class="section" data-category="video">
+  <h2 class="title">Gerar GIF</h2>
+  <p class="sub">Escolha o ponto inicial e a dura&ccedil;&atilde;o do trecho que ser&aacute; transformado em GIF.</p>
+  <div class="drop mt-drop">
+    <form class="mt-extra-form mt-card-form" data-endpoint="/api/videos/gif">
+      <div class="inputs mt-form-grid">
+        <div class="mt-field mt-field-wide"><label for="video_gif_file">Arquivo de v&iacute;deo</label><input id="video_gif_file" type="file" name="file" accept="video/*"></div>
+        <div class="mt-field"><label for="video_gif_start">Come&ccedil;ar em (segundos)</label><input id="video_gif_start" type="number" name="start" value="0" step="0.1"></div>
+        <div class="mt-field"><label for="video_gif_duration">Dura&ccedil;&atilde;o do GIF (segundos)</label><input id="video_gif_duration" type="number" name="duration" value="5" step="0.1"></div>
+        <div class="mt-action-row"><button class="btn" type="submit">Gerar GIF</button></div>
+      </div>
+    </form>
+  </div>
+  <div class="note mt-extra-result" role="status"></div>
+  <p class="note">GIFs curtos ficam mais leves e carregam mais r&aacute;pido.</p>
+</section>
+
+<section id="tab-links-qr-generate" class="section" data-category="links">
+  <h2 class="title">Gerador de QR Code</h2>
+  <p class="sub">Converta textos, links e mensagens em QR Code com um clique.</p>
+  <div class="drop mt-drop">
+    <form class="mt-extra-form mt-card-form" data-endpoint="/api/links/qr-generate">
+      <div class="inputs mt-form-grid">
+        <div class="mt-field mt-field-wide"><label for="links_qr_text">Texto ou link</label><input id="links_qr_text" type="text" name="text" placeholder="Ex.: https://meusite.com"><small>O QR Code aparecer&aacute; na tela assim que for gerado.</small></div>
+        <div class="mt-action-row"><button class="btn" type="submit">Gerar QR Code</button></div>
+      </div>
+    </form>
+  </div>
+  <div class="note mt-extra-result" role="status"></div>
+  <p class="note">Gera uma imagem PNG e mostra o QR Code na tela.</p>
+</section>
+
+<section id="tab-links-qr-read" class="section" data-category="links">
+  <h2 class="title">Leitor de QR Code</h2>
+  <p class="sub">Envie uma imagem com QR Code para extrair o conte&uacute;do.</p>
+  <div class="drop mt-drop">
+    <form class="mt-extra-form mt-card-form" data-endpoint="/api/links/qr-read">
+      <div class="inputs mt-form-grid">
+        <div class="mt-field mt-field-wide"><label for="links_qr_file">Imagem com QR Code</label><input id="links_qr_file" type="file" name="file" accept="image/*"><small>Use PNG, JPG ou WEBP com o QR Code vis&iacute;vel.</small></div>
+        <div class="mt-action-row"><button class="btn" type="submit">Ler QR Code</button></div>
+      </div>
+    </form>
+  </div>
+  <div class="note mt-extra-result" role="status"></div>
+  <p class="note">Suporta imagens comuns como PNG e JPG.</p>
+</section>
+
+  <h2 class="title"></h2>
+  
+  <div class="drop mt-drop">
+    <div class="mt-card-form"><div class="inputs"><span class="small">Nenhuma ferramenta publicada nesta categoria at&eacute; o momento.</span></div></div>
+  </div>
+  <div class="note mt-extra-result" role="status"></div>
+  <p class="note">Esta &aacute;rea foi preservada para expans&atilde;o futura do painel.</p>
+</section>
+
+<section id="tab-text-chars" class="section" data-category="text">
+  <h2 class="title">Contador de caracteres</h2>
+  <p class="sub">Conte rapidamente o total de caracteres do texto informado.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form"><div class="inputs mt-form-stack"><textarea id="txt_chars" placeholder="Digite seu texto" rows="6"></textarea><button class="btn" id="run_txt_chars" type="button">Contar</button></div></div>
+  </div>
+  <p class="note mt-inline-result" id="out_txt_chars"></p>
+  <p class="note">O resultado aparece logo abaixo, sem recarregar a p&aacute;gina.</p>
+</section>
+
+<section id="tab-text-words" class="section" data-category="text">
+  <h2 class="title">Contador de palavras</h2>
+  <p class="sub">Veja quantas palavras existem no conte&uacute;do digitado.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form"><div class="inputs mt-form-stack"><textarea id="txt_words" placeholder="Digite seu texto" rows="6"></textarea><button class="btn" id="run_txt_words" type="button">Contar</button></div></div>
+  </div>
+  <p class="note mt-inline-result" id="out_txt_words"></p>
+  <p class="note">Ideal para revis&atilde;o r&aacute;pida de tamanho de textos.</p>
+</section>
+
+<section id="tab-text-trimlines" class="section" data-category="text">
+  <h2 class="title">Remover quebras de linha</h2>
+  <p class="sub">Transforme texto quebrado em uma linha cont&iacute;nua.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form"><div class="inputs mt-form-stack"><textarea id="txt_trimlines" placeholder="Cole o texto aqui" rows="6"></textarea><button class="btn" id="run_txt_trimlines" type="button">Processar</button></div></div>
+  </div>
+  <p class="note mt-inline-result" id="out_txt_trimlines"></p>
+  <p class="note">Bom para limpar textos copiados de PDFs e mensagens.</p>
+</section>
+
+<section id="tab-text-trimspaces" class="section" data-category="text">
+  <h2 class="title">Remover espa&ccedil;os extras</h2>
+  <p class="sub">Ajuste espa&ccedil;amentos duplicados em um clique.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form"><div class="inputs mt-form-stack"><textarea id="txt_trimspaces" placeholder="Cole o texto aqui" rows="6"></textarea><button class="btn" id="run_txt_trimspaces" type="button">Processar</button></div></div>
+  </div>
+  <p class="note mt-inline-result" id="out_txt_trimspaces"></p>
+  <p class="note">Mant&eacute;m o texto mais limpo para reutiliza&ccedil;&atilde;o.</p>
+</section>
+
+<section id="tab-text-upper" class="section" data-category="text">
+  <h2 class="title">Converter para MAI&Uacute;SCULAS</h2>
+  <p class="sub">Padronize o texto para caixa alta.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form"><div class="inputs mt-form-stack"><textarea id="txt_upper" placeholder="Cole o texto aqui" rows="6"></textarea><button class="btn" id="run_txt_upper" type="button">Converter</button></div></div>
+  </div>
+  <p class="note mt-inline-result" id="out_txt_upper"></p>
+  <p class="note">O texto convertido &eacute; exibido logo abaixo.</p>
+</section>
+
+<section id="tab-text-lower" class="section" data-category="text">
+  <h2 class="title">Converter para min&uacute;sculas</h2>
+  <p class="sub">Padronize o texto para caixa baixa.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form"><div class="inputs mt-form-stack"><textarea id="txt_lower" placeholder="Cole o texto aqui" rows="6"></textarea><button class="btn" id="run_txt_lower" type="button">Converter</button></div></div>
+  </div>
+  <p class="note mt-inline-result" id="out_txt_lower"></p>
+  <p class="note">O texto convertido &eacute; exibido logo abaixo.</p>
+</section>
+
+<section id="tab-text-cap" class="section" data-category="text">
+  <h2 class="title">Capitalizar texto</h2>
+  <p class="sub">Deixe cada palavra com inicial mai&uacute;scula.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form"><div class="inputs mt-form-stack"><textarea id="txt_cap" placeholder="Cole o texto aqui" rows="6"></textarea><button class="btn" id="run_txt_cap" type="button">Converter</button></div></div>
+  </div>
+  <p class="note mt-inline-result" id="out_txt_cap"></p>
+  <p class="note">&Uacute;til para nomes, t&iacute;tulos e listas.</p>
+</section>
+
+<section id="tab-text-sort" class="section" data-category="text">
+  <h2 class="title">Ordenar lista</h2>
+  <p class="sub">Organize itens em ordem alfab&eacute;tica.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form"><div class="inputs mt-form-stack"><textarea id="txt_sort" placeholder="Um item por linha" rows="6"></textarea><button class="btn" id="run_txt_sort" type="button">Ordenar</button></div></div>
+  </div>
+  <p class="note mt-inline-result" id="out_txt_sort"></p>
+  <p class="note">Informe um item por linha para facilitar a ordena&ccedil;&atilde;o.</p>
+</section>
+
+<section id="tab-text-dedupe" class="section" data-category="text">
+  <h2 class="title">Remover duplicados</h2>
+  <p class="sub">Elimine repeti&ccedil;&otilde;es de uma lista de texto.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form"><div class="inputs mt-form-stack"><textarea id="txt_dedupe" placeholder="Um item por linha" rows="6"></textarea><button class="btn" id="run_txt_dedupe" type="button">Remover</button></div></div>
+  </div>
+  <p class="note mt-inline-result" id="out_txt_dedupe"></p>
+  <p class="note">Mant&eacute;m apenas a primeira ocorr&ecirc;ncia de cada item.</p>
+</section>
+
+<section id="tab-text-lorem" class="section" data-category="text">
+  <h2 class="title">Gerador de Lorem Ipsum</h2>
+  <p class="sub">Crie texto de exemplo para layouts e testes.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form"><div class="inputs"><button class="btn" id="run_txt_lorem" type="button">Gerar</button></div></div>
+  </div>
+  <p class="note mt-inline-result" id="out_txt_lorem"></p>
+  <p class="note">Um clique gera um bloco padr&atilde;o para uso imediato.</p>
+</section>
+
+
+<section id="tab-text-regex" class="section" data-category="text">
+  <h2 class="title">Testador Regex</h2>
+  <p class="sub">Teste uma express&atilde;o regular em um texto de exemplo e veja as ocorr&ecirc;ncias encontradas.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form">
+      <div class="inputs mt-form-grid mt-utility-grid">
+        <div class="mt-field mt-field-wide"><label for="txt_regex_pattern">Express&atilde;o regular</label><input type="text" id="txt_regex_pattern" placeholder="Ex.: Melo|Tools"><small>Informe apenas o padr&atilde;o, sem barras no in&iacute;cio ou fim.</small></div>
+        <div class="mt-field"><label for="txt_regex_flags">Modo de busca</label><select id="txt_regex_flags"><option value="gi">Ignorar mai&uacute;sculas/min&uacute;sculas</option><option value="g">Diferenciar mai&uacute;sculas/min&uacute;sculas</option><option value="gm">Multilinha</option><option value="gim">Multilinha + ignorar caixa</option></select><small>O site aplica a busca global automaticamente.</small></div>
+        <div class="mt-field mt-field-wide"><label for="txt_regex_text">Texto para testar</label><textarea id="txt_regex_text" rows="7" placeholder="Cole aqui o texto onde a express&atilde;o ser&aacute; testada."></textarea></div>
+        <div class="mt-action-row"><button class="btn" id="run_txt_regex" type="button">Testar regex</button></div>
+      </div>
+    </div>
+  </div>
+  <p class="note mt-inline-result" id="out_txt_regex"></p>
+  <p class="note">Mostra at&eacute; 200 ocorr&ecirc;ncias para evitar travar textos muito grandes.</p>
+</section>
+
+<section id="tab-text-diff" class="section" data-category="text">
+  <h2 class="title">Comparar textos</h2>
+  <p class="sub">Compare dois textos linha a linha para encontrar diferen&ccedil;as rapidamente.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form">
+      <div class="inputs mt-form-grid mt-utility-grid">
+        <div class="mt-field mt-field-wide"><label for="txt_diff_a">Texto A</label><textarea id="txt_diff_a" rows="8" placeholder="Cole aqui o primeiro texto."></textarea></div>
+        <div class="mt-field mt-field-wide"><label for="txt_diff_b">Texto B</label><textarea id="txt_diff_b" rows="8" placeholder="Cole aqui o segundo texto."></textarea></div>
+        <div class="mt-action-row"><button class="btn" id="run_txt_diff" type="button">Comparar textos</button></div>
+      </div>
+    </div>
+  </div>
+  <p class="note mt-inline-result" id="out_txt_diff"></p>
+  <p class="note">Linhas com "-" existem apenas no Texto A; linhas com "+" existem apenas no Texto B.</p>
+</section>
+
+<section id="tab-dev-password" class="section" data-category="dev">
+  <h2 class="title">Gerador de senha</h2>
+  <p class="sub">Defina o tamanho com uma barra e escolha se a senha ter&aacute; s&iacute;mbolos.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form">
+      <div class="inputs mt-form-grid">
+        <div class="mt-field mt-field-range mt-field-wide">
+          <label for="dev_pass_len">Tamanho da senha</label>
+          <input id="dev_pass_len" type="range" min="4" max="128" value="12" data-output="dev_pass_len_value">
+          <div class="mt-range-value"><span id="dev_pass_len_value">12</span><small>Escolha quantos caracteres a senha deve ter.</small></div>
+        </div>
+        <div class="mt-field"><label for="dev_pass_sym">Adicionar s&iacute;mbolos?</label><select id="dev_pass_sym"><option value="true">Sim, incluir s&iacute;mbolos</option><option value="false">N&atilde;o, s&oacute; letras e n&uacute;meros</option></select></div>
+        <div class="mt-action-row"><button class="btn" id="run_dev_pass" type="button">Gerar</button></div>
+      </div>
+    </div>
+  </div>
+  <p class="note mt-inline-result" id="out_dev_pass"></p>
+  <p class="note">Use a barra para escolher o tamanho sem precisar digitar.</p>
+</section>
+
+<section id="tab-dev-ipcalc" class="section" data-category="dev">
+  <h2 class="title">Calculadora de IP/sub-rede</h2>
+  <p class="sub">Analise faixa de rede a partir de um CIDR.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form"><div class="inputs mt-form-grid"><div class="mt-field mt-field-wide"><label for="dev_cidr">IP ou bloco CIDR</label><input type="text" id="dev_cidr" placeholder="Ex.: 192.168.1.10/24"><small>Inclua a m&aacute;scara depois da barra.</small></div><div class="mt-action-row"><button class="btn" id="run_dev_ipcalc" type="button">Calcular</button></div></div></div>
+  </div>
+  <p class="note mt-inline-result" id="out_dev_ipcalc"></p>
+  <p class="note">Exemplo: 192.168.1.10/24</p>
+</section>
+
+<section id="tab-dev-port" class="section" data-category="dev">
+  <h2 class="title">Testador de porta</h2>
+  <p class="sub">Informe claramente o host e a porta que voc&ecirc; quer testar.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form">
+      <div class="inputs mt-form-grid">
+        <div class="mt-field mt-field-wide"><label for="dev_host">Host ou IP</label><input id="dev_host" type="text" placeholder="Ex.: exemplo.com ou 192.168.1.10"><small>Digite o endere&ccedil;o do servidor que deve responder.</small></div>
+        <div class="mt-field"><label for="dev_port">Porta TCP</label><input id="dev_port" type="number" value="80" min="1" max="65535"></div>
+        <div class="mt-action-row"><button class="btn" id="run_dev_port" type="button">Testar</button></div>
+      </div>
+    </div>
+  </div>
+  <p class="note mt-inline-result" id="out_dev_port"></p>
+  <p class="note">Use, por exemplo, 80 para HTTP, 443 para HTTPS ou outra porta espec&iacute;fica.</p>
+</section>
+
+<section id="tab-dev-dns" class="section" data-category="dev">
+  <h2 class="title">DNS lookup</h2>
+  <p class="sub">Consulte registros DNS b&aacute;sicos de um dom&iacute;nio.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form"><div class="inputs mt-form-grid"><div class="mt-field mt-field-wide"><label for="dev_dns_host">Dom&iacute;nio</label><input type="text" id="dev_dns_host" placeholder="Ex.: exemplo.com"><small>Informe apenas o dom&iacute;nio, sem http://.</small></div><div class="mt-action-row"><button class="btn" id="run_dev_dns" type="button">Consultar</button></div></div></div>
+  </div>
+  <p class="note mt-inline-result" id="out_dev_dns"></p>
+  <p class="note">Retorna endere&ccedil;os ou nomes encontrados na consulta.</p>
+</section>
+
+<section id="tab-dev-whois" class="section" data-category="dev">
+  <h2 class="title">Whois</h2>
+  <p class="sub">Consulte dados p&uacute;blicos de registro de dom&iacute;nios.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form"><div class="inputs mt-form-grid"><div class="mt-field mt-field-wide"><label for="dev_whois">Dom&iacute;nio</label><input type="text" id="dev_whois" placeholder="Ex.: exemplo.com"><small>Consulta dados p&uacute;blicos do registro.</small></div><div class="mt-action-row"><button class="btn" id="run_dev_whois" type="button">Consultar</button></div></div></div>
+  </div>
+  <p class="note mt-inline-result" id="out_dev_whois"></p>
+  <p class="note">Os dados dependem da disponibilidade do servi&ccedil;o Whois consultado.</p>
+</section>
+
+<section id="tab-dev-linux-cmds" class="section" data-category="dev">
+  <h2 class="title">Dicionário de comandos Linux</h2>
+  <p class="sub">Escolha a distribuição e veja comandos essenciais em um painel rápido.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form">
+      <div class="inputs mt-form-grid mt-utility-grid">
+        <div class="mt-field"><label for="dev_linux_distro">Distribuição Linux</label><select id="dev_linux_distro"><option value="ubuntu">Ubuntu / Debian</option><option value="fedora">Fedora / RHEL</option><option value="arch">Arch Linux</option><option value="opensuse">openSUSE</option><option value="alpine">Alpine</option></select></div>
+        <div class="mt-field"><label for="dev_linux_group">Grupo de comandos</label><select id="dev_linux_group"><option value="essenciais">Essenciais</option><option value="pacotes">Pacotes</option><option value="rede">Rede</option><option value="servicos">Serviços</option><option value="logs">Logs</option></select></div>
+        <div class="mt-action-row"><button class="btn" id="run_dev_linux_show" type="button">Mostrar comandos</button><button class="btn alt" id="run_dev_linux_random" type="button">Sugestão rápida</button></div>
+      </div>
+      <div id="dev_linux_commands" class="mt-linux-cmd-list" aria-live="polite"></div>
+    </div>
+  </div>
+  <p class="note mt-inline-result" id="out_dev_linux"></p>
+  <p class="note">Clique em um comando para copiar. Revise antes de executar em produção.</p>
+</section>
+
+<section id="tab-dev-json" class="section" data-category="dev">
+  <h2 class="title">Formatador JSON</h2>
+  <p class="sub">Valide, organize ou compacte JSON de forma simples.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form">
+      <div class="inputs mt-form-stack mt-utility-code">
+        <div class="mt-field mt-field-wide"><label for="dev_json_input">JSON de entrada</label><textarea id="dev_json_input" rows="10" placeholder='Cole aqui um JSON, por exemplo: {"nome":"MeloTools","ok":true}'></textarea><small>Nenhum arquivo &eacute; necess&aacute;rio: basta colar o conte&uacute;do.</small></div>
+        <div class="mt-action-row"><button class="btn" id="run_dev_json" type="button">Formatar</button><button class="btn alt" id="run_dev_json_min" type="button">Compactar</button></div>
+      </div>
+    </div>
+  </div>
+  <p class="note mt-inline-result" id="out_dev_json"></p>
+  <p class="note">Se houver erro, o resultado indica que o JSON precisa ser revisado.</p>
+</section>
+
+<section id="tab-dev-base64" class="section" data-category="dev">
+  <h2 class="title">Base64</h2>
+  <p class="sub">Codifique ou decodifique textos em Base64.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form">
+      <div class="inputs mt-form-grid mt-utility-grid">
+        <div class="mt-field"><label for="dev_base64_action">O que fazer?</label><select id="dev_base64_action"><option value="encode">Texto para Base64</option><option value="decode">Base64 para texto</option></select></div>
+        <div class="mt-field mt-field-wide"><label for="dev_base64_input">Conte&uacute;do</label><textarea id="dev_base64_input" rows="8" placeholder="Cole o texto ou Base64 aqui."></textarea></div>
+        <div class="mt-action-row"><button class="btn" id="run_dev_base64" type="button">Converter</button></div>
+      </div>
+    </div>
+  </div>
+  <p class="note mt-inline-result" id="out_dev_base64"></p>
+  <p class="note">Aceita texto com acentos e caracteres especiais.</p>
+</section>
+
+<section id="tab-dev-urlcodec" class="section" data-category="dev">
+  <h2 class="title">URL encode/decode</h2>
+  <p class="sub">Prepare ou leia trechos de URL com caracteres especiais.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form">
+      <div class="inputs mt-form-grid mt-utility-grid">
+        <div class="mt-field"><label for="dev_url_action">O que fazer?</label><select id="dev_url_action"><option value="encode">Codificar para URL</option><option value="decode">Decodificar URL</option></select></div>
+        <div class="mt-field mt-field-wide"><label for="dev_url_input">Texto ou URL</label><textarea id="dev_url_input" rows="7" placeholder="Ex.: https://site.com/?q=olá mundo"></textarea></div>
+        <div class="mt-action-row"><button class="btn" id="run_dev_url" type="button">Executar</button></div>
+      </div>
+    </div>
+  </div>
+  <p class="note mt-inline-result" id="out_dev_url"></p>
+  <p class="note">Use para par&acirc;metros de links, pesquisas e integra&ccedil;&otilde;es.</p>
+</section>
+
+<section id="tab-dev-hash" class="section" data-category="dev">
+  <h2 class="title">Gerador de hash</h2>
+  <p class="sub">Gere hashes comuns para confer&ecirc;ncia de texto e integra&ccedil;&otilde;es.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form">
+      <div class="inputs mt-form-grid mt-utility-grid">
+        <div class="mt-field"><label for="dev_hash_alg">Algoritmo</label><select id="dev_hash_alg"><option value="sha256">SHA-256</option><option value="sha512">SHA-512</option><option value="sha1">SHA-1 legado</option><option value="md5">MD5 legado</option></select><small>MD5 e SHA-1 s&atilde;o apenas para compatibilidade.</small></div>
+        <div class="mt-field mt-field-wide"><label for="dev_hash_input">Texto</label><textarea id="dev_hash_input" rows="7" placeholder="Digite ou cole o texto para gerar o hash."></textarea></div>
+        <div class="mt-action-row"><button class="btn" id="run_dev_hash" type="button">Gerar hash</button></div>
+      </div>
+    </div>
+  </div>
+  <p class="note mt-inline-result" id="out_dev_hash"></p>
+  <p class="note">N&atilde;o use MD5 ou SHA-1 para novas prote&ccedil;&otilde;es de seguran&ccedil;a.</p>
+</section>
+
+<section id="tab-dev-uuid" class="section" data-category="dev">
+  <h2 class="title">UUID v4</h2>
+  <p class="sub">Gere identificadores aleat&oacute;rios para testes, bancos de dados e integra&ccedil;&otilde;es.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form">
+      <div class="inputs mt-form-grid mt-utility-grid">
+        <div class="mt-field"><label for="dev_uuid_count">Quantidade</label><select id="dev_uuid_count"><option value="1">1 UUID</option><option value="3">3 UUIDs</option><option value="5">5 UUIDs</option><option value="10">10 UUIDs</option></select></div>
+        <div class="mt-action-row"><button class="btn" id="run_dev_uuid" type="button">Gerar UUID</button></div>
+      </div>
+    </div>
+  </div>
+  <p class="note mt-inline-result" id="out_dev_uuid"></p>
+  <p class="note">Os UUIDs s&atilde;o gerados no navegador.</p>
+</section>
+
+<section id="tab-dev-timestamp" class="section" data-category="dev">
+  <h2 class="title">Unix timestamp</h2>
+  <p class="sub">Converta timestamp Unix para data ou data para timestamp.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form">
+      <div class="inputs mt-form-grid mt-utility-grid">
+        <div class="mt-field mt-field-wide"><label for="dev_ts_value">Timestamp</label><input type="text" id="dev_ts_value" placeholder="Ex.: 1715356800 ou 1715356800000"><small>Use segundos ou milissegundos.</small></div>
+        <div class="mt-field mt-field-wide"><label for="dev_ts_date">Data e hora</label><input type="datetime-local" id="dev_ts_date"><small>Escolha uma data para converter em Unix.</small></div>
+        <div class="mt-action-row"><button class="btn" id="run_dev_ts_now" type="button">Usar agora</button><button class="btn alt" id="run_dev_ts_to_date" type="button">Timestamp &rarr; data</button><button class="btn alt" id="run_dev_date_to_ts" type="button">Data &rarr; timestamp</button></div>
+      </div>
+    </div>
+  </div>
+  <p class="note mt-inline-result" id="out_dev_timestamp"></p>
+  <p class="note">Mostra data local, ISO, segundos e milissegundos.</p>
+</section>
+
+<section id="tab-dev-jwt" class="section" data-category="dev">
+  <h2 class="title">Decodificador JWT</h2>
+  <p class="sub">Leia o cabe&ccedil;alho e o payload de um JWT sem validar assinatura.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form">
+      <div class="inputs mt-form-stack mt-utility-code">
+        <div class="mt-field mt-field-wide"><label for="dev_jwt_input">Token JWT</label><textarea id="dev_jwt_input" rows="7" placeholder="Cole aqui o token no formato header.payload.signature"></textarea><small>A assinatura n&atilde;o &eacute; validada por esta ferramenta.</small></div>
+        <div class="mt-action-row"><button class="btn" id="run_dev_jwt" type="button">Decodificar JWT</button></div>
+      </div>
+    </div>
+  </div>
+  <p class="note mt-inline-result" id="out_dev_jwt"></p>
+  <p class="note">Use apenas para inspe&ccedil;&atilde;o visual; n&atilde;o confirma autenticidade.</p>
+</section>
+
+<section id="tab-random-names" class="section" data-category="random">
+  <h2 class="title">Sorteador de nomes</h2>
+  <p class="sub">Escolha aleatoriamente um nome de uma lista.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form"><div class="inputs mt-form-stack"><textarea id="rnd_names" placeholder="Um nome por linha" rows="6"></textarea><button class="btn" id="run_rnd_names" type="button">Sortear</button></div></div>
+  </div>
+  <p class="note mt-inline-result" id="out_rnd_names"></p>
+  <p class="note">Informe um nome por linha para melhorar o sorteio.</p>
+</section>
+
+<section id="tab-random-numbers" class="section" data-category="random">
+  <h2 class="title">Sorteador de n&uacute;meros</h2>
+  <p class="sub">Escolha um intervalo m&iacute;nimo e m&aacute;ximo de forma mais clara.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form">
+      <div class="inputs mt-form-grid">
+        <div class="mt-field"><label for="rnd_min">N&uacute;mero m&iacute;nimo</label><input id="rnd_min" type="number" value="1"></div>
+        <div class="mt-field"><label for="rnd_max">N&uacute;mero m&aacute;ximo</label><input id="rnd_max" type="number" value="100"></div>
+        <div class="mt-action-row"><button class="btn" id="run_rnd_numbers" type="button">Sortear</button></div>
+      </div>
+    </div>
+  </div>
+  <p class="note mt-inline-result" id="out_rnd_numbers"></p>
+  <p class="note">O sistema vai sortear um n&uacute;mero inteiro dentro desse intervalo.</p>
+</section>
+
+<section id="tab-random-pick" class="section" data-category="random">
+  <h2 class="title">Escolher item aleat&oacute;rio</h2>
+  <p class="sub">Selecione um item aleat&oacute;rio de uma lista simples.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form"><div class="inputs mt-form-stack"><textarea id="rnd_pick" placeholder="Um item por linha" rows="6"></textarea><button class="btn" id="run_rnd_pick" type="button">Escolher</button></div></div>
+  </div>
+  <p class="note mt-inline-result" id="out_rnd_pick"></p>
+  <p class="note">Informe um item por linha para o resultado ficar mais previs&iacute;vel.</p>
+</section>
+
+<section id="tab-random-shuffle" class="section" data-category="random">
+  <h2 class="title">Embaralhar lista</h2>
+  <p class="sub">Reorganize a ordem de uma lista de forma aleat&oacute;ria.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form"><div class="inputs mt-form-stack"><textarea id="rnd_shuffle" placeholder="Um item por linha" rows="6"></textarea><button class="btn" id="run_rnd_shuffle" type="button">Embaralhar</button></div></div>
+  </div>
+  <p class="note mt-inline-result" id="out_rnd_shuffle"></p>
+  <p class="note">&Uacute;til para sorteios, filas e jogos.</p>
+</section>
+
+<section id="tab-random-roulette" class="section" data-category="random">
+  <h2 class="title">Roleta de op&ccedil;&otilde;es</h2>
+  <p class="sub">Monte sua lista e gire uma roleta real para decidir.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form">
+      <div class="inputs mt-form-stack">
+        <textarea id="rnd_roulette" placeholder="Uma op&ccedil;&atilde;o por linha" rows="6"></textarea>
+        <div class="mt-action-row"><button class="btn" id="run_rnd_roulette" type="button">Girar roleta</button></div>
+      </div>
+      <div class="mt-roulette-wrap">
+        <div class="mt-roulette-pointer" aria-hidden="true"></div>
+        <canvas id="rnd_roulette_canvas" width="360" height="360" aria-label="Roleta de op&ccedil;&otilde;es"></canvas>
+      </div>
+    </div>
+  </div>
+  <p class="note mt-inline-result" id="out_rnd_roulette"></p>
+  <p class="note">A roleta usa exatamente as op&ccedil;&otilde;es digitadas por voc&ecirc;.</p>
+</section>
+
+<section id="tab-random-coin" class="section" data-category="random">
+  <h2 class="title">Cara ou coroa</h2>
+  <p class="sub">Lance uma moeda com animação e resultado visual.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form">
+      <div class="inputs mt-form-row">
+        <button class="btn" id="run_rnd_coin" type="button">Lançar moeda</button>
+      </div>
+      <div class="mt-coin-stage">
+        <div class="mt-coin" id="rnd_coin_visual" aria-hidden="true">
+          <div class="mt-coin-edge"></div>
+          <div class="mt-coin-face mt-coin-head">
+            <span class="mt-coin-mark mt-coin-rs">R$</span>
+            <span class="mt-coin-mark mt-coin-value">1</span>
+            <span class="mt-coin-mark mt-coin-country">BRASIL</span>
+          </div>
+          <div class="mt-coin-face mt-coin-tail">
+            <span class="mt-coin-mark mt-coin-stars">? ? ?</span>
+            <span class="mt-coin-mark mt-coin-crown">Coroa</span>
+            <span class="mt-coin-mark mt-coin-year">MeloTools</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="note mt-inline-result" id="out_rnd_coin"></p>
+  <p class="note">A animação termina exatamente no lado sorteado.</p>
+</section>
+
+<section id="tab-random-dice" class="section" data-category="random">
+  <h2 class="title">Dado virtual 3D</h2>
+  <p class="sub">Rode um dado 3D real e veja a face sorteada.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form">
+      <div class="inputs mt-form-grid">
+        <div class="mt-field mt-field-range mt-field-wide">
+          <label for="rnd_faces">Quantidade de faces</label>
+          <input id="rnd_faces" type="range" min="2" max="100" value="6" data-output="rnd_faces_value">
+          <div class="mt-range-value"><span id="rnd_faces_value">6</span><small>Com 6 faces, o dado 3D mostra exatamente a face sorteada.</small></div>
+        </div>
+        <div class="mt-action-row"><button class="btn" id="run_rnd_dice" type="button">Rolar dado</button></div>
+      </div>
+      <div class="mt-dice-stage">
+        <canvas class="mt-dice-canvas" id="rnd_dice_visual" width="240" height="180" aria-label="Dado com quantidade de lados selecionada"></canvas>
+      </div>
+    </div>
+  </div>
+  <p class="note mt-inline-result" id="out_rnd_dice"></p>
+  <p class="note">O desenho do dado acompanha exatamente a quantidade de faces selecionada.</p>
+</section>
+
+<section id="tab-calc-simple" class="section" data-category="calc">
+  <h2 class="title">Calculadora simples</h2>
+  <p class="sub">Use o teclado visual para fazer contas r&aacute;pidas.</p>
+  <div class="drop mt-drop">
+    <div class="mt-calculator" role="group" aria-label="Calculadora simples">
+      <label class="mt-calc-label" for="calc_expr">Express&atilde;o</label>
+      <input class="mt-calc-expression" type="text" id="calc_expr" inputmode="decimal" autocomplete="off" placeholder="0" aria-describedby="out_calc_simple">
+      <div class="mt-calc-display" id="calc_visual_display" aria-live="polite">0</div>
+      <div class="mt-calc-keypad" aria-label="Teclado da calculadora">
+        <button type="button" class="mt-calc-key mt-calc-muted" data-calc-action="clear">C</button>
+        <button type="button" class="mt-calc-key mt-calc-muted" data-calc-action="backspace">&larr;</button>
+        <button type="button" class="mt-calc-key mt-calc-op" data-calc-value="(">(</button>
+        <button type="button" class="mt-calc-key mt-calc-op" data-calc-value=")">)</button>
+        <button type="button" class="mt-calc-key" data-calc-value="7">7</button>
+        <button type="button" class="mt-calc-key" data-calc-value="8">8</button>
+        <button type="button" class="mt-calc-key" data-calc-value="9">9</button>
+        <button type="button" class="mt-calc-key mt-calc-op" data-calc-value="/">&divide;</button>
+        <button type="button" class="mt-calc-key" data-calc-value="4">4</button>
+        <button type="button" class="mt-calc-key" data-calc-value="5">5</button>
+        <button type="button" class="mt-calc-key" data-calc-value="6">6</button>
+        <button type="button" class="mt-calc-key mt-calc-op" data-calc-value="*">&times;</button>
+        <button type="button" class="mt-calc-key" data-calc-value="1">1</button>
+        <button type="button" class="mt-calc-key" data-calc-value="2">2</button>
+        <button type="button" class="mt-calc-key" data-calc-value="3">3</button>
+        <button type="button" class="mt-calc-key mt-calc-op" data-calc-value="-">&minus;</button>
+        <button type="button" class="mt-calc-key" data-calc-value="0">0</button>
+        <button type="button" class="mt-calc-key" data-calc-value=".">.</button>
+        <button type="button" class="mt-calc-key mt-calc-equals" id="run_calc_simple" data-calc-action="equals">=</button>
+        <button type="button" class="mt-calc-key mt-calc-op" data-calc-value="+">+</button>
+      </div>
+    </div>
+  </div>
+  <p class="note mt-inline-result" id="out_calc_simple"></p>
+  <p class="note">Use as teclas ou digite a express&atilde;o no visor.</p>
+</section>
+
+<section id="tab-calc-percent" class="section" data-category="calc">
+  <h2 class="title">Calculadora de porcentagem</h2>
+  <p class="sub">Preencha os dois campos com r&oacute;tulos claros para n&atilde;o haver d&uacute;vida.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form">
+      <div class="inputs mt-form-grid">
+        <div class="mt-field"><label for="calc_val">Valor base</label><input id="calc_val" type="number" placeholder="Ex.: 250" step="any"></div>
+        <div class="mt-field"><label for="calc_pct">Percentual (%)</label><input id="calc_pct" type="number" placeholder="Ex.: 12" step="any"></div>
+        <div class="mt-action-row"><button class="btn" id="run_calc_percent" type="button">Calcular</button></div>
+      </div>
+    </div>
+  </div>
+  <p class="note mt-inline-result" id="out_calc_percent"></p>
+  <p class="note">Exemplo: 12% de 250.</p>
+</section>
+
+<section id="tab-calc-rule3" class="section" data-category="calc">
+  <h2 class="title">Regra de tr&ecirc;s</h2>
+  <p class="sub">Use r&oacute;tulos simples para entender qual valor corresponde a cada parte da propor&ccedil;&atilde;o.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form">
+      <div class="inputs mt-form-grid">
+        <div class="mt-field"><label for="calc_a">Valor A</label><input id="calc_a" type="number" placeholder="Primeiro valor" step="any"></div>
+        <div class="mt-field"><label for="calc_b">Valor B</label><input id="calc_b" type="number" placeholder="Segundo valor" step="any"></div>
+        <div class="mt-field"><label for="calc_c">Valor C</label><input id="calc_c" type="number" placeholder="Terceiro valor" step="any"></div>
+        <div class="mt-action-row"><button class="btn" id="run_calc_rule3" type="button">Calcular</button></div>
+      </div>
+    </div>
+  </div>
+  <p class="note mt-inline-result" id="out_calc_rule3"></p>
+  <p class="note">O sistema calcula o valor proporcional a partir de A, B e C.</p>
+</section>
+
+<section id="tab-calc-convert" class="section" data-category="calc">
+  <h2 class="title">Conversor de unidades</h2>
+  <p class="sub">Escolha o tipo, as unidades e o valor em campos bem identificados.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form">
+      <div class="inputs mt-form-grid">
+        <div class="mt-field"><label for="calc_convert_type">O que deseja converter?</label><select id="calc_convert_type"><option value="temperature">Temperatura</option><option value="weight">Peso</option><option value="distance">Dist&acirc;ncia</option><option value="filesize">Tamanho de arquivo</option></select></div>
+        <div class="mt-field"><label for="calc_from">Unidade de origem</label><select id="calc_from"></select></div>
+        <div class="mt-field"><label for="calc_to">Unidade de destino</label><select id="calc_to"></select></div>
+        <div class="mt-field"><label for="calc_num">Valor para converter</label><input id="calc_num" type="number" placeholder="Ex.: 10" step="any"></div>
+        <div class="mt-action-row"><button class="btn" id="run_calc_convert" type="button">Converter</button></div>
+      </div>
+    </div>
+  </div>
+  <p class="note mt-inline-result" id="out_calc_convert"></p>
+  <p class="note">As listas mudam conforme o tipo de convers&atilde;o escolhido.</p>
+</section>
+
+<section id="tab-calc-temp" class="section" data-category="calc">
+  <h2 class="title">Conversor de temperatura</h2>
+  <p class="sub">Selecione claramente de qual escala para qual escala deseja converter.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form">
+      <div class="inputs mt-form-grid">
+        <div class="mt-field"><label for="calc_temp_from">Temperatura de origem</label><select id="calc_temp_from"><option value="c">Celsius (C)</option><option value="f">Fahrenheit (F)</option><option value="k">Kelvin (K)</option></select></div>
+        <div class="mt-field"><label for="calc_temp_to">Temperatura de destino</label><select id="calc_temp_to"><option value="f">Fahrenheit (F)</option><option value="c">Celsius (C)</option><option value="k">Kelvin (K)</option></select></div>
+        <div class="mt-field"><label for="calc_temp_num">Valor informado</label><input id="calc_temp_num" type="number" placeholder="Ex.: 32" step="any"></div>
+        <div class="mt-action-row"><button class="btn" id="run_calc_temp" type="button">Converter</button></div>
+      </div>
+    </div>
+  </div>
+  <p class="note mt-inline-result" id="out_calc_temp"></p>
+  <p class="note">Exemplo: converter 32&deg;F para Celsius.</p>
+</section>
+
+<section id="tab-calc-weight" class="section" data-category="calc">
+  <h2 class="title">Conversor de peso</h2>
+  <p class="sub">Escolha o peso de origem, o peso de destino e depois informe o valor.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form">
+      <div class="inputs mt-form-grid">
+        <div class="mt-field"><label for="calc_weight_from">Peso de origem</label><select id="calc_weight_from"><option value="kg">Quilograma (kg)</option><option value="g">Grama (g)</option><option value="lb">Libra (lb)</option></select></div>
+        <div class="mt-field"><label for="calc_weight_to">Peso de destino</label><select id="calc_weight_to"><option value="lb">Libra (lb)</option><option value="kg">Quilograma (kg)</option><option value="g">Grama (g)</option></select></div>
+        <div class="mt-field"><label for="calc_weight_num">Valor informado</label><input id="calc_weight_num" type="number" placeholder="Ex.: 2" step="any"></div>
+        <div class="mt-action-row"><button class="btn" id="run_calc_weight" type="button">Converter</button></div>
+      </div>
+    </div>
+  </div>
+  <p class="note mt-inline-result" id="out_calc_weight"></p>
+  <p class="note">As unidades seguem exatamente o que o sistema suporta.</p>
+</section>
+
+<section id="tab-calc-distance" class="section" data-category="calc">
+  <h2 class="title">Conversor de dist&acirc;ncia</h2>
+  <p class="sub">Defina a medida de origem, a medida final e o n&uacute;mero que ser&aacute; convertido.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form">
+      <div class="inputs mt-form-grid">
+        <div class="mt-field"><label for="calc_distance_from">Dist&acirc;ncia de origem</label><select id="calc_distance_from"><option value="m">Metro (m)</option><option value="km">Quil&ocirc;metro (km)</option><option value="cm">Cent&iacute;metro (cm)</option><option value="mi">Milha (mi)</option></select></div>
+        <div class="mt-field"><label for="calc_distance_to">Dist&acirc;ncia de destino</label><select id="calc_distance_to"><option value="km">Quil&ocirc;metro (km)</option><option value="m">Metro (m)</option><option value="cm">Cent&iacute;metro (cm)</option><option value="mi">Milha (mi)</option></select></div>
+        <div class="mt-field"><label for="calc_distance_num">Valor informado</label><input id="calc_distance_num" type="number" placeholder="Ex.: 5" step="any"></div>
+        <div class="mt-action-row"><button class="btn" id="run_calc_distance" type="button">Converter</button></div>
+      </div>
+    </div>
+  </div>
+  <p class="note mt-inline-result" id="out_calc_distance"></p>
+  <p class="note">Exemplo: converter 5 km para metros.</p>
+</section>
+
+<section id="tab-calc-filesize" class="section" data-category="calc">
+  <h2 class="title">Conversor de tamanho de arquivo</h2>
+  <p class="sub">Escolha as unidades e informe o valor a partir de campos bem descritos.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form">
+      <div class="inputs mt-form-grid">
+        <div class="mt-field"><label for="calc_filesize_from">Unidade de origem</label><select id="calc_filesize_from"><option value="b">Byte (B)</option><option value="kb">Kilobyte (KB)</option><option value="mb">Megabyte (MB)</option><option value="gb">Gigabyte (GB)</option><option value="tb">Terabyte (TB)</option></select></div>
+        <div class="mt-field"><label for="calc_filesize_to">Unidade de destino</label><select id="calc_filesize_to"><option value="kb">Kilobyte (KB)</option><option value="b">Byte (B)</option><option value="mb">Megabyte (MB)</option><option value="gb">Gigabyte (GB)</option><option value="tb">Terabyte (TB)</option></select></div>
+        <div class="mt-field"><label for="calc_filesize_num">Valor informado</label><input id="calc_filesize_num" type="number" placeholder="Ex.: 1024" step="any"></div>
+        <div class="mt-action-row"><button class="btn" id="run_calc_filesize" type="button">Converter</button></div>
+      </div>
+    </div>
+  </div>
+  <p class="note mt-inline-result" id="out_calc_filesize"></p>
+  <p class="note">A convers&atilde;o usa base bin&aacute;ria para KB, MB, GB e TB.</p>
+</section>
+
+<section id="tab-calc-days" class="section" data-category="calc">
+  <h2 class="title">Dias entre datas</h2>
+  <p class="sub">Descubra quantos dias existem entre duas datas.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form"><div class="inputs mt-form-grid"><div class="mt-field"><label for="calc_d1">Data inicial</label><input type="date" id="calc_d1"></div><div class="mt-field"><label for="calc_d2">Data final</label><input type="date" id="calc_d2"></div><div class="mt-action-row"><button class="btn" id="run_calc_days" type="button">Calcular</button></div></div></div>
+  </div>
+  <p class="note mt-inline-result" id="out_calc_days"></p>
+  <p class="note">Selecione as duas datas para calcular a diferen&ccedil;a.</p>
+</section>
+
+<section id="tab-calc-age" class="section" data-category="calc">
+  <h2 class="title">Calculadora de idade</h2>
+  <p class="sub">Calcule a idade com base na data de nascimento.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form"><div class="inputs mt-form-grid"><div class="mt-field"><label for="calc_birth">Data de nascimento</label><input type="date" id="calc_birth"></div><div class="mt-action-row"><button class="btn" id="run_calc_age" type="button">Calcular</button></div></div></div>
+  </div>
+  <p class="note mt-inline-result" id="out_calc_age"></p>
+  <p class="note">Selecione a data para obter anos completos.</p>
+</section>
+
+<section id="tab-calc-cycle" class="section" data-category="wellness">
+  <h2 class="title">Ciclo menstrual (para homens)</h2>
+  <p class="sub">Informe os dados do ciclo e veja um calendário estimado com fases, sinais visuais e sugestões de cuidado.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form">
+      <div class="inputs mt-form-grid">
+        <div class="mt-field"><label for="calc_cycle_last">último início da menstruação</label><input type="date" id="calc_cycle_last"></div>
+        <div class="mt-field"><label for="calc_cycle_len">Duração média do ciclo (dias)</label><input type="number" id="calc_cycle_len" value="28" min="21" max="40"></div>
+        <div class="mt-field"><label for="calc_cycle_period">Duração média da menstruação (dias)</label><input type="number" id="calc_cycle_period" value="5" min="2" max="10"></div>
+        <div class="mt-field"><label for="calc_cycle_months">Período do calendário</label><select id="calc_cycle_months"><option value="1">1 mês</option><option value="2">2 meses</option><option value="3" selected>3 meses</option><option value="4">4 meses</option></select></div>
+        <div class="mt-action-row"><button class="btn" id="run_calc_cycle" type="button">Gerar calendário</button></div>
+      </div>
+    </div>
+  </div>
+  <p class="note mt-inline-result" id="out_calc_cycle"></p>
+  <div id="calc_cycle_calendar" class="mt-cycle-calendar" aria-live="polite"></div>
+  <p class="note">Estimativa informativa. Não substitui orientação médica.</p>
+</section>
+
+<section id="tab-calc-cycle-women" class="section" data-category="wellness">
+  <h2 class="title">Ciclo menstrual (para mulheres)</h2>
+  <p class="sub">Acompanhe seu ciclo com calendário estimado por fases, janela fértil e lembretes de autocuidado.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form">
+      <div class="inputs mt-form-grid">
+        <div class="mt-field"><label for="calc_w_cycle_last">último início da menstruação</label><input type="date" id="calc_w_cycle_last"></div>
+        <div class="mt-field"><label for="calc_w_cycle_len">Duração média do ciclo (dias)</label><input type="number" id="calc_w_cycle_len" value="28" min="21" max="40"></div>
+        <div class="mt-field"><label for="calc_w_period_len">Duração média da menstruação (dias)</label><input type="number" id="calc_w_period_len" value="5" min="2" max="10"></div>
+        <div class="mt-field"><label for="calc_w_months">Período do calendário</label><select id="calc_w_months"><option value="1">1 mês</option><option value="2">2 meses</option><option value="3" selected>3 meses</option><option value="4">4 meses</option></select></div>
+        <div class="mt-action-row"><button class="btn" id="run_calc_cycle_women" type="button">Gerar calendário</button></div>
+      </div>
+    </div>
+  </div>
+  <p class="note mt-inline-result" id="out_calc_cycle_women"></p>
+  <div id="calc_cycle_calendar_women" class="mt-cycle-calendar" aria-live="polite"></div>
+  <p class="note">Estimativa informativa para organização pessoal. Em caso de sintomas intensos, procure orientação médica.</p>
+</section>
+
+<section id="tab-wellness-bmi" class="section" data-category="wellness">
+  <h2 class="title">IMC</h2>
+  <p class="sub">Calcule seu &Iacute;ndice de Massa Corporal em segundos.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form">
+      <div class="inputs mt-form-grid">
+        <div class="mt-field"><label for="well_bmi_weight">Peso (kg)</label><input id="well_bmi_weight" type="number" step="any" placeholder="Ex.: 72.5"></div>
+        <div class="mt-field"><label for="well_bmi_height">Altura (m)</label><input id="well_bmi_height" type="number" step="any" placeholder="Ex.: 1.75"></div>
+        <div class="mt-action-row"><button class="btn" id="run_well_bmi" type="button">Calcular IMC</button></div>
+      </div>
+    </div>
+  </div>
+  <p class="note mt-inline-result" id="out_well_bmi"></p>
+  <p class="note">Resultado informativo. Para avalia&ccedil;&atilde;o cl&iacute;nica, procure um profissional de sa&uacute;de.</p>
+</section>
+
+<section id="tab-wellness-breath" class="section" data-category="wellness">
+  <h2 class="title">Respira&ccedil;&atilde;o guiada</h2>
+  <p class="sub">Quando bater a ansiedade, siga o ritmo visual para inspirar e expirar com calma.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form">
+      <div class="inputs mt-form-grid">
+        <div class="mt-field mt-field-wide"><div class="mt-action-row"><button class="btn" id="run_well_breath_478" type="button">Respiração 4-7-8 (para relaxamento profundo)</button><button class="btn alt" id="run_well_breath_424" type="button">Respiração 4-2-4 (neutralizar crises)</button></div></div>
+        <div class="mt-action-row"><button class="btn alt" id="run_well_breath_stop" type="button">Parar</button></div>
+      </div>
+      <div class="mt-breath-wrap" aria-live="polite">
+        <div class="mt-breath-ball" id="well_breath_ball"></div>
+        <p class="mt-breath-phase" id="well_breath_phase">Pronto para iniciar</p>
+      </div>
+    </div>
+  </div>
+  <p class="note mt-inline-result" id="out_well_breath">Voc&ecirc; est&aacute; seguro. Respire no seu tempo.</p>
+</section>
+
+<section id="tab-calc-timer" class="section" data-category="clock">
+  <h2 class="title">Temporizador</h2>
+  <p class="sub">Escolha a dura&ccedil;&atilde;o com uma barra deslizante e acompanhe a contagem.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form">
+      <div class="inputs mt-form-grid">
+        <div class="mt-field mt-field-range mt-field-wide">
+          <label for="calc_timer_sec">Dura&ccedil;&atilde;o do temporizador</label>
+          <input id="calc_timer_sec" type="range" min="10" max="3600" step="10" value="60" data-output="calc_timer_sec_value">
+          <div class="mt-range-value"><span id="calc_timer_sec_value">60</span><small>Tempo em segundos. Arraste a barra at&eacute; o valor desejado.</small></div>
+        </div>
+        <div class="mt-action-row"><button class="btn" id="run_calc_timer" type="button">Iniciar</button><button class="btn alt" id="stop_calc_timer" type="button">Parar</button></div>
+      </div>
+    </div>
+  </div>
+  <p class="note mt-inline-result" id="out_calc_timer"></p>
+  <p class="note">A barra evita digita&ccedil;&atilde;o manual para os tempos mais comuns.</p>
+  <p class="note mt-clock-link-row">Link <a id="obs_timer_link" href="/timer/60" target="_blank" rel="noopener noreferrer">/timer/60</a></p>
+</section>
+
+<section id="tab-calc-stopwatch" class="section" data-category="clock">
+  <h2 class="title">Cron&ocirc;metro</h2>
+  <p class="sub">Use um cron&ocirc;metro simples para medi&ccedil;&otilde;es r&aacute;pidas.</p>
+  <div class="drop mt-drop">
+    <div class="mt-card-form"><div class="inputs mt-form-row"><button class="btn" id="run_calc_sw" type="button">Iniciar</button><button class="btn alt" id="stop_calc_sw" type="button">Parar</button><button class="btn alt" id="reset_calc_sw" type="button">Resetar</button></div></div>
+  </div>
+  <p class="note mt-inline-result" id="out_calc_sw"></p>
+  <p class="note">Voc&ecirc; pode iniciar, parar e resetar o contador.</p>
+  <p class="note mt-clock-link-row">Link <a id="obs_sw_link" href="/cronometro" target="_blank" rel="noopener noreferrer">/cronometro</a></p>
+</section>
+<!-- MELOTOOLS_EXTRA_SECTIONS_END -->
+  </div>
+  <div class="footer" id="footerContent">{{ footer }}</div>
+</main>
+
+
+<a href="/politica-de-cookies" class="cookie-footer-link" data-i18n="cookie_policy_link">Pol&iacute;tica de Cookies</a>
+
+<div class="cookie-notice hidden" id="cookieNotice" role="dialog" aria-live="polite" aria-label="Aviso de cookies" aria-hidden="true">
+  <div class="cookie-notice-copy">
+    <strong data-i18n="cookie_banner_title">Aviso de cookies</strong>
+    <p id="cookieNoticeText" data-i18n="cookie_notice">Usamos cookies para melhorar sua experi&ecirc;ncia e analisar o uso do site.</p>
+    <a href="/politica-de-cookies" class="cookie-policy-link" data-i18n="cookie_policy_link">Ler pol&iacute;tica de cookies</a>
+  </div>
+  <div class="cookie-notice-actions">
+    <button class="btn secondary" id="cookieReject" type="button" data-i18n="cookie_reject_optional">Rejeitar opcionais</button>
+    <button class="btn secondary" id="cookieManage" type="button" data-i18n="cookie_manage">Gerenciar</button>
+    <button class="btn" id="cookieAccept" type="button" data-i18n="cookie_accept_all">Aceitar</button>
+  </div>
+</div>
+
+<div class="cookie-panel hidden" id="cookiePanel" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Prefer&ecirc;ncias de cookies">
+  <div class="cookie-panel-card">
+    <div class="cookie-panel-head">
+      <div>
+        <strong data-i18n="cookie_preferences_title">Prefer&ecirc;ncias de cookies</strong>
+        <p data-i18n="cookie_preferences_text">Voc&ecirc; pode escolher quais cookies opcionais deseja permitir.</p>
+      </div>
+      <button class="cookie-panel-close" id="cookiePanelClose" type="button" aria-label="Fechar">&times;</button>
+    </div>
+    <div class="cookie-option">
+      <div>
+        <strong data-i18n="cookie_necessary_title">Cookies necess&aacute;rios</strong>
+        <p data-i18n="cookie_necessary_text">Essenciais para o funcionamento do site e sempre ativos.</p>
+      </div>
+      <span class="cookie-badge" data-i18n="cookie_always_on">Sempre ativos</span>
+    </div>
+    <div class="cookie-option">
+      <div>
+        <strong data-i18n="cookie_analytics_title">Cookies anal&iacute;ticos</strong>
+        <p data-i18n="cookie_analytics_text">Ajudam a entender o uso do site para melhorar a experi&ecirc;ncia.</p>
+      </div>
+      <label class="cookie-switch">
+        <input type="checkbox" id="cookieAnalytics">
+        <span></span>
+      </label>
+    </div>
+    <div class="cookie-panel-actions">
+      <a href="/politica-de-cookies" class="cookie-policy-link" data-i18n="cookie_policy_link">Ler pol&iacute;tica de cookies</a>
+      <button class="btn" id="cookieSave" type="button" data-i18n="cookie_save_preferences">Salvar prefer&ecirc;ncias</button>
+    </div>
+  </div>
+</div>
+
+<script>
+window.APP_CONFIG = {
+  maxMb: {{ max_mb|tojson }},
+  currentLang: {{ current_lang|tojson }},
+  footerHtml: {{ footer|tojson }},
+  languages: {{ languages|tojson }},
+  analyticsMeasurementId: {{ analytics_measurement_id|tojson }}
+};
+</script>
+<script src="{{ url_for('static', filename='js/i18n.min.js', v='footerfix-20260517-1') }}"></script>
+<!-- app.js legado desativado para evitar conflito com melotools-extra-tabs.js -->
+<script src="{{ url_for('static', filename='js/xp-effects.js', v='20260517-logo-msg3') }}"></script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').then(function(reg){ if(reg && reg.update){ reg.update(); } return reg; })
+    .then(function(reg) {
+      console.log('Service Worker registrado:', reg);
+    })
+    .catch(function(err) {
+      console.error('Erro ao registrar Service Worker:', err);
+    });
+}
+</script>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+  <link rel="stylesheet" href="/static/css/melotools-extra-tabs.min.css?v=20260517-wellness-fix2">
+<script src="/static/js/melotools-extra-tabs.min.js?v=20260517-wellness-fix2"></script>
+<script id="theme-switch-script">
+(function(){
+  function applyTheme(theme){
+    var t = (theme === 'xp') ? 'xp' : 'saas';
+    document.documentElement.setAttribute('data-ui-theme', t);
+    try { localStorage.setItem('melotools-ui-theme', t); } catch(_e) {}
+    document.querySelectorAll('.theme-option[data-theme-choice]').forEach(function(btn){
+      var active = btn.getAttribute('data-theme-choice') === t;
+      btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+      btn.classList.toggle('active', active);
+    });
+  }
+
+  function initThemeSwitcher(){
+    var current = 'xp';
+    try { current = localStorage.getItem('melotools-ui-theme') || 'saas'; } catch(_e) { current = 'saas'; }
+    applyTheme(current);
+
+    document.querySelectorAll('.theme-option[data-theme-choice]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var choice = btn.getAttribute('data-theme-choice') || 'saas';
+        applyTheme(choice);
+      });
+    });
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', initThemeSwitcher);
+  } else {
+    initThemeSwitcher();
+  }
+})();
+</script>
+<script id="sw-cleanup-rebootstrap">
+(function(){
+  if (!('serviceWorker' in navigator)) return;
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.getRegistrations().then(function(regs){
+      return Promise.all(regs.map(function(r){ return r.unregister(); }));
+    }).catch(function(){}).then(function(){
+      if (!window.caches || !caches.keys) return;
+      return caches.keys().then(function(keys){
+        return Promise.all(keys.map(function(k){ return caches.delete(k); }));
+      });
+    }).catch(function(){}).then(function(){
+      return navigator.serviceWorker.register('/sw.js');
+    }).catch(function(err){
+      console.warn('Falha ao reconfigurar SW:', err);
+    });
+  });
+})();
+</script>
+</body>
+</html>
+

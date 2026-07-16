@@ -9,6 +9,14 @@ results/
 tmp/
 models/
 archive/
+.ssh/
+.cache/
+.config/
+.local/
+.venv_minify/
+yt-cookies.txt
+*.pem
+*.key
 .codex-pdfjs-inspect/
 static/vendor/
 *.tar.gz

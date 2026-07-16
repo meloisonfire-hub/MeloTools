@@ -1,0 +1,349 @@
+/* Extend the original OCR-Web layout without changing its identity. */
+html[data-ui-theme] .main-tabs {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)) !important;
+  gap: 8px !important;
+  height: auto !important;
+  max-height: none !important;
+}
+
+html[data-ui-theme] .main-tabs .main-tab {
+  width: auto !important;
+  min-width: 0 !important;
+  white-space: normal !important;
+}
+
+html[data-ui-theme] .tool-tabs {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  height: auto !important;
+  max-height: none !important;
+}
+
+html[data-ui-theme] .tool-tabs .tool-tab.is-hidden {
+  display: none !important;
+}
+
+.mt-drop {
+  max-width: 1160px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.mt-card-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: min(100%, 940px);
+  margin: 0 auto;
+  align-items: center;
+}
+
+.mt-form-row,
+.mt-form-stack {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  text-align: center;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.mt-form-stack {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.mt-card-form input[type="text"],
+.mt-card-form input[type="number"],
+.mt-card-form input[type="url"],
+.mt-card-form input[type="date"],
+.mt-card-form input[type="file"],
+.mt-card-form select,
+.mt-card-form textarea {
+  min-height: 42px;
+}
+
+.mt-card-form textarea {
+  width: min(100%, 860px);
+  min-height: 180px;
+  resize: vertical;
+  margin: 0 auto;
+}
+
+.mt-card-form input[type="text"],
+.mt-card-form input[type="number"],
+.mt-card-form input[type="url"],
+.mt-card-form input[type="date"],
+.mt-card-form select {
+  min-width: 180px;
+  max-width: 240px;
+  flex: 0 1 220px;
+}
+
+.mt-card-form input[type="file"] {
+  width: min(100%, 420px);
+  flex: 0 1 420px;
+}
+
+.mt-card-form .btn {
+  min-width: 180px;
+  flex: 0 0 auto;
+}
+
+.mt-inline-result,
+.mt-extra-result {
+  white-space: pre-wrap;
+  word-break: break-word;
+  text-align: center;
+  width: min(100%, 860px);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.mt-inline-result:empty,
+.mt-extra-result:empty {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  html[data-ui-theme] .main-tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .mt-card-form {
+    width: 100%;
+  }
+
+  .mt-card-form input[type="text"],
+  .mt-card-form input[type="number"],
+  .mt-card-form input[type="url"],
+  .mt-card-form input[type="date"],
+  .mt-card-form input[type="file"],
+  .mt-card-form select,
+  .mt-card-form textarea,
+  .mt-card-form .btn {
+    width: 100%;
+    max-width: 100%;
+    flex-basis: 100%;
+  }
+}
+
+
+.mt-form-grid {
+  justify-content: center;
+  align-items: stretch;
+}
+
+.mt-field {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 180px;
+  max-width: 260px;
+  flex: 1 1 220px;
+  text-align: left;
+}
+
+.mt-field label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.mt-field small {
+  font-size: 12px;
+  line-height: 1.35;
+  color: #64748b;
+}
+
+.mt-field input,
+.mt-field select,
+.mt-field textarea {
+  width: 100%;
+}
+
+.mt-field-wide {
+  flex-basis: min(100%, 680px);
+  max-width: 680px;
+}
+
+.mt-field-range input[type="range"] {
+  width: 100%;
+  accent-color: #2563eb;
+}
+
+.mt-range-value {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.mt-range-value span {
+  min-width: 42px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.12);
+  color: #1d4ed8;
+  font-weight: 700;
+  text-align: center;
+}
+
+.mt-action-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  width: 100%;
+  margin-top: 4px;
+}
+
+html[data-ui-theme="xp"] .mt-field label {
+  color: #0f172a;
+}
+
+html[data-ui-theme="xp"] .mt-range-value span {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+@media (max-width: 760px) {
+  .mt-field,
+  .mt-field-wide,
+  .mt-action-row {
+    max-width: 100%;
+    flex-basis: 100%;
+  }
+
+  .mt-action-row {
+    justify-content: stretch;
+  }
+}
+
+
+.mt-field .social-url-input,
+.mt-field .clip-url-input,
+.mt-field input[type="url"],
+.mt-field input[type="text"],
+.mt-field input[type="number"],
+.mt-field input[type="date"],
+.mt-field textarea,
+.mt-field select {
+  width: 100%;
+}
+
+.media-field-stack .mt-field,
+.media-field-stack-compact .mt-field {
+  width: 100%;
+  max-width: 100%;
+  flex-basis: 100%;
+}
+
+.mt-auto-hint {
+  display: block;
+  margin-top: 2px;
+}
+
+
+.mt-choice-row {
+  padding: 10px 14px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 12px;
+  background: rgba(248, 250, 252, 0.7);
+}
+
+.mt-choice-row.is-active {
+  border-color: rgba(37, 99, 235, 0.45);
+  background: rgba(219, 234, 254, 0.55);
+  box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.08);
+}
+
+.mt-choice-row input[disabled] {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+html[data-ui-theme="xp"] .mt-choice-row {
+  background: #f7f4e7;
+  border-color: #c9c2a6;
+}
+
+html[data-ui-theme="xp"] .mt-choice-row.is-active {
+  background: #e8f1ff;
+  border-color: #7aa2d6;
+}
+
+
+.mt-result-card {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 14px;
+  background: rgba(255,255,255,0.85);
+}
+
+.mt-result-preview {
+  width: 100%;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.mt-result-preview img,
+.mt-result-preview video,
+.mt-result-preview iframe,
+.mt-result-preview audio {
+  display: block;
+  width: 100%;
+}
+
+.mt-result-preview img {
+  max-height: 360px;
+  object-fit: contain;
+  background: linear-gradient(180deg, #f8fafc, #eef2ff);
+}
+
+.mt-result-preview video,
+.mt-result-preview iframe {
+  min-height: 320px;
+  background: #fff;
+}
+
+.mt-result-preview audio {
+  padding: 10px;
+}
+
+.mt-result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-start;
+}
+
+html[data-ui-theme="xp"] .mt-result-card {
+  background: #f8f4e6;
+  border-color: #c9c2a6;
+}
+
+
+.row .mt-result-preview,
+.youtube-batch-item .mt-result-preview {
+  margin-top: 10px;
+}
+
+.row .mt-result-actions,
+.youtube-batch-item .mt-result-actions {
+  margin-top: 10px;
+}

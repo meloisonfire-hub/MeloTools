@@ -1,0 +1,1236 @@
+/* MeloTools SaaS theme override
+   Loaded after the XP skin and activated with html[data-ui-theme="saas"]. */
+
+html[data-ui-theme="saas"],
+html[data-ui-theme="saas"] body{
+  color-scheme:light;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(96,165,250,.20) 0, rgba(96,165,250,0) 34%),
+    radial-gradient(circle at 82% 4%, rgba(34,197,94,.12) 0, rgba(34,197,94,0) 26%),
+    linear-gradient(180deg,#f8fbff 0%,#eef5ff 44%,#f8fafc 100%) !important;
+  color:#0f172a !important;
+  font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif !important;
+  font-size:14px !important;
+  cursor:auto !important;
+  -webkit-font-smoothing:antialiased !important;
+}
+
+html[data-ui-theme="saas"] body::before,
+html[data-ui-theme="saas"] body::after,
+html[data-ui-theme="saas"] .card::before,
+html[data-ui-theme="saas"] .card::after{
+  content:none !important;
+  display:none !important;
+}
+
+html[data-ui-theme="saas"] button,
+html[data-ui-theme="saas"] input,
+html[data-ui-theme="saas"] select,
+html[data-ui-theme="saas"] textarea{
+  font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif !important;
+  font-size:14px !important;
+  cursor:auto;
+}
+html[data-ui-theme="saas"] button,
+html[data-ui-theme="saas"] .btn,
+html[data-ui-theme="saas"] .tabbtn,
+html[data-ui-theme="saas"] .lang-current,
+html[data-ui-theme="saas"] .lang-option,
+html[data-ui-theme="saas"] .theme-option,
+html[data-ui-theme="saas"] a.btn{ cursor:pointer !important; }
+
+html[data-ui-theme="saas"] .header{
+  padding:18px 20px 8px !important;
+  align-items:center !important;
+  text-align:center !important;
+}
+html[data-ui-theme="saas"] .header-top{
+  width:min(1180px,100%) !important;
+  justify-content:flex-end !important;
+  gap:10px !important;
+  margin:0 auto 8px !important;
+}
+html[data-ui-theme="saas"] .wrap{
+  max-width:1180px !important;
+  padding:0 18px 36px !important;
+  margin:0 auto !important;
+}
+
+html[data-ui-theme="saas"] .theme-switcher{
+  display:inline-flex !important;
+  align-items:center !important;
+  gap:4px !important;
+  padding:4px !important;
+  border:1px solid rgba(148,163,184,.34) !important;
+  border-radius:999px !important;
+  background:rgba(255,255,255,.76) !important;
+  box-shadow:0 14px 36px rgba(15,23,42,.08) !important;
+  backdrop-filter:blur(16px) !important;
+}
+html[data-ui-theme="saas"] .theme-option{
+  min-height:34px !important;
+  padding:0 13px !important;
+  border:0 !important;
+  border-radius:999px !important;
+  background:transparent !important;
+  color:#475569 !important;
+  font-weight:750 !important;
+  line-height:1 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+}
+html[data-ui-theme="saas"] .theme-option.active{
+  color:#fff !important;
+  background:linear-gradient(135deg,#2563eb,#0f63d8) !important;
+  box-shadow:0 8px 18px rgba(37,99,235,.28) !important;
+}
+
+html[data-ui-theme="saas"] .lang-current{
+  width:46px !important;
+  height:46px !important;
+  border:1px solid rgba(148,163,184,.28) !important;
+  border-radius:16px !important;
+  background:rgba(255,255,255,.82) !important;
+  box-shadow:0 14px 30px rgba(15,23,42,.08) !important;
+}
+html[data-ui-theme="saas"] .lang-menu{
+  right:0 !important;
+  left:auto !important;
+  padding:10px !important;
+  gap:8px !important;
+  border:1px solid rgba(148,163,184,.26) !important;
+  border-radius:20px !important;
+  background:rgba(255,255,255,.96) !important;
+  box-shadow:0 24px 48px rgba(15,23,42,.14) !important;
+  backdrop-filter:blur(16px) !important;
+}
+html[data-ui-theme="saas"] .lang-option{
+  width:46px !important;
+  height:46px !important;
+  border:0 !important;
+  border-radius:14px !important;
+  background:transparent !important;
+}
+html[data-ui-theme="saas"] .lang-option:hover,
+html[data-ui-theme="saas"] .lang-option.active{
+  background:#eff6ff !important;
+}
+
+html[data-ui-theme="saas"] .xp-window-titlebar,
+html[data-ui-theme="saas"] .xp-mute-btn{
+  display:none !important;
+}
+
+html[data-ui-theme="saas"] .card{
+  overflow:visible !important;
+  padding:28px !important;
+  border:1px solid rgba(148,163,184,.26) !important;
+  border-radius:30px !important;
+  background:rgba(255,255,255,.86) !important;
+  box-shadow:0 24px 70px rgba(15,23,42,.10) !important;
+  backdrop-filter:blur(20px) !important;
+}
+html[data-ui-theme="saas"] .logo-wrap{
+  justify-content:center !important;
+  margin:2px auto 20px !important;
+  text-align:center !important;
+}
+html[data-ui-theme="saas"] .logo-xp{
+  display:none !important;
+}
+html[data-ui-theme="saas"] .logo-saas{
+  display:block !important;
+}
+html[data-ui-theme="saas"] .logo,
+html[data-ui-theme="saas"] .logo:hover,
+html[data-ui-theme="saas"] .logo:focus{
+  width:min(620px,88vw) !important;
+  max-height:190px !important;
+  object-fit:contain !important;
+  filter:none !important;
+  box-shadow:none !important;
+  transform:none !important;
+}
+
+html[data-ui-theme="saas"] .nav-shell{
+  padding:10px !important;
+  margin:0 auto 26px !important;
+  border:1px solid rgba(148,163,184,.22) !important;
+  border-radius:24px !important;
+  background:linear-gradient(180deg,rgba(255,255,255,.94),rgba(248,250,252,.86)) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.8), 0 12px 30px rgba(15,23,42,.06) !important;
+}
+html[data-ui-theme="saas"] .main-tabs,
+html[data-ui-theme="saas"] .tool-tabs{
+  display:flex !important;
+  flex-wrap:nowrap !important;
+  justify-content:flex-start !important;
+  gap:8px !important;
+  padding:2px 2px 10px !important;
+  margin:0 !important;
+  border:0 !important;
+  background:transparent !important;
+  overflow-x:auto !important;
+  overflow-y:hidden !important;
+  -webkit-overflow-scrolling:touch !important;
+  scrollbar-width:thin !important;
+}
+html[data-ui-theme="saas"] .tool-tabs{
+  margin-top:10px !important;
+  padding-top:10px !important;
+  border-top:1px solid rgba(148,163,184,.18) !important;
+}
+html[data-ui-theme="saas"] .main-tab,
+html[data-ui-theme="saas"] .tool-tab,
+html[data-ui-theme="saas"] .tabbtn{
+  min-height:40px !important;
+  padding:10px 15px !important;
+  border:1px solid rgba(148,163,184,.24) !important;
+  border-radius:999px !important;
+  color:#334155 !important;
+  background:#fff !important;
+  box-shadow:0 7px 18px rgba(15,23,42,.06) !important;
+  font-weight:750 !important;
+  line-height:1.1 !important;
+  text-shadow:none !important;
+}
+html[data-ui-theme="saas"] .main-tab:hover,
+html[data-ui-theme="saas"] .tool-tab:hover,
+html[data-ui-theme="saas"] .tabbtn:hover{
+  border-color:rgba(37,99,235,.35) !important;
+  color:#1d4ed8 !important;
+  transform:translateY(-1px) !important;
+}
+html[data-ui-theme="saas"] .main-tab.active,
+html[data-ui-theme="saas"] .tool-tab.active,
+html[data-ui-theme="saas"] .tabbtn.active{
+  color:#fff !important;
+  border-color:transparent !important;
+  background:linear-gradient(135deg,#2563eb,#0f63d8) !important;
+  box-shadow:0 12px 26px rgba(37,99,235,.28) !important;
+}
+
+html[data-ui-theme="saas"] .section{
+  text-align:center !important;
+}
+html[data-ui-theme="saas"] .title{
+  margin:0 0 8px !important;
+  color:#0f172a !important;
+  font-size:clamp(24px,3vw,36px) !important;
+  line-height:1.08 !important;
+  letter-spacing:-.04em !important;
+  text-align:center !important;
+  font-weight:850 !important;
+  text-shadow:none !important;
+}
+html[data-ui-theme="saas"] .sub{
+  max-width:760px !important;
+  margin:0 auto 22px !important;
+  color:#64748b !important;
+  font-size:15px !important;
+  line-height:1.55 !important;
+  text-align:center !important;
+}
+html[data-ui-theme="saas"] .note,
+html[data-ui-theme="saas"] .small{
+  color:#64748b !important;
+  font-size:13px !important;
+  line-height:1.45 !important;
+}
+
+html[data-ui-theme="saas"] .youtube-panel,
+html[data-ui-theme="saas"] .media-download-card,
+html[data-ui-theme="saas"] .instagram-card,
+html[data-ui-theme="saas"] .drop,
+html[data-ui-theme="saas"] .removebg-strength,
+html[data-ui-theme="saas"] .removebg-preview-card,
+html[data-ui-theme="saas"] .media-options-panel,
+html[data-ui-theme="saas"] .youtube-options,
+html[data-ui-theme="saas"] .cookie-notice,
+html[data-ui-theme="saas"] .cookie-panel-card,
+html[data-ui-theme="saas"] .cookie-footer-link,
+html[data-ui-theme="saas"] .window{
+  border:1px solid rgba(148,163,184,.24) !important;
+  border-radius:24px !important;
+  background:rgba(255,255,255,.88) !important;
+  box-shadow:0 16px 44px rgba(15,23,42,.08) !important;
+  backdrop-filter:blur(18px) !important;
+}
+html[data-ui-theme="saas"] .media-tool-shell,
+html[data-ui-theme="saas"] .media-tool-shell-narrow{
+  max-width:920px !important;
+  margin:0 auto !important;
+}
+html[data-ui-theme="saas"] .youtube-panel,
+html[data-ui-theme="saas"] .media-download-card,
+html[data-ui-theme="saas"] .instagram-card{
+  padding:22px !important;
+}
+html[data-ui-theme="saas"] .media-tool-title{
+  color:#0f172a !important;
+  font-size:18px !important;
+  font-weight:850 !important;
+  text-align:left !important;
+}
+html[data-ui-theme="saas"] .drop{
+  max-width:920px !important;
+  margin:0 auto !important;
+  padding:28px !important;
+  border:1.5px dashed rgba(37,99,235,.32) !important;
+  background:linear-gradient(180deg,rgba(239,246,255,.82),rgba(255,255,255,.88)) !important;
+}
+html[data-ui-theme="saas"] .drop.dragover{
+  border-color:#2563eb !important;
+  box-shadow:0 0 0 4px rgba(37,99,235,.12), 0 18px 46px rgba(37,99,235,.14) !important;
+}
+html[data-ui-theme="saas"] .icon{
+  color:#2563eb !important;
+  filter:drop-shadow(0 8px 14px rgba(37,99,235,.18)) !important;
+}
+
+html[data-ui-theme="saas"] input,
+html[data-ui-theme="saas"] select,
+html[data-ui-theme="saas"] textarea{
+  min-height:44px !important;
+  border:1px solid #cbd5e1 !important;
+  border-radius:16px !important;
+  background:#fff !important;
+  color:#0f172a !important;
+  box-shadow:0 1px 0 rgba(255,255,255,.75), inset 0 1px 2px rgba(15,23,42,.04) !important;
+  outline:none !important;
+}
+html[data-ui-theme="saas"] textarea{
+  min-height:128px !important;
+  padding:14px 16px !important;
+}
+html[data-ui-theme="saas"] input:focus,
+html[data-ui-theme="saas"] select:focus,
+html[data-ui-theme="saas"] textarea:focus{
+  border-color:#2563eb !important;
+  box-shadow:0 0 0 4px rgba(37,99,235,.13) !important;
+}
+html[data-ui-theme="saas"] .clip-url-input,
+html[data-ui-theme="saas"] .social-url-input{
+  max-width:100% !important;
+  width:100% !important;
+}
+
+html[data-ui-theme="saas"] .btn,
+html[data-ui-theme="saas"] button.btn,
+html[data-ui-theme="saas"] a.btn{
+  min-height:42px !important;
+  padding:10px 17px !important;
+  border:0 !important;
+  border-radius:15px !important;
+  color:#fff !important;
+  background:linear-gradient(135deg,#2563eb,#0f63d8) !important;
+  box-shadow:0 12px 24px rgba(37,99,235,.26) !important;
+  font-weight:800 !important;
+  text-align:center !important;
+  text-shadow:none !important;
+}
+html[data-ui-theme="saas"] .btn:hover,
+html[data-ui-theme="saas"] button.btn:hover,
+html[data-ui-theme="saas"] a.btn:hover{
+  transform:translateY(-1px) !important;
+  box-shadow:0 16px 28px rgba(37,99,235,.32) !important;
+}
+html[data-ui-theme="saas"] .btn:active,
+html[data-ui-theme="saas"] button.btn:active,
+html[data-ui-theme="saas"] a.btn:active{
+  transform:translateY(0) scale(.99) !important;
+}
+html[data-ui-theme="saas"] .btn.alt,
+html[data-ui-theme="saas"] .btn.secondary{
+  color:#1e293b !important;
+  background:#eef4ff !important;
+  box-shadow:none !important;
+  border:1px solid rgba(148,163,184,.22) !important;
+}
+
+html[data-ui-theme="saas"] .inputs,
+html[data-ui-theme="saas"] .media-action-strip,
+html[data-ui-theme="saas"] .media-command-row,
+html[data-ui-theme="saas"] .clip-control-grid{
+  gap:10px !important;
+  text-align:left !important;
+}
+html[data-ui-theme="saas"] .row,
+html[data-ui-theme="saas"] .item,
+html[data-ui-theme="saas"] .youtube-meta,
+html[data-ui-theme="saas"] .youtube-batch-item{
+  border:1px solid rgba(148,163,184,.22) !important;
+  border-radius:18px !important;
+  background:#fff !important;
+  box-shadow:0 10px 28px rgba(15,23,42,.06) !important;
+}
+html[data-ui-theme="saas"] .progress,
+html[data-ui-theme="saas"] .youtube-progress-bar{
+  border:0 !important;
+  border-radius:999px !important;
+  background:#e2e8f0 !important;
+  overflow:hidden !important;
+}
+html[data-ui-theme="saas"] .progress > div,
+html[data-ui-theme="saas"] .youtube-progress-bar > div{
+  border-radius:999px !important;
+  background:linear-gradient(90deg,#2563eb,#22c55e) !important;
+}
+
+html[data-ui-theme="saas"] .footer{
+  margin-top:24px !important;
+  padding:16px !important;
+  border:1px solid rgba(148,163,184,.22) !important;
+  border-radius:20px !important;
+  background:rgba(255,255,255,.72) !important;
+  color:#64748b !important;
+  text-align:center !important;
+  box-shadow:0 12px 32px rgba(15,23,42,.06) !important;
+}
+html[data-ui-theme="saas"] .footer a,
+html[data-ui-theme="saas"] .footer-link,
+html[data-ui-theme="saas"] .cookie-policy-link,
+html[data-ui-theme="saas"] .cookie-footer-link{
+  color:#2563eb !important;
+}
+
+html[data-ui-theme="saas"] .xp-dialog{
+  border:1px solid rgba(148,163,184,.28) !important;
+  border-radius:22px !important;
+  background:#fff !important;
+  box-shadow:0 30px 90px rgba(15,23,42,.22) !important;
+  overflow:hidden !important;
+}
+html[data-ui-theme="saas"] .xp-dialog-titlebar{
+  background:linear-gradient(135deg,#2563eb,#0f63d8) !important;
+  border:0 !important;
+}
+
+/* Cookie policy page */
+html[data-ui-theme="saas"] .policy-themebar{
+  display:flex !important;
+  justify-content:flex-end !important;
+  margin-bottom:12px !important;
+}
+html[data-ui-theme="saas"] .back{
+  border:1px solid rgba(148,163,184,.25) !important;
+  border-radius:999px !important;
+  color:#2563eb !important;
+  background:#fff !important;
+  box-shadow:0 10px 24px rgba(15,23,42,.07) !important;
+}
+html[data-ui-theme="saas"] .window-title{
+  color:#0f172a !important;
+  background:transparent !important;
+  border:0 !important;
+  padding:24px 24px 6px !important;
+  font-size:30px !important;
+  letter-spacing:-.04em !important;
+  text-shadow:none !important;
+}
+html[data-ui-theme="saas"] .window-body{ padding:12px 24px 24px !important; }
+html[data-ui-theme="saas"] .badge{
+  border:0 !important;
+  border-radius:999px !important;
+  color:#1d4ed8 !important;
+  background:#eff6ff !important;
+}
+html[data-ui-theme="saas"] h2{ color:#0f172a !important; font-size:20px !important; }
+html[data-ui-theme="saas"] p,
+html[data-ui-theme="saas"] li{ color:#475569 !important; }
+html[data-ui-theme="saas"] .table{
+  border-collapse:separate !important;
+  border-spacing:0 !important;
+  overflow:hidden !important;
+  border-radius:18px !important;
+  box-shadow:0 12px 28px rgba(15,23,42,.06) !important;
+}
+html[data-ui-theme="saas"] .table th,
+html[data-ui-theme="saas"] .table td{
+  border-color:#e2e8f0 !important;
+}
+html[data-ui-theme="saas"] .table th{
+  color:#0f172a !important;
+  background:#f8fafc !important;
+}
+
+@media (max-width:760px){
+  html[data-ui-theme="saas"] .header{ padding:12px 10px 4px !important; }
+  html[data-ui-theme="saas"] .header-top{ justify-content:center !important; flex-wrap:wrap !important; }
+  html[data-ui-theme="saas"] .wrap{ padding:0 10px 26px !important; }
+  html[data-ui-theme="saas"] .card{ padding:16px 12px !important; border-radius:24px !important; }
+  html[data-ui-theme="saas"] .nav-shell{ border-radius:20px !important; padding:8px !important; }
+  html[data-ui-theme="saas"] .main-tab,
+  html[data-ui-theme="saas"] .tool-tab,
+  html[data-ui-theme="saas"] .tabbtn{ width:auto !important; flex:0 0 auto !important; min-height:42px !important; }
+  html[data-ui-theme="saas"] .title{ font-size:25px !important; }
+  html[data-ui-theme="saas"] .youtube-panel,
+  html[data-ui-theme="saas"] .media-download-card,
+  html[data-ui-theme="saas"] .instagram-card,
+  html[data-ui-theme="saas"] .drop{ padding:16px !important; border-radius:20px !important; }
+  html[data-ui-theme="saas"] .btn,
+  html[data-ui-theme="saas"] button.btn,
+  html[data-ui-theme="saas"] a.btn{ width:100%; }
+  html[data-ui-theme="saas"] .theme-switcher{ order:3; width:100%; justify-content:center !important; }
+  html[data-ui-theme="saas"] .theme-option{ flex:1; }
+}
+
+
+/* SaaS horizontal menu final correction */
+html[data-ui-theme="saas"] .nav-shell{
+  overflow:hidden !important;
+}
+html[data-ui-theme="saas"] .main-tabs,
+html[data-ui-theme="saas"] .tool-tabs{
+  flex-wrap:nowrap !important;
+  justify-content:flex-start !important;
+  overflow-x:auto !important;
+  scroll-snap-type:x proximity;
+}
+html[data-ui-theme="saas"] .main-tab,
+html[data-ui-theme="saas"] .tool-tab,
+html[data-ui-theme="saas"] .tabbtn{
+  flex:0 0 auto !important;
+  white-space:nowrap !important;
+  scroll-snap-align:start;
+}
+html[data-ui-theme="saas"] .logo-saas{ display:block !important; }
+html[data-ui-theme="saas"] .logo-xp{ display:none !important; }
+
+
+/* SaaS legacy look correction - closer to the original clean theme */
+html[data-ui-theme="saas"],
+html[data-ui-theme="saas"] body{
+  background:linear-gradient(180deg,#f8fafc 0%,#eef4f9 100%) !important;
+  color:#17304a !important;
+}
+
+html[data-ui-theme="saas"] .header{
+  padding:12px 18px 0 !important;
+}
+
+html[data-ui-theme="saas"] .wrap{
+  max-width:1180px !important;
+  padding:0 0 34px !important;
+  margin:12px auto 0 !important;
+}
+
+html[data-ui-theme="saas"] .card{
+  width:min(1180px, calc(100vw - 28px)) !important;
+  margin:0 auto !important;
+  padding:24px 24px 34px !important;
+  border:1px solid #cfe0f1 !important;
+  border-radius:22px !important;
+  background:rgba(255,255,255,.84) !important;
+  box-shadow:0 28px 70px rgba(32,64,96,.10) !important;
+  backdrop-filter:none !important;
+}
+
+html[data-ui-theme="saas"] .logo-wrap{
+  display:none !important;
+}
+
+html[data-ui-theme="saas"] .nav-shell{
+  width:100% !important;
+  margin:0 auto 24px !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  overflow:visible !important;
+}
+
+html[data-ui-theme="saas"] .main-tabs{
+  display:none !important;
+}
+
+html[data-ui-theme="saas"] .tool-tabs{
+  display:flex !important;
+  flex-wrap:nowrap !important;
+  justify-content:center !important;
+  align-items:center !important;
+  gap:10px !important;
+  margin:0 auto !important;
+  padding:0 4px 4px !important;
+  border:0 !important;
+  background:transparent !important;
+  overflow-x:auto !important;
+  overflow-y:hidden !important;
+  scrollbar-width:thin !important;
+}
+
+html[data-ui-theme="saas"] .tool-tab,
+html[data-ui-theme="saas"] .tabbtn{
+  flex:0 0 auto !important;
+  min-height:38px !important;
+  padding:9px 17px !important;
+  border:1px solid #d7e2ee !important;
+  border-radius:18px !important;
+  background:linear-gradient(180deg,#ffffff 0%,#f7fbff 100%) !important;
+  color:#5d7187 !important;
+  box-shadow:none !important;
+  font-size:13px !important;
+  font-weight:750 !important;
+  line-height:1 !important;
+  white-space:nowrap !important;
+}
+
+html[data-ui-theme="saas"] .tool-tab:hover,
+html[data-ui-theme="saas"] .tabbtn:hover{
+  color:#285ccf !important;
+  border-color:#bcd0e5 !important;
+  transform:none !important;
+}
+
+html[data-ui-theme="saas"] .tool-tab.active,
+html[data-ui-theme="saas"] .tabbtn.active{
+  color:#fff !important;
+  border-color:#5f86e8 !important;
+  background:linear-gradient(180deg,#7ea1f3 0%,#3265e8 100%) !important;
+  box-shadow:0 10px 22px rgba(50,101,232,.24) !important;
+}
+
+html[data-ui-theme="saas"] .section{
+  max-width:none !important;
+  text-align:center !important;
+}
+
+html[data-ui-theme="saas"] .title{
+  margin:4px auto 10px !important;
+  color:#17304a !important;
+  font-size:30px !important;
+  line-height:1.12 !important;
+  letter-spacing:-.035em !important;
+  font-weight:850 !important;
+  text-align:center !important;
+}
+
+html[data-ui-theme="saas"] .sub{
+  margin:0 auto 20px !important;
+  color:#66809b !important;
+  font-size:15px !important;
+  line-height:1.45 !important;
+  text-align:center !important;
+}
+
+html[data-ui-theme="saas"] .media-brand-title svg{
+  width:0 !important;
+  height:0 !important;
+  opacity:0 !important;
+  margin:0 !important;
+}
+
+html[data-ui-theme="saas"] .media-tool-shell,
+html[data-ui-theme="saas"] .media-tool-shell-narrow{
+  max-width:100% !important;
+  margin:0 auto !important;
+}
+
+html[data-ui-theme="saas"] .youtube-panel,
+html[data-ui-theme="saas"] .media-download-card,
+html[data-ui-theme="saas"] .instagram-card{
+  max-width:900px !important;
+  margin:0 auto !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+}
+
+html[data-ui-theme="saas"] .media-tool-title,
+html[data-ui-theme="saas"] .youtube-batch-hint{
+  display:none !important;
+}
+
+html[data-ui-theme="saas"] .drop,
+html[data-ui-theme="saas"] #drop,
+html[data-ui-theme="saas"] #dropMerge,
+html[data-ui-theme="saas"] #dropRotate,
+html[data-ui-theme="saas"] #dropSplit,
+html[data-ui-theme="saas"] #dropCompress,
+html[data-ui-theme="saas"] #dropProtect,
+html[data-ui-theme="saas"] #dropRemoveBg,
+html[data-ui-theme="saas"] #dropPdf2Png,
+html[data-ui-theme="saas"] #dropWord2Pdf,
+html[data-ui-theme="saas"] #dropVideo{
+  max-width:100% !important;
+  min-height:160px !important;
+  margin:18px auto 12px !important;
+  padding:34px 22px !important;
+  border:2px dashed #c4d9f0 !important;
+  border-radius:18px !important;
+  background:#fbfdff !important;
+  box-shadow:none !important;
+}
+
+html[data-ui-theme="saas"] .drop .icon{
+  width:34px !important;
+  height:34px !important;
+  color:#2f66e8 !important;
+  margin:0 auto 18px !important;
+  filter:none !important;
+}
+
+html[data-ui-theme="saas"] .drop .inline{
+  display:flex !important;
+  justify-content:center !important;
+}
+
+html[data-ui-theme="saas"] .drop .btn,
+html[data-ui-theme="saas"] #choose,
+html[data-ui-theme="saas"] #chooseMerge,
+html[data-ui-theme="saas"] #chooseRotate,
+html[data-ui-theme="saas"] #chooseSplit,
+html[data-ui-theme="saas"] #chooseCompress,
+html[data-ui-theme="saas"] #chooseProtect,
+html[data-ui-theme="saas"] #chooseRemoveBg,
+html[data-ui-theme="saas"] #choosePdf2Png,
+html[data-ui-theme="saas"] #chooseWord2Pdf,
+html[data-ui-theme="saas"] #chooseVideo{
+  width:auto !important;
+  min-height:38px !important;
+  padding:10px 18px !important;
+  border-radius:13px !important;
+  background:linear-gradient(180deg,#356ff0 0%,#245be1 100%) !important;
+  box-shadow:0 13px 24px rgba(37,99,235,.22) !important;
+  color:#fff !important;
+  font-size:13px !important;
+  font-weight:800 !important;
+}
+
+html[data-ui-theme="saas"] .btn,
+html[data-ui-theme="saas"] button.btn,
+html[data-ui-theme="saas"] a.btn{
+  min-height:38px !important;
+  padding:10px 18px !important;
+  border-radius:13px !important;
+  background:linear-gradient(180deg,#356ff0 0%,#245be1 100%) !important;
+  box-shadow:0 12px 22px rgba(37,99,235,.22) !important;
+  font-size:13px !important;
+  font-weight:800 !important;
+}
+
+html[data-ui-theme="saas"] .btn.alt,
+html[data-ui-theme="saas"] .btn.secondary{
+  color:#526a82 !important;
+  border:1px solid #d8e3ee !important;
+  background:linear-gradient(180deg,#fff 0%,#f7fbff 100%) !important;
+  box-shadow:none !important;
+}
+
+html[data-ui-theme="saas"] input,
+html[data-ui-theme="saas"] select,
+html[data-ui-theme="saas"] textarea{
+  border:1px solid #cfe0f1 !important;
+  border-radius:14px !important;
+  background:#fff !important;
+  color:#17304a !important;
+  box-shadow:none !important;
+}
+
+html[data-ui-theme="saas"] textarea,
+html[data-ui-theme="saas"] .youtube-url-textarea{
+  min-height:116px !important;
+}
+
+html[data-ui-theme="saas"] .media-action-strip,
+html[data-ui-theme="saas"] .youtube-mode-row,
+html[data-ui-theme="saas"] .media-command-row,
+html[data-ui-theme="saas"] .inputs{
+  justify-content:center !important;
+  text-align:center !important;
+}
+
+html[data-ui-theme="saas"] .removebg-strength,
+html[data-ui-theme="saas"] .removebg-preview-card,
+html[data-ui-theme="saas"] .media-options-panel,
+html[data-ui-theme="saas"] .youtube-options,
+html[data-ui-theme="saas"] .row,
+html[data-ui-theme="saas"] .item,
+html[data-ui-theme="saas"] .youtube-meta,
+html[data-ui-theme="saas"] .youtube-batch-item{
+  border:1px solid #cfe0f1 !important;
+  border-radius:16px !important;
+  background:#fbfdff !important;
+  box-shadow:none !important;
+}
+
+html[data-ui-theme="saas"] .progress,
+html[data-ui-theme="saas"] .youtube-progress-bar{
+  height:8px !important;
+  background:#e5edf5 !important;
+}
+
+html[data-ui-theme="saas"] .progress > div,
+html[data-ui-theme="saas"] .youtube-progress-bar > div{
+  background:#2f66e8 !important;
+}
+
+html[data-ui-theme="saas"] .note,
+html[data-ui-theme="saas"] .small{
+  color:#66809b !important;
+  font-size:12px !important;
+}
+
+html[data-ui-theme="saas"] .footer{
+  width:min(1180px, calc(100vw - 28px)) !important;
+  margin:22px auto 0 !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  color:#66809b !important;
+  font-size:12px !important;
+}
+
+@media (max-width:760px){
+  html[data-ui-theme="saas"] .wrap{ margin-top:8px !important; padding:0 0 24px !important; }
+  html[data-ui-theme="saas"] .card{ width:calc(100vw - 18px) !important; padding:16px 12px 24px !important; border-radius:18px !important; }
+  html[data-ui-theme="saas"] .tool-tabs{ justify-content:flex-start !important; padding-bottom:8px !important; }
+  html[data-ui-theme="saas"] .title{ font-size:24px !important; }
+  html[data-ui-theme="saas"] .drop{ min-height:150px !important; padding:28px 14px !important; }
+}
+
+
+/* SaaS modern refinement: quieter product UI, cleaner controls, better proportions */
+html[data-ui-theme="saas"]{
+  --brand:#2f6fe8;
+  --brand-strong:#1f5bd7;
+  --brand-ink:#123f86;
+  --brand-soft:#eef5ff;
+  --accent:#f4a51c;
+  --fg:#17324a;
+  --muted:#60758a;
+  --stroke:#cfddeb;
+  --stroke-strong:#b8c9db;
+  --surface:#ffffff;
+  --surface-soft:#f7fafd;
+  --panel:rgba(255,255,255,.88);
+  --panel-soft:rgba(248,251,254,.96);
+  --shadow:0 22px 60px rgba(23,50,74,.09);
+  --shadow-soft:0 10px 28px rgba(23,50,74,.07);
+  --radius-lg:26px;
+  --radius-md:18px;
+  --radius-sm:12px;
+}
+html[data-ui-theme="saas"],
+html[data-ui-theme="saas"] body,
+html[data-ui-theme="saas"] button,
+html[data-ui-theme="saas"] input,
+html[data-ui-theme="saas"] select,
+html[data-ui-theme="saas"] textarea{
+  font-family:"Aptos","Segoe UI Variable","Segoe UI",ui-sans-serif,sans-serif !important;
+}
+html[data-ui-theme="saas"] body::before{
+  background:
+    radial-gradient(720px 320px at 18% 0%, rgba(47,111,232,.15), transparent 66%),
+    radial-gradient(560px 280px at 86% 10%, rgba(244,165,28,.09), transparent 70%),
+    linear-gradient(180deg,#fbfdff 0%,#f0f5fa 50%,#e9f1f8 100%) !important;
+}
+html[data-ui-theme="saas"] .header{
+  width:min(1160px, calc(100% - 32px)) !important;
+  margin-top:20px !important;
+}
+html[data-ui-theme="saas"] .header-top{
+  min-height:108px !important;
+  padding:14px 22px !important;
+  border-radius:30px !important;
+  background:rgba(255,255,255,.72) !important;
+  border:1px solid rgba(207,221,235,.88) !important;
+  box-shadow:0 18px 52px rgba(23,50,74,.08) !important;
+}
+html[data-ui-theme="saas"] .saas-brand-logo{
+  height:88px !important;
+  max-width:370px !important;
+  filter:drop-shadow(0 10px 16px rgba(23,50,74,.09)) !important;
+}
+html[data-ui-theme="saas"] .theme-switcher{
+  gap:4px !important;
+  padding:5px !important;
+  border-radius:16px !important;
+  background:rgba(247,250,253,.92) !important;
+  border-color:rgba(207,221,235,.92) !important;
+}
+html[data-ui-theme="saas"] .theme-option{
+  min-height:36px !important;
+  padding:0 14px !important;
+  border-radius:12px !important;
+  font-size:12px !important;
+  font-weight:760 !important;
+}
+html[data-ui-theme="saas"] .theme-option.active{
+  background:linear-gradient(180deg,#3f7df0,#2865df) !important;
+  box-shadow:0 8px 18px rgba(47,111,232,.22) !important;
+}
+html[data-ui-theme="saas"] .lang-current{
+  width:44px !important;
+  height:44px !important;
+  border-radius:15px !important;
+  background:rgba(247,250,253,.94) !important;
+}
+html[data-ui-theme="saas"] .lang-menu{
+  border-radius:18px !important;
+  background:rgba(255,255,255,.98) !important;
+  box-shadow:0 20px 46px rgba(23,50,74,.16) !important;
+}
+html[data-ui-theme="saas"] .wrap{
+  width:min(1160px, calc(100% - 32px)) !important;
+  margin-top:34px !important;
+}
+html[data-ui-theme="saas"] .card{
+  padding:30px !important;
+  border-radius:30px !important;
+  background:rgba(255,255,255,.88) !important;
+  box-shadow:0 24px 70px rgba(23,50,74,.10) !important;
+}
+html[data-ui-theme="saas"] .nav-shell{
+  display:grid !important;
+  gap:12px !important;
+  margin-bottom:26px !important;
+}
+html[data-ui-theme="saas"] .main-tabs{
+  width:max-content !important;
+  padding:4px !important;
+  gap:4px !important;
+  border-radius:18px !important;
+  background:#f3f7fb !important;
+  border:1px solid rgba(207,221,235,.9) !important;
+}
+html[data-ui-theme="saas"] .main-tabs .main-tab,
+html[data-ui-theme="saas"] .main-tabs .tabbtn{
+  min-height:38px !important;
+  padding:10px 17px !important;
+  border-radius:14px !important;
+  color:#41586f !important;
+  font-size:13px !important;
+  font-weight:760 !important;
+}
+html[data-ui-theme="saas"] .main-tabs .tabbtn.active{
+  background:#fff !important;
+  color:var(--brand-ink) !important;
+  border-color:rgba(207,221,235,.7) !important;
+  box-shadow:0 8px 20px rgba(23,50,74,.08) !important;
+}
+html[data-ui-theme="saas"] .tool-tabs{
+  gap:8px !important;
+  max-width:100% !important;
+}
+html[data-ui-theme="saas"] .tool-tabs .tabbtn{
+  min-height:36px !important;
+  padding:9px 14px !important;
+  border-radius:13px !important;
+  background:#fff !important;
+  border:1px solid rgba(207,221,235,.92) !important;
+  color:#29435c !important;
+  box-shadow:0 6px 16px rgba(23,50,74,.04) !important;
+}
+html[data-ui-theme="saas"] .tool-tabs .tabbtn:hover{
+  background:#f8fbff !important;
+  border-color:#b8c9db !important;
+  transform:translateY(-1px) !important;
+}
+html[data-ui-theme="saas"] .tool-tabs .tabbtn.active{
+  background:var(--brand-soft) !important;
+  color:var(--brand-ink) !important;
+  border-color:rgba(47,111,232,.34) !important;
+  box-shadow:inset 0 0 0 1px rgba(47,111,232,.05),0 8px 18px rgba(47,111,232,.10) !important;
+}
+html[data-ui-theme="saas"] .title{
+  font-size:clamp(1.35rem,1.05rem + .75vw,1.82rem) !important;
+  line-height:1.18 !important;
+  letter-spacing:-.025em !important;
+}
+html[data-ui-theme="saas"] .sub{
+  margin-bottom:20px !important;
+  color:#64798f !important;
+  font-size:14.5px !important;
+}
+html[data-ui-theme="saas"] .media-tool-shell,
+html[data-ui-theme="saas"] .media-tool-shell-narrow,
+html[data-ui-theme="saas"] .youtube-panel,
+html[data-ui-theme="saas"] .media-download-card,
+html[data-ui-theme="saas"] .instagram-card{
+  max-width:920px !important;
+}
+html[data-ui-theme="saas"] textarea,
+html[data-ui-theme="saas"] .youtube-url-textarea,
+html[data-ui-theme="saas"] #youtubeUrls,
+html[data-ui-theme="saas"] #youtubeClipUrl,
+html[data-ui-theme="saas"] input[type="text"],
+html[data-ui-theme="saas"] input[type="url"],
+html[data-ui-theme="saas"] input[type="number"],
+html[data-ui-theme="saas"] input[type="password"],
+html[data-ui-theme="saas"] select{
+  border-radius:16px !important;
+  border:1px solid var(--stroke) !important;
+  background:#fff !important;
+  color:var(--fg) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 1px 0 rgba(23,50,74,.02) !important;
+  font-size:14px !important;
+}
+html[data-ui-theme="saas"] textarea,
+html[data-ui-theme="saas"] .youtube-url-textarea,
+html[data-ui-theme="saas"] #youtubeUrls{
+  min-height:104px !important;
+  height:104px !important;
+  max-height:180px !important;
+  padding:16px !important;
+  line-height:1.5 !important;
+}
+html[data-ui-theme="saas"] #youtubeClipUrl,
+html[data-ui-theme="saas"] #instagramUrl{
+  min-height:48px !important;
+  height:48px !important;
+  max-height:80px !important;
+  padding:0 16px !important;
+}
+html[data-ui-theme="saas"] textarea::placeholder,
+html[data-ui-theme="saas"] input::placeholder{
+  color:#7c8fa3 !important;
+  opacity:.95 !important;
+}
+html[data-ui-theme="saas"] .drop{
+  min-height:132px !important;
+  padding:22px !important;
+  border:1px dashed #b9cadd !important;
+  border-radius:24px !important;
+  background:#fbfdff !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.96) !important;
+}
+html[data-ui-theme="saas"] .drop.dragover,
+html[data-ui-theme="saas"] .drop:hover{
+  background:#f7fbff !important;
+  border-color:#8fb0d5 !important;
+  box-shadow:0 0 0 4px rgba(47,111,232,.08) !important;
+}
+html[data-ui-theme="saas"] .drop .icon,
+html[data-ui-theme="saas"] .icon{
+  width:42px !important;
+  height:42px !important;
+  padding:9px !important;
+  border-radius:14px !important;
+  color:var(--brand) !important;
+  background:#edf5ff !important;
+}
+html[data-ui-theme="saas"] .btn,
+html[data-ui-theme="saas"] button.btn,
+html[data-ui-theme="saas"] a.btn{
+  min-height:42px !important;
+  padding:0 18px !important;
+  border-radius:14px !important;
+  background:#2f6fe8 !important;
+  color:#fff !important;
+  border:1px solid #285fd0 !important;
+  box-shadow:0 9px 20px rgba(47,111,232,.18) !important;
+  font-size:13.5px !important;
+  font-weight:780 !important;
+  letter-spacing:-.005em !important;
+}
+html[data-ui-theme="saas"] .btn:hover,
+html[data-ui-theme="saas"] button.btn:hover,
+html[data-ui-theme="saas"] a.btn:hover{
+  background:#245fd5 !important;
+  transform:translateY(-1px) !important;
+  box-shadow:0 13px 26px rgba(47,111,232,.22) !important;
+}
+html[data-ui-theme="saas"] .btn:active,
+html[data-ui-theme="saas"] button.btn:active,
+html[data-ui-theme="saas"] a.btn:active{
+  transform:translateY(0) !important;
+  box-shadow:0 5px 14px rgba(47,111,232,.16) !important;
+}
+html[data-ui-theme="saas"] .btn.alt,
+html[data-ui-theme="saas"] .btn.secondary,
+html[data-ui-theme="saas"] .controls .btn{
+  background:#fff !important;
+  color:#29435c !important;
+  border:1px solid var(--stroke) !important;
+  box-shadow:0 5px 14px rgba(23,50,74,.05) !important;
+}
+html[data-ui-theme="saas"] .btn.alt:hover,
+html[data-ui-theme="saas"] .btn.secondary:hover,
+html[data-ui-theme="saas"] .controls .btn:hover{
+  background:#f8fbff !important;
+  border-color:#b8c9db !important;
+  box-shadow:0 8px 18px rgba(23,50,74,.08) !important;
+}
+html[data-ui-theme="saas"] .inputs,
+html[data-ui-theme="saas"] .media-action-strip,
+html[data-ui-theme="saas"] .media-command-row,
+html[data-ui-theme="saas"] .clip-control-grid{
+  gap:10px !important;
+}
+html[data-ui-theme="saas"] .media-action-strip,
+html[data-ui-theme="saas"] .media-command-row,
+html[data-ui-theme="saas"] .youtube-options,
+html[data-ui-theme="saas"] .media-options-panel{
+  border-radius:20px !important;
+  background:#f8fbfe !important;
+  border:1px solid rgba(207,221,235,.9) !important;
+  box-shadow:none !important;
+}
+html[data-ui-theme="saas"] .youtube-meta,
+html[data-ui-theme="saas"] .row,
+html[data-ui-theme="saas"] .item,
+html[data-ui-theme="saas"] .youtube-batch-item,
+html[data-ui-theme="saas"] .removebg-strength,
+html[data-ui-theme="saas"] .removebg-preview-card{
+  border-radius:20px !important;
+  background:#fff !important;
+  border:1px solid rgba(207,221,235,.9) !important;
+  box-shadow:0 8px 22px rgba(23,50,74,.055) !important;
+}
+html[data-ui-theme="saas"] .youtube-meta-thumb{
+  border-radius:16px !important;
+}
+html[data-ui-theme="saas"] .slider-wrap{
+  border-radius:18px !important;
+  background:#f8fbfe !important;
+}
+html[data-ui-theme="saas"] .cookie-notice,
+html[data-ui-theme="saas"] .cookie-panel-card{
+  border-radius:24px !important;
+  box-shadow:0 24px 70px rgba(23,50,74,.15) !important;
+}
+@media (max-width:760px){
+  html[data-ui-theme="saas"] .header,
+  html[data-ui-theme="saas"] .wrap{
+    width:calc(100% - 20px) !important;
+  }
+  html[data-ui-theme="saas"] .header-top{
+    padding:12px !important;
+    border-radius:24px !important;
+  }
+  html[data-ui-theme="saas"] .saas-brand-logo{
+    height:64px !important;
+    max-width:min(230px,62vw) !important;
+  }
+  html[data-ui-theme="saas"] .card{
+    padding:16px 12px !important;
+    border-radius:24px !important;
+  }
+  html[data-ui-theme="saas"] .main-tabs{
+    border-radius:16px !important;
+  }
+  html[data-ui-theme="saas"] .main-tabs .main-tab,
+  html[data-ui-theme="saas"] .main-tabs .tabbtn,
+  html[data-ui-theme="saas"] .tool-tabs .tabbtn{
+    min-height:38px !important;
+    padding:9px 13px !important;
+  }
+  html[data-ui-theme="saas"] textarea,
+  html[data-ui-theme="saas"] .youtube-url-textarea,
+  html[data-ui-theme="saas"] #youtubeUrls{
+    min-height:96px !important;
+    height:96px !important;
+  }
+  html[data-ui-theme="saas"] .btn,
+  html[data-ui-theme="saas"] button.btn,
+  html[data-ui-theme="saas"] a.btn{
+    min-height:44px !important;
+  }
+}
+
+
+/* SaaS final rescue: visible navigation, hidden skip link, balanced action rows */
+.skip-link{
+  position:fixed !important;
+  left:18px !important;
+  top:14px !important;
+  z-index:20000 !important;
+  transform:translateY(-180%) !important;
+  padding:10px 14px !important;
+  border-radius:999px !important;
+  background:#2f6fe8 !important;
+  color:#fff !important;
+  font-weight:800 !important;
+  text-decoration:none !important;
+  box-shadow:0 14px 28px rgba(47,111,232,.24) !important;
+  transition:transform .18s ease !important;
+}
+.skip-link:focus,
+.skip-link:focus-visible{
+  transform:translateY(0) !important;
+  outline:none !important;
+}
+html[data-ui-theme="saas"] .main-tabs{
+  display:flex !important;
+  visibility:visible !important;
+  opacity:1 !important;
+  flex-direction:row !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:max-content !important;
+  max-width:100% !important;
+  min-height:48px !important;
+  gap:4px !important;
+  padding:4px !important;
+  margin:0 auto 12px !important;
+  overflow:visible !important;
+  border:1px solid rgba(207,221,235,.9) !important;
+  border-radius:18px !important;
+  background:#f3f7fb !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9) !important;
+}
+html[data-ui-theme="saas"] .main-tabs .main-tab,
+html[data-ui-theme="saas"] .main-tabs .tabbtn{
+  display:inline-flex !important;
+  visibility:visible !important;
+  opacity:1 !important;
+  flex:0 0 auto !important;
+  width:auto !important;
+  min-width:0 !important;
+  min-height:38px !important;
+  padding:10px 17px !important;
+  border-radius:14px !important;
+  white-space:nowrap !important;
+}
+html[data-ui-theme="saas"] .main-tabs .main-tab-label{
+  display:block !important;
+  white-space:nowrap !important;
+}
+html[data-ui-theme="saas"] .media-command-row,
+html[data-ui-theme="saas"] .media-action-strip{
+  width:min(920px,100%) !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  flex-wrap:wrap !important;
+  gap:12px !important;
+  margin-left:auto !important;
+  margin-right:auto !important;
+  padding:14px !important;
+}
+html[data-ui-theme="saas"] .media-command-row .btn,
+html[data-ui-theme="saas"] .media-action-strip .btn{
+  width:auto !important;
+  min-width:136px !important;
+  max-width:220px !important;
+  flex:0 0 auto !important;
+}
+html[data-ui-theme="saas"] .media-command-row label,
+html[data-ui-theme="saas"] .media-action-strip label{
+  margin:0 !important;
+}
+@media (max-width:760px){
+  html[data-ui-theme="saas"] .main-tabs{
+    width:100% !important;
+    justify-content:flex-start !important;
+    overflow-x:auto !important;
+    scrollbar-width:none !important;
+  }
+  html[data-ui-theme="saas"] .main-tabs::-webkit-scrollbar{display:none !important;}
+  html[data-ui-theme="saas"] .media-command-row,
+  html[data-ui-theme="saas"] .media-action-strip{
+    align-items:stretch !important;
+  }
+  html[data-ui-theme="saas"] .media-command-row .btn,
+  html[data-ui-theme="saas"] .media-action-strip .btn{
+    width:100% !important;
+    max-width:none !important;
+  }
+}

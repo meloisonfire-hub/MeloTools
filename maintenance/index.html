@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>MeloTools em manutenção</title>
+  <style>
+    :root {
+      --bg: #07110d;
+      --panel: rgba(255, 255, 255, .08);
+      --panel-border: rgba(255, 255, 255, .16);
+      --text: #f7fff9;
+      --muted: #b9cbbf;
+      --green: #34d36f;
+      --green-2: #8dffb5;
+      --shadow: 0 30px 90px rgba(0, 0, 0, .42);
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      min-height: 100%;
+      display: grid;
+      place-items: center;
+      padding: 28px;
+      color: var(--text);
+      font-family: "Trebuchet MS", Verdana, Arial, sans-serif;
+      background:
+        radial-gradient(circle at 18% 16%, rgba(52, 211, 111, .26), transparent 28%),
+        radial-gradient(circle at 88% 20%, rgba(76, 132, 255, .18), transparent 30%),
+        linear-gradient(135deg, #050807 0%, #081b12 48%, #06100d 100%);
+      overflow: hidden;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: radial-gradient(circle at center, black 0 58%, transparent 82%);
+      pointer-events: none;
+    }
+    .card {
+      width: min(760px, 100%);
+      position: relative;
+      padding: clamp(28px, 6vw, 58px);
+      text-align: center;
+      border: 1px solid var(--panel-border);
+      border-radius: 32px;
+      background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.055));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+    .logo {
+      width: min(360px, 86%);
+      height: auto;
+      display: block;
+      margin: 0 auto 28px;
+      filter: drop-shadow(0 14px 30px rgba(0,0,0,.35));
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 16px;
+      border-radius: 999px;
+      color: #092113;
+      background: linear-gradient(135deg, var(--green), var(--green-2));
+      font-weight: 800;
+      letter-spacing: .02em;
+      box-shadow: 0 10px 26px rgba(52, 211, 111, .28);
+    }
+    .pulse {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: #092113;
+      animation: pulse 1.35s ease-in-out infinite;
+    }
+    h1 {
+      margin: 24px 0 12px;
+      font-size: clamp(2rem, 6vw, 4.6rem);
+      line-height: .95;
+      letter-spacing: -0.06em;
+    }
+    p {
+      max-width: 590px;
+      margin: 0 auto;
+      color: var(--muted);
+      font-size: clamp(1.05rem, 2.4vw, 1.35rem);
+      line-height: 1.65;
+    }
+    .soon {
+      margin-top: 26px;
+      font-weight: 900;
+      color: var(--green-2);
+      font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+    }
+    .bar {
+      height: 8px;
+      width: min(390px, 86%);
+      margin: 34px auto 0;
+      border-radius: 999px;
+      background: rgba(255,255,255,.12);
+      overflow: hidden;
+    }
+    .bar span {
+      display: block;
+      height: 100%;
+      width: 48%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, transparent, var(--green), var(--green-2), transparent);
+      animation: load 1.65s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%, 100% { transform: scale(.75); opacity: .65; } 50% { transform: scale(1.25); opacity: 1; } }
+    @keyframes load { 0% { transform: translateX(-110%); } 100% { transform: translateX(230%); } }
+    @media (max-width: 520px) {
+      body { padding: 18px; }
+      .card { border-radius: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="card" role="main" aria-label="MeloTools em manutenção">
+    <img class="logo" src="/maintenance/logo.png" alt="MeloTools">
+    <div class="badge"><span class="pulse" aria-hidden="true"></span> Manutenção em andamento</div>
+    <h1>Voltamos em breve.</h1>
+    <p>Estamos preparando uma versão melhorada do MeloTools, mais rápida, estável e caprichada para você usar sem complicação.</p>
+    <div class="soon">Obrigado pela paciência. Já já estamos de volta.</div>
+    <div class="bar" aria-hidden="true"><span></span></div>
+  </main>
+</body>
+</html>

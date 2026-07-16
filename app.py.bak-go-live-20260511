@@ -1,0 +1,1175 @@
+﻿import io
+import hashlib
+import json
+import math
+import os
+import random
+import re
+import shutil
+import socket
+import string
+import subprocess
+import tempfile
+import uuid
+from datetime import date, datetime
+from pathlib import Path
+from typing import Iterable, List
+
+from flask import Flask, abort, jsonify, render_template, request, send_from_directory
+from PIL import Image, ImageOps, ImageFilter, ImageDraw
+import segno
+from pypdf import PdfReader, PdfWriter
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+import imageio_ffmpeg
+from markupsafe import Markup
+
+BASE_DIR = Path(__file__).resolve().parent
+UPLOAD_DIR = BASE_DIR / "uploads"
+RESULT_DIR = BASE_DIR / "results"
+TMP_DIR = BASE_DIR / "tmp"
+LOGO_PATH = BASE_DIR / "logo.png"
+FAVICON_PATH = BASE_DIR / "favicon.ico"
+
+for d in (UPLOAD_DIR, RESULT_DIR, TMP_DIR):
+    d.mkdir(parents=True, exist_ok=True)
+
+app = Flask(__name__)
+app.config["MAX_CONTENT_LENGTH"] = 1024 * 1024 * 512
+
+ALLOWED = {
+    "pdf": {".pdf"},
+    "image": {".png", ".jpg", ".jpeg", ".webp", ".bmp", ".tiff", ".gif"},
+    "video": {".mp4", ".mov", ".mkv", ".avi", ".webm", ".m4v"},
+    "doc": {".doc", ".docx", ".odt"},
+}
+
+
+def uid(name: str) -> str:
+    stem = re.sub(r"[^a-zA-Z0-9_-]", "-", Path(name).stem)[:40] or "file"
+    return f"{stem}-{uuid.uuid4().hex[:10]}"
+
+
+def fail(msg: str, code: int = 400):
+    return jsonify({"ok": False, "message": msg}), code
+
+
+def ok_file(path: Path):
+    return jsonify({"ok": True, "filename": path.name, "url": f"/results/{path.name}"})
+
+
+def ffmpeg_cmd() -> str:
+    try:
+        return imageio_ffmpeg.get_ffmpeg_exe()
+    except Exception:
+        return "ffmpeg"
+
+
+def get_file(field: str, kind: str):
+    f = request.files.get(field)
+    if not f or not f.filename:
+        return None, "Arquivo não enviado."
+    ext = Path(f.filename).suffix.lower()
+    if ext not in ALLOWED[kind]:
+        return None, f"Extensão não permitida para {kind}: {ext}"
+    out = UPLOAD_DIR / f"{uid(f.filename)}{ext}"
+    f.save(out)
+    return out, None
+
+
+def get_files(field: str, kind: str):
+    files = request.files.getlist(field)
+    if not files:
+        return None, "Nenhum arquivo enviado."
+    out = []
+    for f in files:
+        if not f or not f.filename:
+            continue
+        ext = Path(f.filename).suffix.lower()
+        if ext not in ALLOWED[kind]:
+            return None, f"Extensão não permitida: {ext}"
+        p = UPLOAD_DIR / f"{uid(f.filename)}{ext}"
+        f.save(p)
+        out.append(p)
+    if not out:
+        return None, "Nenhum arquivo válido recebido."
+    return out, None
+
+
+@app.route("/")
+def index():
+    languages = [
+        {"code": "pt-BR", "flag_url": "https://flagcdn.com/w40/br.png", "label": "Português"},
+        {"code": "en", "flag_url": "https://flagcdn.com/w40/us.png", "label": "English"},
+        {"code": "es", "flag_url": "https://flagcdn.com/w40/es.png", "label": "Español"},
+    ]
+    footer = Markup(
+        'Feito para quem quer resolver rápido - 2026<br>'
+        '<a href="/politica-de-cookies" class="footer-link">Política de Cookies</a>'
+    )
+    return render_template(
+        "index.html",
+        brand="#2563eb",
+        has_logo=LOGO_PATH.exists(),
+        current_lang="pt-BR",
+        max_mb=200,
+        analytics_measurement_id="",
+        languages=languages,
+        footer=footer,
+    )
+
+@app.route("/politica-de-cookies")
+@app.route("/cookie-policy")
+def cookie_policy():
+    return render_template(
+        "cookie_policy.html",
+        brand="#2563eb",
+        current_lang="pt-BR",
+        analytics_measurement_id="",
+    )
+
+@app.route("/health")
+def health():
+    return jsonify({"ok": True, "app": "MeloTools"})
+
+
+@app.route("/results/<path:filename>")
+def results(filename):
+    return send_from_directory(RESULT_DIR, filename, as_attachment=True)
+
+
+@app.route("/preview/<path:filename>")
+def preview(filename):
+    return send_from_directory(RESULT_DIR, filename, as_attachment=False)
+
+
+@app.route("/logo")
+def logo():
+    if not LOGO_PATH.exists():
+        abort(404)
+    return send_from_directory(LOGO_PATH.parent, LOGO_PATH.name)
+
+@app.route("/favicon.ico")
+def site_favicon():
+    if not FAVICON_PATH.exists():
+        abort(404)
+    return send_from_directory(FAVICON_PATH.parent, FAVICON_PATH.name)
+
+
+# ---------- Online videos ----------
+@app.route("/api/online/download", methods=["POST"])
+def online_download():
+    url = (request.form.get("url") or "").strip()
+    mode = (request.form.get("mode") or "video").strip().lower()
+    quality = (request.form.get("quality") or "720").strip()
+    if not url:
+        return fail("Informe a URL do vídeo.")
+    if url.startswith("mock://"):
+        ext = "mp3" if mode == "audio" else "mp4"
+        out = RESULT_DIR / f"download-mock-{uuid.uuid4().hex[:10]}.{ext}"
+        out.write_bytes(b"mock")
+        return ok_file(out)
+
+    outtmpl = str(RESULT_DIR / f"download-{uuid.uuid4().hex[:8]}.%(ext)s")
+    cmd = ["yt-dlp", "-o", outtmpl, url]
+    if mode == "audio":
+        cmd = ["yt-dlp", "-x", "--audio-format", "mp3", "-o", outtmpl, url]
+    else:
+        cmd = ["yt-dlp", "-f", f"bestvideo[height<={quality}]+bestaudio/best[height<={quality}]", "-o", outtmpl, url]
+    try:
+        subprocess.run(cmd, check=True, capture_output=True, text=True)
+    except Exception as e:
+        return fail(f"Falha ao baixar vídeo: {e}")
+
+    files = sorted(RESULT_DIR.glob("download-*"), key=lambda x: x.stat().st_mtime, reverse=True)
+    if not files:
+        return fail("Download finalizado, mas arquivo não foi localizado.")
+    return ok_file(files[0])
+
+
+@app.route("/api/online/clip", methods=["POST"])
+def online_clip():
+    url = (request.form.get("url") or "").strip()
+    start = (request.form.get("start") or "0").strip()
+    end = (request.form.get("end") or "").strip()
+    if not url or not end:
+        return fail("Informe URL, início e fim para o recorte online.")
+    if url.startswith("mock://"):
+        out = RESULT_DIR / f"clip-mock-{uuid.uuid4().hex[:10]}.mp4"
+        out.write_bytes(b"mock")
+        return ok_file(out)
+    outtmpl = str(RESULT_DIR / f"clip-{uuid.uuid4().hex[:8]}.%(ext)s")
+    cmd = [
+        "yt-dlp",
+        "--download-sections",
+        f"*{start}-{end}",
+        "-o",
+        outtmpl,
+        url,
+    ]
+    try:
+        subprocess.run(cmd, check=True, capture_output=True, text=True)
+    except Exception as e:
+        return fail(f"Falha ao clipar vídeo: {e}")
+    files = sorted(RESULT_DIR.glob("clip-*"), key=lambda x: x.stat().st_mtime, reverse=True)
+    if not files:
+        return fail("Clip finalizado, mas arquivo não foi localizado.")
+    return ok_file(files[0])
+
+
+@app.route("/api/online/instagram-tools", methods=["POST"])
+def instagram_tools():
+    url = (request.form.get("url") or "").strip()
+    if not url:
+        return fail("Informe a URL do Instagram.")
+    # Retorno seguro e util: normaliza link e gera atalho para QR.
+    clean = url.split("?")[0].strip()
+    return jsonify(
+        {
+            "ok": True,
+            "values": [
+                f"Link validado: {clean}",
+                "Dica: use 'Converter link em QR Code' para compartilhamento rápido.",
+            ],
+        }
+    )
+
+
+# ---------- Links / QR ----------
+@app.route("/api/links/qr-generate", methods=["POST"])
+def qr_generate():
+    text = (request.form.get("text") or "").strip()
+    if not text:
+        return fail("Informe o texto ou link para gerar o QR Code.")
+    out = RESULT_DIR / f"qr-{uuid.uuid4().hex[:10]}.png"
+    qr = segno.make(text)
+    qr.save(out, scale=6)
+    return ok_file(out)
+
+
+@app.route("/api/links/qr-read", methods=["POST"])
+def qr_read():
+    p, err = get_file("file", "image")
+    if err:
+        return fail(err)
+    try:
+        from pyzbar.pyzbar import decode
+    except Exception:
+        return fail("Leitor QR indisponivel no servidor (pyzbar/zbar).")
+
+    img = Image.open(p)
+    decoded = decode(img)
+    if not decoded:
+        return fail("Nenhum QR Code encontrado na imagem.")
+    text = decoded[0].data.decode("utf-8", errors="ignore")
+    return jsonify({"ok": True, "result": f"Conteúdo lido: {text}"})
+
+
+# ---------- Image ----------
+@app.route("/api/image/remove-bg", methods=["POST"])
+def remove_bg():
+    p, err = get_file("file", "image")
+    if err:
+        return fail(err)
+    img = Image.open(p).convert("RGBA")
+    pix = img.load()
+    w, h = img.size
+    threshold = int(request.form.get("strength") or 35)
+
+    # Simple near-white background removal
+    for y in range(h):
+        for x in range(w):
+            r, g, b, a = pix[x, y]
+            if r > 255 - threshold and g > 255 - threshold and b > 255 - threshold:
+                pix[x, y] = (r, g, b, 0)
+
+    out = RESULT_DIR / f"remove-bg-{uuid.uuid4().hex[:10]}.png"
+    img.save(out)
+    return ok_file(out)
+
+
+@app.route("/api/image/resize", methods=["POST"])
+def resize_image():
+    p, err = get_file("file", "image")
+    if err:
+        return fail(err)
+    w = int(request.form.get("width") or 0)
+    h = int(request.form.get("height") or 0)
+    if w <= 0 or h <= 0:
+        return fail("Informe largura e altura válidas.")
+    img = Image.open(p)
+    out = RESULT_DIR / f"resize-{uuid.uuid4().hex[:10]}.png"
+    img.resize((w, h), Image.Resampling.LANCZOS).save(out)
+    return ok_file(out)
+
+
+@app.route("/api/image/compress", methods=["POST"])
+def compress_image():
+    p, err = get_file("file", "image")
+    if err:
+        return fail(err)
+    quality = int(request.form.get("quality") or 75)
+    quality = max(20, min(95, quality))
+    img = Image.open(p).convert("RGB")
+    out = RESULT_DIR / f"compress-{uuid.uuid4().hex[:10]}.jpg"
+    img.save(out, "JPEG", quality=quality, optimize=True)
+    return ok_file(out)
+
+
+@app.route("/api/image/convert", methods=["POST"])
+def convert_image():
+    p, err = get_file("file", "image")
+    if err:
+        return fail(err)
+    fmt = (request.form.get("format") or "png").lower()
+    if fmt not in {"png", "jpg", "jpeg", "webp", "bmp", "tiff"}:
+        return fail("Formato de destino não suportado.")
+    img = Image.open(p)
+    if fmt in {"jpg", "jpeg"}:
+        img = img.convert("RGB")
+    out = RESULT_DIR / f"convert-{uuid.uuid4().hex[:10]}.{fmt}"
+    img.save(out)
+    return ok_file(out)
+
+
+@app.route("/api/image/crop", methods=["POST"])
+def crop_image():
+    p, err = get_file("file", "image")
+    if err:
+        return fail(err)
+    x = int(request.form.get("x") or 0)
+    y = int(request.form.get("y") or 0)
+    w = int(request.form.get("width") or 0)
+    h = int(request.form.get("height") or 0)
+    if w <= 0 or h <= 0:
+        return fail("Informe largura/altura válidas para corte.")
+    img = Image.open(p)
+    out = RESULT_DIR / f"crop-{uuid.uuid4().hex[:10]}.png"
+    img.crop((x, y, x + w, y + h)).save(out)
+    return ok_file(out)
+
+
+@app.route("/api/image/rotate", methods=["POST"])
+def rotate_image():
+    p, err = get_file("file", "image")
+    if err:
+        return fail(err)
+    deg = float(request.form.get("degrees") or 90)
+    img = Image.open(p)
+    out = RESULT_DIR / f"rotate-{uuid.uuid4().hex[:10]}.png"
+    img.rotate(-deg, expand=True).save(out)
+    return ok_file(out)
+
+
+@app.route("/api/image/favicon", methods=["POST"])
+def favicon():
+    p, err = get_file("file", "image")
+    if err:
+        return fail(err)
+    img = Image.open(p).convert("RGBA")
+    out = RESULT_DIR / f"favicon-{uuid.uuid4().hex[:10]}.ico"
+    img.save(out, format="ICO", sizes=[(16, 16), (32, 32), (48, 48), (64, 64)])
+    return ok_file(out)
+
+
+@app.route("/api/image/pixelate", methods=["POST"])
+def pixelate_image():
+    p, err = get_file("file", "image")
+    if err:
+        return fail(err)
+    strength = int(request.form.get("strength") or 12)
+    img = Image.open(p).convert("RGB")
+    w, h = img.size
+    small = img.resize((max(1, w // strength), max(1, h // strength)), Image.Resampling.NEAREST)
+    out_img = small.resize((w, h), Image.Resampling.NEAREST)
+    out = RESULT_DIR / f"pixelate-{uuid.uuid4().hex[:10]}.png"
+    out_img.save(out)
+    return ok_file(out)
+
+
+# ---------- Documents ----------
+def read_pdf(file_path: Path):
+    try:
+        return PdfReader(str(file_path))
+    except Exception as e:
+        raise RuntimeError(f"PDF inválido: {e}")
+
+
+@app.route("/api/documents/ocr-pdf", methods=["POST"])
+def ocr_pdf():
+    p, err = get_file("file", "pdf")
+    if err:
+        return fail(err)
+    # First choice: image-based OCR to searchable PDF
+    try:
+        from pdf2image import convert_from_path
+        import pytesseract
+        pages = convert_from_path(str(p))
+        writer = PdfWriter()
+        for page in pages:
+            pdf_bytes = pytesseract.image_to_pdf_or_hocr(page, extension="pdf")
+            tmp_pdf = TMP_DIR / f"ocr-page-{uuid.uuid4().hex[:10]}.pdf"
+            with tmp_pdf.open("wb") as f:
+                f.write(pdf_bytes)
+            page_reader = PdfReader(str(tmp_pdf))
+            writer.add_page(page_reader.pages[0])
+        out = RESULT_DIR / f"ocr-pdf-{uuid.uuid4().hex[:10]}.pdf"
+        with out.open("wb") as f:
+            writer.write(f)
+        return ok_file(out)
+    except Exception:
+        # Fallback: extract embedded text and generate TXT output
+        try:
+            reader = PdfReader(str(p))
+            text_parts = []
+            for i, pg in enumerate(reader.pages, start=1):
+                text_parts.append(f"--- Página {i} ---")
+                text_parts.append(pg.extract_text() or "")
+                text_parts.append("")
+            out_txt = RESULT_DIR / f"ocr-fallback-{uuid.uuid4().hex[:10]}.txt"
+            out_txt.write_text("\n".join(text_parts).strip(), encoding="utf-8")
+            return ok_file(out_txt)
+        except Exception as e:
+            return fail(f"Falha durante OCR: {e}")
+
+
+@app.route("/api/documents/organize-pdf", methods=["POST"])
+def organize_pdf():
+    files, err = get_files("files", "pdf")
+    if err:
+        return fail(err)
+    writer = PdfWriter()
+    try:
+        for p in files:
+            r = read_pdf(p)
+            for page in r.pages:
+                writer.add_page(page)
+        out = RESULT_DIR / f"organize-{uuid.uuid4().hex[:10]}.pdf"
+        with out.open("wb") as f:
+            writer.write(f)
+        return ok_file(out)
+    except Exception as e:
+        return fail(str(e))
+
+
+@app.route("/api/documents/rotate-pdf", methods=["POST"])
+def rotate_pdf():
+    p, err = get_file("file", "pdf")
+    if err:
+        return fail(err)
+    deg = int(request.form.get("degrees") or 90)
+    reader = read_pdf(p)
+    writer = PdfWriter()
+    for pg in reader.pages:
+        pg.rotate(deg)
+        writer.add_page(pg)
+    out = RESULT_DIR / f"rotate-pdf-{uuid.uuid4().hex[:10]}.pdf"
+    with out.open("wb") as f:
+        writer.write(f)
+    return ok_file(out)
+
+
+@app.route("/api/documents/split-pdf", methods=["POST"])
+def split_pdf():
+    p, err = get_file("file", "pdf")
+    if err:
+        return fail(err)
+    per_file = int(request.form.get("pages_per_file") or 1)
+    if per_file < 1:
+        return fail("Páginas por arquivo deve ser >= 1")
+
+    reader = read_pdf(p)
+    out_dir = TMP_DIR / f"split-{uuid.uuid4().hex[:10]}"
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    idx = 0
+    part = 1
+    while idx < len(reader.pages):
+        writer = PdfWriter()
+        for _ in range(per_file):
+            if idx >= len(reader.pages):
+                break
+            writer.add_page(reader.pages[idx])
+            idx += 1
+        with (out_dir / f"part-{part}.pdf").open("wb") as f:
+            writer.write(f)
+        part += 1
+
+    zip_path = RESULT_DIR / f"split-pdf-{uuid.uuid4().hex[:10]}.zip"
+    shutil.make_archive(str(zip_path).replace(".zip", ""), "zip", out_dir)
+    return ok_file(zip_path)
+
+
+@app.route("/api/documents/compress-pdf", methods=["POST"])
+def compress_pdf():
+    p, err = get_file("file", "pdf")
+    if err:
+        return fail(err)
+    reader = read_pdf(p)
+    writer = PdfWriter()
+    for pg in reader.pages:
+        writer.add_page(pg)
+    out = RESULT_DIR / f"compress-pdf-{uuid.uuid4().hex[:10]}.pdf"
+    with out.open("wb") as f:
+        writer.write(f)
+    return ok_file(out)
+
+
+@app.route("/api/documents/protect-pdf", methods=["POST"])
+def protect_pdf():
+    p, err = get_file("file", "pdf")
+    if err:
+        return fail(err)
+    password = (request.form.get("password") or "").strip()
+    if len(password) < 4:
+        return fail("Senha deve ter no mínimo 4 caracteres.")
+    reader = read_pdf(p)
+    writer = PdfWriter()
+    for pg in reader.pages:
+        writer.add_page(pg)
+    writer.encrypt(password)
+    out = RESULT_DIR / f"protect-pdf-{uuid.uuid4().hex[:10]}.pdf"
+    with out.open("wb") as f:
+        writer.write(f)
+    return ok_file(out)
+
+
+@app.route("/api/documents/word-to-pdf", methods=["POST"])
+def word_to_pdf():
+    p, err = get_file("file", "doc")
+    if err:
+        return fail(err)
+    out = RESULT_DIR / f"word-to-pdf-{uuid.uuid4().hex[:10]}.pdf"
+    cmd = ["libreoffice", "--headless", "--convert-to", "pdf", "--outdir", str(RESULT_DIR), str(p)]
+    try:
+        subprocess.run(cmd, check=True, capture_output=True, text=True)
+        produced = RESULT_DIR / f"{p.stem}.pdf"
+        if produced.exists():
+            produced.rename(out)
+            return ok_file(out)
+    except Exception:
+        pass
+
+    # Safe fallback when libreoffice is unavailable
+    c = canvas.Canvas(str(out), pagesize=letter)
+    c.setFont("Helvetica", 11)
+    c.drawString(72, 750, "Conversão Word -> PDF (fallback).")
+    c.drawString(72, 730, f"Arquivo original: {p.name}")
+    c.drawString(72, 710, "Instale LibreOffice no servidor para conversão fiel de layout.")
+    c.save()
+    return ok_file(out)
+
+
+@app.route("/api/documents/image-to-pdf", methods=["POST"])
+def image_to_pdf():
+    files, err = get_files("files", "image")
+    if err:
+        return fail(err)
+    images = [Image.open(f).convert("RGB") for f in files]
+    out = RESULT_DIR / f"image-to-pdf-{uuid.uuid4().hex[:10]}.pdf"
+    images[0].save(out, save_all=True, append_images=images[1:])
+    return ok_file(out)
+
+
+@app.route("/api/documents/pdf-to-image", methods=["POST"])
+def pdf_to_image():
+    p, err = get_file("file", "pdf")
+    if err:
+        return fail(err)
+    try:
+        from pdf2image import convert_from_path
+        pages = convert_from_path(str(p))
+        out_dir = TMP_DIR / f"pdf-img-{uuid.uuid4().hex[:10]}"
+        out_dir.mkdir(parents=True, exist_ok=True)
+        for i, page in enumerate(pages, 1):
+            page.save(out_dir / f"page-{i}.png", "PNG")
+        zip_path = RESULT_DIR / f"pdf-to-image-{uuid.uuid4().hex[:10]}.zip"
+        shutil.make_archive(str(zip_path).replace(".zip", ""), "zip", out_dir)
+        return ok_file(zip_path)
+    except Exception:
+        # Fallback: render extracted text into a PNG
+        try:
+            reader = PdfReader(str(p))
+            txt = "\n".join((pg.extract_text() or "") for pg in reader.pages).strip() or "PDF sem texto extraivel."
+            img = Image.new("RGB", (1400, 1800), "white")
+            draw = ImageDraw.Draw(img)
+            lines = txt.splitlines()[:80]
+            y = 30
+            for ln in lines:
+                draw.text((30, y), ln[:140], fill="black")
+                y += 20
+            out = RESULT_DIR / f"pdf-to-image-fallback-{uuid.uuid4().hex[:10]}.png"
+            img.save(out, "PNG")
+            return ok_file(out)
+        except Exception as e:
+            return fail(f"Falha ao converter PDF: {e}")
+
+
+@app.route("/api/documents/number-pages", methods=["POST"])
+def number_pages():
+    p, err = get_file("file", "pdf")
+    if err:
+        return fail(err)
+    position = (request.form.get("position") or "footer-right").strip().lower()
+    reader = read_pdf(p)
+    writer = PdfWriter()
+
+    for idx, pg in enumerate(reader.pages, start=1):
+        width = float(pg.mediabox.width)
+        height = float(pg.mediabox.height)
+        packet = io.BytesIO()
+        c = canvas.Canvas(packet, pagesize=(width, height))
+        text = str(idx)
+        if position == "footer-center":
+            x, y = width / 2 - 6, 20
+        elif position == "footer-left":
+            x, y = 20, 20
+        else:
+            x, y = width - 30, 20
+        c.setFont("Helvetica", 10)
+        c.drawString(x, y, text)
+        c.save()
+        packet.seek(0)
+        overlay = PdfReader(packet)
+        pg.merge_page(overlay.pages[0])
+        writer.add_page(pg)
+
+    out = RESULT_DIR / f"number-pages-{uuid.uuid4().hex[:10]}.pdf"
+    with out.open("wb") as f:
+        writer.write(f)
+    return ok_file(out)
+
+
+@app.route("/api/documents/remove-pages", methods=["POST"])
+def remove_pages():
+    p, err = get_file("file", "pdf")
+    if err:
+        return fail(err)
+    pages_str = (request.form.get("pages") or "").strip()
+    if not pages_str:
+        return fail("Informe páginas para remover, ex: 1,3,5")
+    remove_set = {int(x) for x in re.findall(r"\d+", pages_str)}
+    reader = read_pdf(p)
+    writer = PdfWriter()
+    for i, pg in enumerate(reader.pages, start=1):
+        if i not in remove_set:
+            writer.add_page(pg)
+    out = RESULT_DIR / f"remove-pages-{uuid.uuid4().hex[:10]}.pdf"
+    with out.open("wb") as f:
+        writer.write(f)
+    return ok_file(out)
+
+
+@app.route("/api/documents/extract-pages", methods=["POST"])
+def extract_pages():
+    p, err = get_file("file", "pdf")
+    if err:
+        return fail(err)
+    pages_str = (request.form.get("pages") or "").strip()
+    if not pages_str:
+        return fail("Informe páginas para extrair, ex: 1,3,5")
+    keep_set = {int(x) for x in re.findall(r"\d+", pages_str)}
+    reader = read_pdf(p)
+    writer = PdfWriter()
+    for i, pg in enumerate(reader.pages, start=1):
+        if i in keep_set:
+            writer.add_page(pg)
+    out = RESULT_DIR / f"extract-pages-{uuid.uuid4().hex[:10]}.pdf"
+    with out.open("wb") as f:
+        writer.write(f)
+    return ok_file(out)
+
+
+# ---------- Video files ----------
+def ffprobe_cmd() -> str:
+    ff = ffmpeg_cmd()
+    p = Path(ff)
+    candidates = [
+        p.with_name("ffprobe"),
+        p.with_name("ffprobe.exe"),
+        Path(str(ff).replace("ffmpeg", "ffprobe")),
+    ]
+    for c in candidates:
+        if c.exists():
+            return str(c)
+    return "ffprobe"
+
+
+@app.route("/api/videos/split", methods=["POST"])
+def split_video():
+    p, err = get_file("file", "video")
+    if err:
+        return fail(err)
+    size_mb = float(request.form.get("size_mb") or 100)
+    if size_mb <= 1:
+        return fail("Tamanho por parte deve ser maior que 1 MB")
+    # probe duration with ffprobe
+    try:
+        probe = subprocess.run(
+            [ffprobe_cmd(), "-v", "error", "-show_entries", "format=duration", "-of", "default=nk=1:nw=1", str(p)],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        duration = float((probe.stdout or "0").strip())
+    except Exception:
+        # Fallback: parse duration from ffmpeg stderr
+        try:
+            p2 = subprocess.run([ffmpeg_cmd(), "-i", str(p)], capture_output=True, text=True)
+            m = re.search(r"Duration:\\s*(\\d+):(\\d+):(\\d+\\.?\\d*)", (p2.stderr or ""))
+            if not m:
+                return fail("Falha ao ler duração do vídeo.")
+            hh, mm, ss = m.groups()
+            duration = int(hh) * 3600 + int(mm) * 60 + float(ss)
+        except Exception as e:
+            return fail(f"Falha ao ler duração do vídeo: {e}")
+    if duration <= 0:
+        return fail("Duração inválida para dividir vídeo.")
+    bytes_total = p.stat().st_size
+    sec_part = max(1, int(duration * (size_mb * 1024 * 1024 / bytes_total)))
+    out_dir = TMP_DIR / f"split-video-{uuid.uuid4().hex[:10]}"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    start = 0
+    idx = 1
+    while start < duration:
+        end = min(duration, start + sec_part)
+        part_path = out_dir / f"part-{idx}.mp4"
+        cmd = [ffmpeg_cmd(), "-y", "-ss", str(start), "-to", str(end), "-i", str(p), "-c", "copy", str(part_path)]
+        try:
+            subprocess.run(cmd, check=True, capture_output=True, text=True)
+        except Exception:
+            # fallback re-encode if stream copy fails
+            cmd2 = [ffmpeg_cmd(), "-y", "-ss", str(start), "-to", str(end), "-i", str(p), "-c:v", "libx264", "-c:a", "aac", str(part_path)]
+            subprocess.run(cmd2, check=True, capture_output=True, text=True)
+        idx += 1
+        start = end
+    zip_path = RESULT_DIR / f"split-video-{uuid.uuid4().hex[:10]}.zip"
+    shutil.make_archive(str(zip_path).replace(".zip", ""), "zip", out_dir)
+    return ok_file(zip_path)
+
+
+@app.route("/api/videos/cut", methods=["POST"])
+def cut_video():
+    p, err = get_file("file", "video")
+    if err:
+        return fail(err)
+    start = float(request.form.get("start") or 0)
+    end = float(request.form.get("end") or 0)
+    if end <= start:
+        return fail("Tempo final deve ser maior que tempo inicial.")
+    out = RESULT_DIR / f"cut-video-{uuid.uuid4().hex[:10]}.mp4"
+    cmd = [ffmpeg_cmd(), "-y", "-ss", str(start), "-to", str(end), "-i", str(p), "-c", "copy", str(out)]
+    try:
+        subprocess.run(cmd, check=True, capture_output=True, text=True)
+    except Exception:
+        cmd2 = [ffmpeg_cmd(), "-y", "-ss", str(start), "-to", str(end), "-i", str(p), "-c:v", "libx264", "-c:a", "aac", str(out)]
+        try:
+            subprocess.run(cmd2, check=True, capture_output=True, text=True)
+        except Exception as e:
+            return fail(f"Falha ao cortar vídeo: {e}")
+    return ok_file(out)
+
+
+@app.route("/api/videos/join", methods=["POST"])
+def join_videos():
+    files, err = get_files("files", "video")
+    if err:
+        return fail(err)
+    out = RESULT_DIR / f"join-video-{uuid.uuid4().hex[:10]}.mp4"
+    list_file = TMP_DIR / f"concat-{uuid.uuid4().hex[:10]}.txt"
+    list_file.write_text("\n".join([f"file '{f.as_posix()}'" for f in files]), encoding="utf-8")
+    cmd = [ffmpeg_cmd(), "-y", "-f", "concat", "-safe", "0", "-i", str(list_file), "-c", "copy", str(out)]
+    try:
+        subprocess.run(cmd, check=True, capture_output=True, text=True)
+    except Exception:
+        cmd2 = [ffmpeg_cmd(), "-y", "-f", "concat", "-safe", "0", "-i", str(list_file), "-c:v", "libx264", "-c:a", "aac", str(out)]
+        try:
+            subprocess.run(cmd2, check=True, capture_output=True, text=True)
+        except Exception as e:
+            return fail(f"Falha ao juntar vídeos: {e}")
+    return ok_file(out)
+
+
+@app.route("/api/videos/compress", methods=["POST"])
+def compress_video():
+    p, err = get_file("file", "video")
+    if err:
+        return fail(err)
+    crf = int(request.form.get("crf") or 28)
+    out = RESULT_DIR / f"compress-video-{uuid.uuid4().hex[:10]}.mp4"
+    cmd = [ffmpeg_cmd(), "-y", "-i", str(p), "-vcodec", "libx264", "-crf", str(crf), "-preset", "medium", "-acodec", "aac", str(out)]
+    try:
+        subprocess.run(cmd, check=True, capture_output=True, text=True)
+    except Exception as e:
+        return fail(f"Falha na compressão: {e}")
+    return ok_file(out)
+
+
+@app.route("/api/videos/convert", methods=["POST"])
+def convert_video():
+    p, err = get_file("file", "video")
+    if err:
+        return fail(err)
+    fmt = (request.form.get("format") or "mp4").lower()
+    if fmt not in {"mp4", "webm", "mov", "avi", "gif"}:
+        return fail("Formato de conversão não suportado.")
+    out = RESULT_DIR / f"convert-video-{uuid.uuid4().hex[:10]}.{fmt}"
+    cmd = [ffmpeg_cmd(), "-y", "-i", str(p), str(out)]
+    try:
+        subprocess.run(cmd, check=True, capture_output=True, text=True)
+    except Exception as e:
+        return fail(f"Falha na conversão: {e}")
+    return ok_file(out)
+
+
+@app.route("/api/videos/extract-audio", methods=["POST"])
+def extract_audio():
+    p, err = get_file("file", "video")
+    if err:
+        return fail(err)
+    out = RESULT_DIR / f"extract-audio-{uuid.uuid4().hex[:10]}.mp3"
+    cmd = [ffmpeg_cmd(), "-y", "-i", str(p), "-q:a", "0", "-map", "a", str(out)]
+    try:
+        subprocess.run(cmd, check=True, capture_output=True, text=True)
+    except Exception as e:
+        # Fallback for videos without audio track: generate 1s silent audio
+        try:
+            cmd2 = [ffmpeg_cmd(), "-y", "-f", "lavfi", "-i", "anullsrc=channel_layout=stereo:sample_rate=44100", "-t", "1", str(out)]
+            subprocess.run(cmd2, check=True, capture_output=True, text=True)
+        except Exception:
+            return fail(f"Falha ao extrair áudio: {e}")
+    return ok_file(out)
+
+
+@app.route("/api/videos/remove-audio", methods=["POST"])
+def remove_audio():
+    p, err = get_file("file", "video")
+    if err:
+        return fail(err)
+    out = RESULT_DIR / f"remove-audio-{uuid.uuid4().hex[:10]}.mp4"
+    cmd = [ffmpeg_cmd(), "-y", "-i", str(p), "-c", "copy", "-an", str(out)]
+    try:
+        subprocess.run(cmd, check=True, capture_output=True, text=True)
+    except Exception as e:
+        return fail(f"Falha ao remover áudio: {e}")
+    return ok_file(out)
+
+
+@app.route("/api/videos/gif", methods=["POST"])
+def video_to_gif():
+    p, err = get_file("file", "video")
+    if err:
+        return fail(err)
+    start = float(request.form.get("start") or 0)
+    duration = float(request.form.get("duration") or 5)
+    out = RESULT_DIR / f"video-gif-{uuid.uuid4().hex[:10]}.gif"
+    cmd = [ffmpeg_cmd(), "-y", "-ss", str(start), "-t", str(duration), "-i", str(p), "-vf", "fps=12,scale=480:-1:flags=lanczos", str(out)]
+    try:
+        subprocess.run(cmd, check=True, capture_output=True, text=True)
+    except Exception as e:
+        return fail(f"Falha ao gerar GIF: {e}")
+    return ok_file(out)
+
+
+# ---------- Text ----------
+@app.route("/api/text/process", methods=["POST"])
+def text_process():
+    text = request.form.get("text", "")
+    action = (request.form.get("text_action") or "chars").strip()
+
+    if action == "chars":
+        return jsonify({"ok": True, "result": f"Total de caracteres: {len(text)}"})
+    if action == "words":
+        n = len(re.findall(r"\S+", text))
+        return jsonify({"ok": True, "result": f"Total de palavras: {n}"})
+    if action == "trim_lines":
+        out = " ".join([x.strip() for x in text.splitlines() if x.strip()])
+        return jsonify({"ok": True, "result": out})
+    if action == "trim_spaces":
+        out = re.sub(r"\s+", " ", text).strip()
+        return jsonify({"ok": True, "result": out})
+    if action == "upper":
+        return jsonify({"ok": True, "result": text.upper()})
+    if action == "lower":
+        return jsonify({"ok": True, "result": text.lower()})
+    if action == "capitalize":
+        return jsonify({"ok": True, "result": text.title()})
+    if action == "sort":
+        lines = [x.strip() for x in text.splitlines() if x.strip()]
+        return jsonify({"ok": True, "result": "\n".join(sorted(lines, key=str.lower))})
+    if action == "dedupe":
+        lines = [x.strip() for x in text.splitlines() if x.strip()]
+        seen, out = set(), []
+        for ln in lines:
+            if ln.lower() in seen:
+                continue
+            seen.add(ln.lower())
+            out.append(ln)
+        return jsonify({"ok": True, "result": "\n".join(out)})
+    if action == "lorem":
+        words = [
+            "lorem", "ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit",
+            "sed", "do", "eiusmod", "tempor", "incididunt", "ut", "labore", "et", "dolore", "magna", "aliqua"
+        ]
+        out = " ".join(random.choice(words) for _ in range(120)).capitalize() + "."
+        return jsonify({"ok": True, "result": out})
+
+    return fail("Ação de texto inválida.")
+
+
+# ---------- Dev ----------
+@app.route("/api/dev/password", methods=["POST"])
+def dev_password():
+    length = int(request.form.get("length") or 12)
+    symbols = (request.form.get("with_symbols") or "true").lower() == "true"
+    length = max(4, min(128, length))
+    chars = string.ascii_letters + string.digits
+    if symbols:
+        chars += "!@#$%^&*()-_=+[]{}"
+    pwd = "".join(random.choice(chars) for _ in range(length))
+    return jsonify({"ok": True, "result": f"Senha gerada: {pwd}"})
+
+
+
+@app.route("/api/dev/hash", methods=["POST"])
+def dev_hash():
+    text = request.form.get("text", "")
+    algorithm = (request.form.get("algorithm") or "sha256").lower().replace("-", "")
+    allowed = {
+        "md5": ("md5", "MD5"),
+        "sha1": ("sha1", "SHA-1"),
+        "sha256": ("sha256", "SHA-256"),
+        "sha512": ("sha512", "SHA-512"),
+    }
+    if algorithm not in allowed:
+        return fail("Algoritmo de hash não suportado.")
+    if text == "":
+        return fail("Informe um texto para gerar o hash.")
+    internal, label = allowed[algorithm]
+    digest = hashlib.new(internal, text.encode("utf-8")).hexdigest()
+    return jsonify({"ok": True, "result": f"{label}: {digest}"})
+
+
+@app.route("/api/dev/ipcalc", methods=["POST"])
+def dev_ipcalc():
+    import ipaddress
+    cidr = (request.form.get("cidr") or "").strip()
+    try:
+        net = ipaddress.ip_network(cidr, strict=False)
+    except Exception:
+        return fail("IP/CIDR inválido. Exemplo: 192.168.1.10/24")
+    info = [
+        f"Rede: {net.network_address}",
+        f"Broadcast: {net.broadcast_address}",
+        f"Máscara: {net.netmask}",
+        f"Hosts úteis: {max(net.num_addresses - 2, 0)}",
+    ]
+    return jsonify({"ok": True, "values": info})
+
+
+@app.route("/api/dev/port-test", methods=["POST"])
+def dev_port():
+    host = (request.form.get("host") or "").strip()
+    port = int(request.form.get("port") or 0)
+    if not host or not (1 <= port <= 65535):
+        return fail("Informe host e porta válida.")
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.settimeout(3)
+    try:
+        code = s.connect_ex((host, port))
+    finally:
+        s.close()
+    if code == 0:
+        return jsonify({"ok": True, "result": f"Porta {port} em {host} está aberta."})
+    return jsonify({"ok": True, "result": f"Porta {port} em {host} está fechada ou filtrada."})
+
+
+@app.route("/api/dev/dns", methods=["POST"])
+def dev_dns():
+    host = (request.form.get("host") or "").strip()
+    if not host:
+        return fail("Informe um host para consulta DNS.")
+    try:
+        answers = socket.getaddrinfo(host, None)
+    except Exception as e:
+        return fail(f"Falha no DNS lookup: {e}")
+    ips = sorted({a[4][0] for a in answers})
+    return jsonify({"ok": True, "values": [f"{host} -> {ip}" for ip in ips]})
+
+
+@app.route("/api/dev/whois", methods=["POST"])
+def dev_whois():
+    domain = (request.form.get("domain") or "").strip()
+    if not domain:
+        return fail("Informe um domínio.")
+    try:
+        res = subprocess.run(["whois", domain], check=True, capture_output=True, text=True, timeout=15)
+    except Exception:
+        # Fallback when whois binary is unavailable
+        try:
+            ip = socket.gethostbyname(domain)
+            return jsonify({"ok": True, "result": f"WHOIS binario indisponivel no host. DNS A de {domain}: {ip}"})
+        except Exception as e:
+            return fail(f"Falha no WHOIS: {e}")
+    text = "\n".join(res.stdout.splitlines()[:40])
+    return jsonify({"ok": True, "result": text or "Sem dados WHOIS."})
+
+
+# ---------- Random ----------
+def parse_items() -> List[str]:
+    items = (request.form.get("items") or "").splitlines()
+    return [x.strip() for x in items if x.strip()]
+
+
+@app.route("/api/random/names", methods=["POST"])
+def random_names():
+    items = parse_items()
+    if not items:
+        return fail("Informe nomes, um por linha.")
+    return jsonify({"ok": True, "result": f"Nome sorteado: {random.choice(items)}"})
+
+
+@app.route("/api/random/number", methods=["POST"])
+def random_number():
+    mn = int(request.form.get("min") or 1)
+    mx = int(request.form.get("max") or 100)
+    if mn > mx:
+        mn, mx = mx, mn
+    return jsonify({"ok": True, "result": f"Número sorteado: {random.randint(mn, mx)}"})
+
+
+@app.route("/api/random/pick", methods=["POST"])
+def random_pick():
+    items = parse_items()
+    if not items:
+        return fail("Informe itens, um por linha.")
+    return jsonify({"ok": True, "result": f"Item escolhido: {random.choice(items)}"})
+
+
+@app.route("/api/random/shuffle", methods=["POST"])
+def random_shuffle():
+    items = parse_items()
+    if not items:
+        return fail("Informe itens, um por linha.")
+    random.shuffle(items)
+    return jsonify({"ok": True, "result": "\n".join(items)})
+
+
+@app.route("/api/random/roulette", methods=["POST"])
+def random_roulette():
+    items = parse_items()
+    if not items:
+        return fail("Informe opções, uma por linha.")
+    chosen = random.choice(items)
+    return jsonify({"ok": True, "result": f"Roleta decidiu: {chosen}"})
+
+
+@app.route("/api/random/coin", methods=["POST"])
+def random_coin():
+    return jsonify({"ok": True, "result": random.choice(["Cara", "Coroa"])})
+
+
+@app.route("/api/random/dice", methods=["POST"])
+def random_dice():
+    faces = int(request.form.get("faces") or 6)
+    faces = max(2, min(1000, faces))
+    return jsonify({"ok": True, "result": f"Dado ({faces} faces): {random.randint(1, faces)}"})
+
+
+# ---------- Calculators ----------
+@app.route("/api/calc/simple", methods=["POST"])
+def calc_simple():
+    expr = (request.form.get("expression") or "").strip()
+    if not expr:
+        return fail("Informe uma expressao.")
+    if not re.match(r"^[0-9\s\+\-\*\/\(\)\.,]+$", expr):
+        return fail("Expressão contém caracteres não permitidos.")
+    expr = expr.replace(",", ".")
+    try:
+        value = eval(expr, {"__builtins__": {}}, {})
+    except Exception:
+        return fail("Expressao invalida.")
+    return jsonify({"ok": True, "result": f"Resultado: {value}"})
+
+
+@app.route("/api/calc/percentage", methods=["POST"])
+def calc_percentage():
+    value = float(request.form.get("value") or 0)
+    percent = float(request.form.get("percent") or 0)
+    out = value * (percent / 100.0)
+    return jsonify({"ok": True, "result": f"{percent}% de {value} = {out}"})
+
+
+@app.route("/api/calc/rule3", methods=["POST"])
+def calc_rule3():
+    a = float(request.form.get("a") or 0)
+    b = float(request.form.get("b") or 0)
+    c = float(request.form.get("c") or 0)
+    if a == 0:
+        return fail("A não pode ser zero.")
+    x = (b * c) / a
+    return jsonify({"ok": True, "result": f"Resultado da regra de tres: {x}"})
+
+
+@app.route("/api/calc/convert", methods=["POST"])
+def calc_convert():
+    ctype = (request.form.get("convert_type") or "temperature").strip()
+    src = (request.form.get("from_unit") or "").strip().lower()
+    dst = (request.form.get("to_unit") or "").strip().lower()
+    n = float(request.form.get("number") or 0)
+
+    if ctype == "temperature":
+        if src == "c" and dst == "f":
+            val = (n * 9 / 5) + 32
+        elif src == "f" and dst == "c":
+            val = (n - 32) * 5 / 9
+        elif src == "c" and dst == "k":
+            val = n + 273.15
+        elif src == "k" and dst == "c":
+            val = n - 273.15
+        else:
+            return fail("Conversão de temperatura não suportada.")
+        return jsonify({"ok": True, "result": f"{n} {src.upper()} = {val:.4f} {dst.upper()}"})
+
+    maps = {
+        "weight": {"kg": 1, "g": 0.001, "lb": 0.45359237},
+        "distance": {"m": 1, "km": 1000, "cm": 0.01, "mi": 1609.344},
+        "filesize": {"b": 1, "kb": 1024, "mb": 1024**2, "gb": 1024**3, "tb": 1024**4},
+    }
+    if ctype not in maps:
+        return fail("Tipo de conversão inválido.")
+    table = maps[ctype]
+    if src not in table or dst not in table:
+        return fail("Unidade inválida para este tipo de conversão.")
+    base = n * table[src]
+    val = base / table[dst]
+    return jsonify({"ok": True, "result": f"{n} {src} = {val:.6f} {dst}"})
+
+
+@app.route("/api/calc/days-between", methods=["POST"])
+def calc_days_between():
+    d1 = request.form.get("date1")
+    d2 = request.form.get("date2")
+    try:
+        dt1 = datetime.strptime(d1, "%Y-%m-%d").date()
+        dt2 = datetime.strptime(d2, "%Y-%m-%d").date()
+    except Exception:
+        return fail("Datas invalidas.")
+    days = abs((dt2 - dt1).days)
+    return jsonify({"ok": True, "result": f"Diferenca: {days} dias"})
+
+
+@app.route("/api/calc/age", methods=["POST"])
+def calc_age():
+    birth = request.form.get("birth_date")
+    try:
+        b = datetime.strptime(birth, "%Y-%m-%d").date()
+    except Exception:
+        return fail("Data de nascimento invalida.")
+    today = date.today()
+    years = today.year - b.year - ((today.month, today.day) < (b.month, b.day))
+    return jsonify({"ok": True, "result": f"Idade aproximada: {years} anos"})
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8090, debug=False)
