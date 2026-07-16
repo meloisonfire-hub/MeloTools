@@ -3,12 +3,17 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+*.bak
+*.bak-*
+*.bak_*
+app.py.bak*
 *.log
 uploads/
 results/
 tmp/
 models/
 archive/
+maintenance/codex-*-backup-*/
 .ssh/
 .cache/
 .config/
