@@ -10,9 +10,11 @@ Group=melotools
 WorkingDirectory=/srv/melotools
 EnvironmentFile=-/etc/melotools.env
 Environment="PATH=/srv/melotools/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+Environment="HOME=/var/lib/melotools"
 Environment="MELOTOOLS_RUNTIME_DIR=/var/lib/melotools"
 Environment="MELOTOOLS_UPLOAD_DIR=/var/lib/melotools/uploads"
 Environment="MELOTOOLS_RESULT_DIR=/var/lib/melotools/results"
+Environment="PLAYWRIGHT_BROWSERS_PATH=/var/lib/melotools/ms-playwright"
 ExecStart=/srv/melotools/venv/bin/gunicorn --worker-class gthread --workers 2 --threads 4 --timeout 900 --graceful-timeout 60 --keep-alive 10 --max-requests 300 --max-requests-jitter 50 --bind 127.0.0.1:8090 app:app
 ExecReload=/bin/kill -s HUP $MAINPID
 Restart=always
