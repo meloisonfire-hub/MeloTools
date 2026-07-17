@@ -21,7 +21,7 @@ python3 -m venv "$VENV_DIR"
 "$VENV_DIR/bin/pip" install -r "$APP_DIR/requirements.txt"
 
 if [ ! -f "$SECRET_FILE" ]; then
-  openssl rand -hex 48 -out "$SECRET_FILE"
+  openssl rand -out "$SECRET_FILE" -hex 48
   chown root:root "$SECRET_FILE"
   chmod 0600 "$SECRET_FILE"
 fi
