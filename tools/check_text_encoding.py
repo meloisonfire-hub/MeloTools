@@ -2,43 +2,48 @@
 from pathlib import Path
 import sys
 
+
 TARGETS = [
-    Path('/srv/melotools/templates/index.html'),
-    Path('/srv/melotools/static/js/melotools-extra-tabs.js'),
-    Path('/srv/melotools/app.py'),
+    Path("templates/index.html"),
+    Path("static/js/melotools-extra-tabs.js"),
+    Path("app.py"),
 ]
 
-ALLOW = [
-    'oembed?url=',
-    'jpe?g',
-    '(\?|$)',
-]
+MOJIBAKE_TOKENS = (
+    "\ufffd",
+    "Ãƒ",
+    "Ã‚",
+    "â€“",
+    "â€”",
+    "â€œ",
+    "â€",
+    "ðŸ",
+)
+
 
 def suspicious(line: str) -> bool:
-    if any(a in line for a in ALLOW):
-        return False
-    if '?' in line:
-        return True
-    if '??' in line:
-        return True
-    # Heuristic for common mojibake in PT-BR words
-    for token in ['Voc?', 'est?', 'Respira??o', 'Classifica??o', 'avalia??o', 'sa?de', '?ndice', '?timo', 'h?bitos', 'saud?veis']:
-        if token in line:
-            return True
-    return False
+    return any(token in line for token in MOJIBAKE_TOKENS)
 
-issues = []
-for fp in TARGETS:
-    if not fp.exists():
-        continue
-    for i, line in enumerate(fp.read_text(encoding='utf-8', errors='replace').splitlines(), 1):
-        if suspicious(line):
-            issues.append((str(fp), i, line[:220]))
 
-if issues:
-    print('FOUND_ISSUES', len(issues))
-    for fp, ln, txt in issues[:200]:
-        print(f'{fp}:{ln}: {txt}')
-    sys.exit(2)
+def main() -> int:
+    issues = []
+    for file_path in TARGETS:
+        if not file_path.exists():
+            continue
+        text = file_path.read_text(encoding="utf-8", errors="strict")
+        for line_number, line in enumerate(text.splitlines(), 1):
+            if suspicious(line):
+                issues.append((str(file_path), line_number))
 
-print('OK_NO_ENCODING_ISSUES')
+    if issues:
+        print(f"FOUND_ENCODING_ISSUES={len(issues)}")
+        for file_path, line_number in issues[:200]:
+            print(f"{file_path}:{line_number}")
+        return 2
+
+    print("OK_NO_ENCODING_ISSUES")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

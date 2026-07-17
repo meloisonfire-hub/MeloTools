@@ -1,6 +1,7 @@
 import io
 import hashlib
 import json
+import logging
 import math
 import os
 import random
@@ -11,7 +12,6 @@ import string
 import subprocess
 import sys
 import tempfile
-import threading
 import uuid
 import urllib.parse
 import urllib.request
@@ -19,8 +19,10 @@ import zipfile
 from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Iterable, List, Optional
+from concurrent.futures import ThreadPoolExecutor
+from threading import BoundedSemaphore
 
-from flask import Flask, abort, jsonify, render_template, request, send_from_directory, url_for
+from flask import Flask, abort, g, jsonify, render_template, request, send_from_directory, url_for
 from PIL import Image, ImageOps, ImageFilter, ImageDraw
 import segno
 from pypdf import PdfReader, PdfWriter
@@ -28,6 +30,11 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 import imageio_ffmpeg
 from markupsafe import Markup
+from itsdangerous import BadSignature, SignatureExpired, URLSafeTimedSerializer
+from werkzeug.middleware.proxy_fix import ProxyFix
+
+from melotools.extensions import limiter
+from melotools.security import UnsafeTarget, resolve_public_host, safe_calculate, validate_public_url
 
 BASE_DIR = Path(__file__).resolve().parent
 UPLOAD_DIR = BASE_DIR / "uploads"
@@ -61,10 +68,56 @@ def make_dir(path: Path) -> Path:
         return fallback
 
 
+def open_image_checked(path: Path):
+    image = Image.open(path)
+    width, height = image.size
+    if width <= 0 or height <= 0 or width * height > app.config.get("MAX_IMAGE_PIXELS", 40_000_000):
+        image.close()
+        raise ValueError("Imagem acima do limite de resolução permitido.")
+    return image
+
+
 for d in (UPLOAD_DIR, RESULT_DIR, TMP_DIR, JOB_DIR, DOWNLOAD_CACHE_DIR, FORMAT_CACHE_DIR):
     make_dir(d)
 
 app = Flask(__name__)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
+app.config["SECRET_KEY"] = os.getenv("MELOTOOLS_SECRET_KEY", "development-key-change-in-production")
+app.config["MAX_CONTENT_LENGTH"] = int(os.getenv("MELOTOOLS_MAX_UPLOAD_MB", "250")) * 1024 * 1024
+app.config["RESULT_TOKEN_MAX_AGE"] = int(os.getenv("MELOTOOLS_RESULT_TTL_SECONDS", "86400"))
+app.config["MAX_IMAGE_PIXELS"] = int(os.getenv("MELOTOOLS_MAX_IMAGE_PIXELS", "40000000"))
+app.config["MAX_PDF_PAGES"] = int(os.getenv("MELOTOOLS_MAX_PDF_PAGES", "500"))
+Image.MAX_IMAGE_PIXELS = app.config["MAX_IMAGE_PIXELS"]
+limiter.init_app(app)
+
+logging.basicConfig(
+    level=os.getenv("MELOTOOLS_LOG_LEVEL", "INFO"),
+    format="%(asctime)s %(levelname)s %(name)s %(message)s",
+)
+logger = logging.getLogger("melotools")
+
+if os.getenv("SENTRY_DSN"):
+    import sentry_sdk
+
+    sentry_sdk.init(
+        dsn=os.environ["SENTRY_DSN"],
+        traces_sample_rate=float(os.getenv("SENTRY_TRACES_SAMPLE_RATE", "0.05")),
+        send_default_pii=False,
+    )
+
+RESULT_SIGNER = URLSafeTimedSerializer(app.config["SECRET_KEY"], salt="melotools-result")
+HEAVY_JOB_LIMIT = max(1, int(os.getenv("MELOTOOLS_MAX_CONCURRENT_JOBS", "2")))
+HEAVY_JOB_SEMAPHORE = BoundedSemaphore(HEAVY_JOB_LIMIT)
+JOB_EXECUTOR = ThreadPoolExecutor(max_workers=HEAVY_JOB_LIMIT, thread_name_prefix="melotools-job")
+HEAVY_PREFIXES = ("/api/online/", "/api/image/", "/api/documents/", "/api/videos/")
+ALLOWED_MEDIA_HOSTS = tuple(
+    item.strip().lower()
+    for item in os.getenv(
+        "MELOTOOLS_ALLOWED_MEDIA_HOSTS",
+        "youtube.com,youtu.be,instagram.com,threads.net,threads.com,tiktok.com,vimeo.com,x.com,twitter.com,facebook.com",
+    ).split(",")
+    if item.strip()
+)
 
 
 def ensure_runtime_dirs() -> None:
@@ -75,8 +128,57 @@ def ensure_runtime_dirs() -> None:
 @app.before_request
 def ensure_runtime_dirs_before_request():
     ensure_runtime_dirs()
+    if request.method == "POST" and request.path.startswith(HEAVY_PREFIXES):
+        if not HEAVY_JOB_SEMAPHORE.acquire(blocking=False):
+            return fail("Servidor ocupado. Aguarde a conclusão dos processamentos atuais e tente novamente.", 503)
+        g.heavy_job_slot = True
+    if request.method == "POST" and request.path.startswith("/api/online/"):
+        raw_url = (request.form.get("url") or "").strip()
+        if raw_url:
+            if raw_url.startswith("mock://"):
+                if not (app.testing or os.getenv("MELOTOOLS_ENABLE_MOCK") == "1"):
+                    return fail("Protocolo de URL não permitido.")
+            else:
+                try:
+                    validated = validate_public_url(normalize_online_url(raw_url))
+                    hostname = (urllib.parse.urlsplit(validated).hostname or "").lower()
+                    if not any(hostname == allowed or hostname.endswith(f".{allowed}") for allowed in ALLOWED_MEDIA_HOSTS):
+                        return fail("Este provedor de mídia não é permitido.")
+                    g.validated_online_url = validated
+                except UnsafeTarget as exc:
+                    return fail(str(exc))
 
-app.config["MAX_CONTENT_LENGTH"] = int(os.getenv("MELOTOOLS_MAX_UPLOAD_MB", "6144")) * 1024 * 1024
+
+@app.after_request
+def finalize_response(response):
+    if getattr(g, "heavy_job_slot", False):
+        HEAVY_JOB_SEMAPHORE.release()
+        g.heavy_job_slot = False
+    response.headers.setdefault("X-Content-Type-Options", "nosniff")
+    response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+    response.headers.setdefault("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
+    response.headers.setdefault("X-Frame-Options", "SAMEORIGIN")
+    if request.path.startswith(("/results/", "/preview/")):
+        response.headers["Cache-Control"] = "private, no-store, max-age=0"
+    return response
+
+
+@app.teardown_request
+def release_heavy_job_slot(_error=None):
+    if getattr(g, "heavy_job_slot", False):
+        HEAVY_JOB_SEMAPHORE.release()
+        g.heavy_job_slot = False
+
+
+@app.errorhandler(413)
+def upload_too_large(_error):
+    return fail(f"Arquivo acima do limite de {app.config['MAX_CONTENT_LENGTH'] // (1024 * 1024)} MB.", 413)
+
+
+@app.errorhandler(ValueError)
+def invalid_value(error):
+    logger.info("Invalid request value on %s: %s", request.path, error)
+    return fail("Parâmetro ou arquivo inválido.")
 
 ALLOWED = {
     "pdf": {".pdf"},
@@ -97,7 +199,27 @@ def fail(msg: str, code: int = 400):
 
 
 def ok_file(path: Path):
-    return jsonify({"ok": True, "filename": path.name, "url": f"/results/{path.name}"})
+    token = RESULT_SIGNER.dumps({"filename": path.name})
+    return jsonify({
+        "ok": True,
+        "filename": path.name,
+        "url": f"/results/{path.name}?token={urllib.parse.quote(token)}",
+        "expires_in_seconds": app.config["RESULT_TOKEN_MAX_AGE"],
+    })
+
+
+def validate_result_token(filename: str) -> None:
+    if app.testing:
+        return
+    token = request.args.get("token", "")
+    if not token:
+        abort(403)
+    try:
+        payload = RESULT_SIGNER.loads(token, max_age=app.config["RESULT_TOKEN_MAX_AGE"])
+    except (BadSignature, SignatureExpired):
+        abort(403)
+    if payload.get("filename") != filename:
+        abort(403)
 
 
 def job_path(job_id: str) -> Path:
@@ -849,7 +971,7 @@ def ocr_instagram_images(url: str) -> Path:
         try:
             download_url_to_file(media_url, image_path, referer=url, accept="image/avif,image/webp,image/apng,image/*,*/*;q=0.8")
             temp_files.append(image_path)
-            with Image.open(image_path) as img:
+            with open_image_checked(image_path) as img:
                 text = pytesseract.image_to_string(ImageOps.exif_transpose(img), lang=os.getenv("MELOTOOLS_OCR_LANG", "por+eng"))
             text = (text or "").strip()
             if text:
@@ -939,6 +1061,21 @@ def download_threads_media(url: str, mode: str, bitrate: str = "192") -> Path:
 
 
 
+def validate_uploaded_content(path: Path, kind: str) -> None:
+    extension = path.suffix.lower()
+    if extension == ".pdf":
+        with path.open("rb") as handle:
+            if handle.read(5) != b"%PDF-":
+                raise ValueError("Invalid PDF signature")
+    if extension in ALLOWED["image"]:
+        with open_image_checked(path) as image:
+            image.verify()
+    if extension in {".docx", ".odt"} and not zipfile.is_zipfile(path):
+        raise ValueError("Invalid document container")
+    if kind == "video" and path.stat().st_size < 12:
+        raise ValueError("Invalid video")
+
+
 def get_file(field: str, kind: str):
     ensure_runtime_dirs()
     f = request.files.get(field)
@@ -953,6 +1090,11 @@ def get_file(field: str, kind: str):
         return None, f"Extensão não permitida para {kind}: {ext}"
     out = UPLOAD_DIR / f"{uid(f.filename)}{ext}"
     f.save(out)
+    try:
+        validate_uploaded_content(out, kind)
+    except Exception:
+        out.unlink(missing_ok=True)
+        return None, "O conteúdo do arquivo não corresponde ao formato informado."
     return out, None
 
 
@@ -965,6 +1107,8 @@ def get_files(field: str, kind: str):
         files = list(request.files.values())
     if not files:
         return None, "Nenhum arquivo enviado."
+    if len(files) > int(os.getenv("MELOTOOLS_MAX_FILES_PER_REQUEST", "20")):
+        return None, "Quantidade de arquivos acima do limite permitido."
     out = []
     for f in files:
         if not f or not f.filename:
@@ -974,6 +1118,13 @@ def get_files(field: str, kind: str):
             return None, f"Extensão não permitida: {ext}"
         p = UPLOAD_DIR / f"{uid(f.filename)}{ext}"
         f.save(p)
+        try:
+            validate_uploaded_content(p, kind)
+        except Exception:
+            p.unlink(missing_ok=True)
+            for saved in out:
+                saved.unlink(missing_ok=True)
+            return None, "Um dos arquivos não corresponde ao formato informado."
         out.append(p)
     if not out:
         return None, "Nenhum arquivo válido recebido."
@@ -1030,13 +1181,29 @@ def health():
     return jsonify({"ok": True, "app": "MeloTools"})
 
 
+@app.route("/ready")
+def ready():
+    ffmpeg_path = ffmpeg_cmd()
+    ytdlp_path = ytdlp_cmd()
+    checks = {
+        "runtime_writable": os.access(TMP_DIR, os.W_OK),
+        "results_writable": os.access(RESULT_DIR, os.W_OK),
+        "ffmpeg": Path(ffmpeg_path).exists() or bool(shutil.which(ffmpeg_path)),
+        "yt_dlp": Path(ytdlp_path).exists() or bool(shutil.which(ytdlp_path)),
+    }
+    status = 200 if all(checks.values()) else 503
+    return jsonify({"ok": status == 200, "checks": checks}), status
+
+
 @app.route("/results/<path:filename>")
 def results(filename):
+    validate_result_token(filename)
     return send_from_directory(RESULT_DIR, filename, as_attachment=True)
 
 
 @app.route("/preview/<path:filename>")
 def preview(filename):
+    validate_result_token(filename)
     return send_from_directory(RESULT_DIR, filename, as_attachment=False)
 
 
@@ -1058,7 +1225,7 @@ def site_favicon():
 @app.route("/api/online/formats", methods=["POST"])
 def online_formats():
     raw_url = (request.form.get("url") or "").strip()
-    url = normalize_online_url(raw_url)
+    url = getattr(g, "validated_online_url", None) or normalize_online_url(raw_url)
     if not url:
         return fail("Informe a URL do v\u00eddeo.")
     if url.startswith("mock://"):
@@ -1096,7 +1263,7 @@ def online_download_job():
         "bitrate": (request.form.get("bitrate") or "best").strip().lower(),
     }
     write_job(job_id, {"ok": True, "status": "queued", "message": "Processando..."})
-    threading.Thread(target=run_online_download_job, args=(job_id, form_data), daemon=True).start()
+    JOB_EXECUTOR.submit(run_online_download_job, job_id, form_data)
     return jsonify({"ok": True, "job_id": job_id, "status": "queued"})
 
 
@@ -1108,7 +1275,7 @@ def job_status(job_id):
 @app.route("/api/online/download", methods=["POST"])
 def online_download():
     raw_url = (request.form.get("url") or "").strip()
-    url = normalize_online_url(raw_url)
+    url = getattr(g, "validated_online_url", None) or normalize_online_url(raw_url)
     mode = (request.form.get("mode") or "video").strip().lower()
     if mode == "mp3":
         mode = "audio"
@@ -1464,7 +1631,7 @@ def qr_read():
     except Exception:
         return fail("Leitor QR indisponivel no servidor (pyzbar/zbar).")
 
-    img = Image.open(p)
+    img = open_image_checked(p)
     decoded = decode(img)
     if not decoded:
         return fail("Nenhum QR Code encontrado na imagem.")
@@ -1478,7 +1645,7 @@ def remove_bg():
     p, err = get_file("file", "image")
     if err:
         return fail(err)
-    img = Image.open(p).convert("RGBA")
+    img = open_image_checked(p).convert("RGBA")
     pix = img.load()
     w, h = img.size
     threshold = int(request.form.get("strength") or 35)
@@ -1504,7 +1671,7 @@ def resize_image():
     h = int(request.form.get("height") or 0)
     if w <= 0 or h <= 0:
         return fail("Informe largura e altura válidas.")
-    img = Image.open(p)
+    img = open_image_checked(p)
     out = RESULT_DIR / f"resize-{uuid.uuid4().hex[:10]}.png"
     img.resize((w, h), Image.Resampling.LANCZOS).save(out)
     return ok_file(out)
@@ -1517,7 +1684,7 @@ def compress_image():
         return fail(err)
     quality = int(request.form.get("quality") or 75)
     quality = max(20, min(95, quality))
-    img = Image.open(p).convert("RGB")
+    img = open_image_checked(p).convert("RGB")
     out = RESULT_DIR / f"compress-{uuid.uuid4().hex[:10]}.jpg"
     img.save(out, "JPEG", quality=quality, optimize=True)
     return ok_file(out)
@@ -1531,7 +1698,7 @@ def convert_image():
     fmt = (request.form.get("format") or "png").lower()
     if fmt not in {"png", "jpg", "jpeg", "webp", "bmp", "tiff"}:
         return fail("Formato de destino não suportado.")
-    img = Image.open(p)
+    img = open_image_checked(p)
     if fmt in {"jpg", "jpeg"}:
         img = img.convert("RGB")
     out = RESULT_DIR / f"convert-{uuid.uuid4().hex[:10]}.{fmt}"
@@ -1550,7 +1717,7 @@ def crop_image():
     h = int(request.form.get("height") or 0)
     if w <= 0 or h <= 0:
         return fail("Informe largura/altura válidas para corte.")
-    img = Image.open(p)
+    img = open_image_checked(p)
     out = RESULT_DIR / f"crop-{uuid.uuid4().hex[:10]}.png"
     img.crop((x, y, x + w, y + h)).save(out)
     return ok_file(out)
@@ -1562,7 +1729,7 @@ def rotate_image():
     if err:
         return fail(err)
     deg = float(request.form.get("degrees") or 90)
-    img = Image.open(p)
+    img = open_image_checked(p)
     out = RESULT_DIR / f"rotate-{uuid.uuid4().hex[:10]}.png"
     img.rotate(-deg, expand=True).save(out)
     return ok_file(out)
@@ -1573,7 +1740,7 @@ def favicon():
     p, err = get_file("file", "image")
     if err:
         return fail(err)
-    img = Image.open(p).convert("RGBA")
+    img = open_image_checked(p).convert("RGBA")
     out = RESULT_DIR / f"favicon-{uuid.uuid4().hex[:10]}.ico"
     img.save(out, format="ICO", sizes=[(16, 16), (32, 32), (48, 48), (64, 64)])
     return ok_file(out)
@@ -1585,7 +1752,7 @@ def pixelate_image():
     if err:
         return fail(err)
     strength = int(request.form.get("strength") or 12)
-    img = Image.open(p).convert("RGB")
+    img = open_image_checked(p).convert("RGB")
     w, h = img.size
     small = img.resize((max(1, w // strength), max(1, h // strength)), Image.Resampling.NEAREST)
     out_img = small.resize((w, h), Image.Resampling.NEAREST)
@@ -1597,13 +1764,16 @@ def pixelate_image():
 # ---------- Documents ----------
 def read_pdf(file_path: Path):
     try:
-        return PdfReader(str(file_path))
+        reader = PdfReader(str(file_path))
+        if len(reader.pages) > app.config["MAX_PDF_PAGES"]:
+            raise RuntimeError(f"PDF acima do limite de {app.config['MAX_PDF_PAGES']} páginas.")
+        return reader
     except Exception as e:
         raise RuntimeError(f"PDF inválido: {e}")
 
 
 def add_image_to_pdf_writer(writer: PdfWriter, file_path: Path) -> None:
-    img = Image.open(file_path)
+    img = open_image_checked(file_path)
     if img.mode in {"RGBA", "LA"} or (img.mode == "P" and "transparency" in img.info):
         rgba = img.convert("RGBA")
         bg = Image.new("RGB", rgba.size, "white")
@@ -1623,6 +1793,7 @@ def ocr_pdf():
     p, err = get_file("file", "pdf")
     if err:
         return fail(err)
+    read_pdf(p)
     # First choice: image-based OCR to searchable PDF
     try:
         from pdf2image import convert_from_path
@@ -1731,13 +1902,37 @@ def compress_pdf():
     p, err = get_file("file", "pdf")
     if err:
         return fail(err)
+    out = RESULT_DIR / f"compress-pdf-{uuid.uuid4().hex[:10]}.pdf"
+    quality = (request.form.get("quality") or "ebook").strip().lower()
+    preset = {"screen": "/screen", "ebook": "/ebook", "printer": "/printer"}.get(quality, "/ebook")
+    ghostscript = shutil.which("gs")
+    if ghostscript:
+        try:
+            run_cmd([
+                ghostscript,
+                "-sDEVICE=pdfwrite",
+                "-dCompatibilityLevel=1.6",
+                f"-dPDFSETTINGS={preset}",
+                "-dNOPAUSE",
+                "-dQUIET",
+                "-dBATCH",
+                f"-sOutputFile={out}",
+                str(p),
+            ])
+            return ok_file(out)
+        except Exception as exc:
+            logger.warning("Ghostscript compression failed: %s", exc)
+
     reader = read_pdf(p)
     writer = PdfWriter()
-    for pg in reader.pages:
-        writer.add_page(pg)
-    out = RESULT_DIR / f"compress-pdf-{uuid.uuid4().hex[:10]}.pdf"
-    with out.open("wb") as f:
-        writer.write(f)
+    for page in reader.pages:
+        try:
+            page.compress_content_streams()
+        except Exception:
+            pass
+        writer.add_page(page)
+    with out.open("wb") as handle:
+        writer.write(handle)
     return ok_file(out)
 
 
@@ -1776,14 +1971,7 @@ def word_to_pdf():
     except Exception:
         pass
 
-    # Safe fallback when libreoffice is unavailable
-    c = canvas.Canvas(str(out), pagesize=letter)
-    c.setFont("Helvetica", 11)
-    c.drawString(72, 750, "Conversão Word -> PDF (fallback).")
-    c.drawString(72, 730, f"Arquivo original: {p.name}")
-    c.drawString(72, 710, "Instale LibreOffice no servidor para conversão fiel de layout.")
-    c.save()
-    return ok_file(out)
+    return fail("Não foi possível converter este documento com o LibreOffice.", 503)
 
 
 @app.route("/api/documents/image-to-pdf", methods=["POST"])
@@ -1791,7 +1979,7 @@ def image_to_pdf():
     files, err = get_files("files", "image")
     if err:
         return fail(err)
-    images = [Image.open(f).convert("RGB") for f in files]
+    images = [open_image_checked(f).convert("RGB") for f in files]
     out = RESULT_DIR / f"image-to-pdf-{uuid.uuid4().hex[:10]}.pdf"
     images[0].save(out, save_all=True, append_images=images[1:])
     return ok_file(out)
@@ -2209,10 +2397,16 @@ def dev_port():
     port = int(request.form.get("port") or 0)
     if not host or not (1 <= port <= 65535):
         return fail("Informe host e porta válida.")
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        target = resolve_public_host(host, port)
+    except UnsafeTarget as exc:
+        return fail(str(exc))
+    address = target.addresses[0]
+    family = socket.AF_INET6 if ":" in address else socket.AF_INET
+    s = socket.socket(family, socket.SOCK_STREAM)
     s.settimeout(3)
     try:
-        code = s.connect_ex((host, port))
+        code = s.connect_ex((address, port))
     finally:
         s.close()
     if code == 0:
@@ -2226,18 +2420,22 @@ def dev_dns():
     if not host:
         return fail("Informe um host para consulta DNS.")
     try:
-        answers = socket.getaddrinfo(host, None)
-    except Exception as e:
+        target = resolve_public_host(host)
+    except (UnsafeTarget, Exception) as e:
         return fail(f"Falha no DNS lookup: {e}")
-    ips = sorted({a[4][0] for a in answers})
+    ips = list(target.addresses)
     return jsonify({"ok": True, "values": [f"{host} -> {ip}" for ip in ips]})
 
 
 @app.route("/api/dev/whois", methods=["POST"])
 def dev_whois():
     domain = (request.form.get("domain") or "").strip()
-    if not domain:
+    if not re.fullmatch(r"(?=.{1,253}$)(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}", domain):
         return fail("Informe um domínio.")
+    try:
+        resolve_public_host(domain)
+    except UnsafeTarget as exc:
+        return fail(str(exc))
     try:
         res = subprocess.run(["whois", domain], check=True, capture_output=True, text=True, timeout=15)
     except Exception:
@@ -2319,12 +2517,10 @@ def calc_simple():
     expr = (request.form.get("expression") or "").strip()
     if not expr:
         return fail("Informe uma expressão.")
-    if not re.match(r"^[0-9\s\+\-\*\/\(\)\.,]+$", expr):
-        return fail("Expressão contém caracteres não permitidos.")
     expr = expr.replace(",", ".")
     try:
-        value = eval(expr, {"__builtins__": {}}, {})
-    except Exception:
+        value = safe_calculate(expr)
+    except (SyntaxError, ValueError, ZeroDivisionError, OverflowError):
         return fail("Expressão inválida.")
     return jsonify({"ok": True, "result": f"Resultado: {value}"})
 
@@ -2599,11 +2795,12 @@ def calc_cycle_women():
     })
 
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8090, debug=False)
-
 @app.route("/sw.js")
 def service_worker():
     response = send_from_directory(BASE_DIR / "static", "sw.js", max_age=0)
     response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
     return response
+
+
+if __name__ == "__main__":
+    app.run(host="127.0.0.1", port=8090, debug=False)

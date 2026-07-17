@@ -1,0 +1,2 @@
+"""Shared MeloTools application helpers."""
+

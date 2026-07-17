@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'melotools-';
-const CACHE_NAME = 'melotools-pwa-20260605';
+const CACHE_NAME = 'melotools-static-20260716-1';
 
 self.addEventListener('install', (event) => {
   event.waitUntil(self.skipWaiting());
@@ -20,6 +20,18 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const request = event.request;
   if (request.method !== 'GET') return;
-  if (!request.url.startsWith(self.location.origin)) return;
-  event.respondWith(fetch(request));
+
+  const url = new URL(request.url);
+  if (url.origin !== self.location.origin || !url.pathname.startsWith('/static/')) return;
+
+  event.respondWith(
+    caches.open(CACHE_NAME).then(async (cache) => {
+      const cached = await cache.match(request);
+      const fresh = fetch(request).then((response) => {
+        if (response.ok) cache.put(request, response.clone());
+        return response;
+      });
+      return cached || fresh;
+    })
+  );
 });

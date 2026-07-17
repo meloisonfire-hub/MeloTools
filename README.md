@@ -4,6 +4,7 @@ Painel web Flask com interface em abas no estilo do OCR-Web, incluindo utilidade
 
 ## Estrutura
 - app.py
+- melotools/ (segurança e extensões compartilhadas)
 - templates/index.html
 - static/css/style.css
 - static/js/app.js
@@ -28,6 +29,16 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
+## Segurança e operação
+
+- O Gunicorn deve escutar apenas em `127.0.0.1:8090`.
+- Segredos ficam em `/etc/melotools.env`, nunca no repositório.
+- Resultados usam URLs assinadas e expiram em 24 horas por padrão.
+- Uploads e processamentos pesados possuem limites configuráveis.
+- A limpeza é executada pelo timer `melotools-cleanup.timer`.
+
+Consulte `docs/SECURITY-OPERATIONS.md` antes de implantar ou atualizar o servidor.
+
 ## Executar localmente
 ```bash
 python app.py
@@ -36,5 +47,5 @@ Acesse: `http://127.0.0.1:8090`
 
 ## Executar com Gunicorn
 ```bash
-gunicorn -w 2 -b 0.0.0.0:8090 app:app
+gunicorn -w 2 -b 127.0.0.1:8090 app:app
 ```

@@ -66,13 +66,19 @@ def check(name, resp):
     ok = resp.status_code == 200 and j.get('ok') is True
     results.append((name, ok, resp.status_code, j))
 
+
+def check_status(name, resp, expected_status):
+    j = resp.json or {}
+    ok = resp.status_code == expected_status
+    results.append((name, ok, resp.status_code, j))
+
 # Health
 check('health', c.get('/health'))
 
 # Online videos
 check('online-download', c.post('/api/online/download', data={'url':'mock://video','mode':'video','quality':'720'}))
 check('online-clip', c.post('/api/online/clip', data={'url':'mock://video','start':'0','end':'1'}))
-check('instagram-tools', c.post('/api/online/instagram-tools', data={'url':'https://instagram.com/p/abc/'}))
+check_status('instagram-invalid-post', c.post('/api/online/instagram-tools', data={'url':'https://instagram.com/p/abc/'}), 400)
 check('online-link-qr', c.post('/api/links/qr-generate', data={'text':'https://example.com/v'}))
 
 # Image
@@ -93,7 +99,7 @@ check('docs-rotate', post_file(c, '/api/documents/rotate-pdf', {'file': mk_pdf()
 check('docs-split', post_file(c, '/api/documents/split-pdf', {'file': mk_pdf(), 'pages_per_file':'1'}))
 check('docs-compress', post_file(c, '/api/documents/compress-pdf', {'file': mk_pdf(), 'quality':'screen'}))
 check('docs-protect', post_file(c, '/api/documents/protect-pdf', {'file': mk_pdf(), 'password':'1234'}))
-check('docs-word-to-pdf', post_file(c, '/api/documents/word-to-pdf', {'file': mk_docx()}))
+check_status('docs-reject-invalid-docx', post_file(c, '/api/documents/word-to-pdf', {'file': mk_docx()}), 400)
 check('docs-image-to-pdf', post_file(c, '/api/documents/image-to-pdf', {'files': [mk_png('i1.png'), mk_png('i2.png')]}))
 check('docs-pdf-to-image', post_file(c, '/api/documents/pdf-to-image', {'file': mk_pdf()}))
 check('docs-number-pages', post_file(c, '/api/documents/number-pages', {'file': mk_pdf(), 'position':'footer-right'}))
@@ -126,8 +132,8 @@ check('links-qr-read', post_file(c, '/api/links/qr-read', {'file': mk_qr_png()})
 check('dev-password', c.post('/api/dev/password', data={'length':'16','with_symbols':'true'}))
 check('dev-hash', c.post('/api/dev/hash', data={'text':'MeloTools','algorithm':'sha256'}))
 check('dev-ipcalc', c.post('/api/dev/ipcalc', data={'cidr':'10.0.0.10/24'}))
-check('dev-port-test', c.post('/api/dev/port-test', data={'host':'127.0.0.1','port':'80'}))
-check('dev-dns', c.post('/api/dev/dns', data={'host':'localhost'}))
+check_status('dev-port-blocks-private-target', c.post('/api/dev/port-test', data={'host':'127.0.0.1','port':'80'}), 400)
+check_status('dev-dns-blocks-private-target', c.post('/api/dev/dns', data={'host':'localhost'}), 400)
 check('dev-whois', c.post('/api/dev/whois', data={'domain':'example.com'}))
 
 # Random

@@ -1,13 +1,45 @@
-﻿[Unit]
-Description=MeloTools
-After=network.target
+[Unit]
+Description=MeloTools web application
+After=network-online.target
+Wants=network-online.target
 
 [Service]
-User=root
+Type=simple
+User=melotools
+Group=melotools
 WorkingDirectory=/srv/melotools
-Environment="PATH=/srv/melotools/venv/bin"
-ExecStart=/srv/melotools/venv/bin/gunicorn -w 2 -b 0.0.0.0:8090 app:app
+EnvironmentFile=-/etc/melotools.env
+Environment="PATH=/srv/melotools/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+Environment="MELOTOOLS_RUNTIME_DIR=/var/lib/melotools"
+ExecStart=/srv/melotools/venv/bin/gunicorn --worker-class gthread --workers 2 --threads 4 --timeout 900 --graceful-timeout 60 --keep-alive 10 --max-requests 300 --max-requests-jitter 50 --bind 127.0.0.1:8090 app:app
+ExecReload=/bin/kill -s HUP $MAINPID
 Restart=always
+RestartSec=3
+TimeoutStopSec=75
+
+StateDirectory=melotools
+StateDirectoryMode=0750
+UMask=0027
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=full
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+ProtectClock=true
+ProtectHostname=true
+RestrictSUIDSGID=true
+LockPersonality=true
+RestrictRealtime=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+CapabilityBoundingSet=
+AmbientCapabilities=
+ReadWritePaths=/var/lib/melotools /srv/melotools/uploads /srv/melotools/results
+LimitNOFILE=65535
+TasksMax=128
+MemoryMax=800M
 
 [Install]
 WantedBy=multi-user.target

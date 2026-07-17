@@ -517,6 +517,37 @@ html[data-ui-theme="saas"] .cookie-footer-link{ z-index:1000 !important; }
 html[data-ui-theme="saas"] .cookie-notice,
 html[data-ui-theme="saas"] .cookie-panel-card{ border:1px solid var(--stroke) !important; border-radius:24px !important; background:#fff !important; box-shadow:0 24px 70px rgba(23,50,74,.15) !important; }
 html[data-ui-theme="saas"] .hidden{ display:none !important; }
+html[data-ui-theme="saas"] .privacy-status{
+  width:min(760px,100%) !important;
+  margin:10px auto 16px !important;
+  padding:10px 14px !important;
+  border:1px solid #cfe0f2 !important;
+  border-radius:14px !important;
+  background:#f4f9ff !important;
+  color:#48647e !important;
+  font-size:13px !important;
+  line-height:1.45 !important;
+  text-align:center !important;
+}
+html[data-ui-theme="saas"] .tool-shortcuts{ width:min(900px,100%) !important; margin:0 auto 14px !important; text-align:center !important; }
+html[data-ui-theme="saas"] .tool-favorite-toggle,
+html[data-ui-theme="saas"] .tool-shortcut-chip{
+  min-height:34px !important;
+  padding:6px 12px !important;
+  border:1px solid #cfdeed !important;
+  border-radius:999px !important;
+  background:#fff !important;
+  color:#38546d !important;
+  font-size:12.5px !important;
+  font-weight:700 !important;
+}
+html[data-ui-theme="saas"] .tool-favorite-toggle[aria-pressed="true"]{ background:#fff7d6 !important; border-color:#f0cf62 !important; }
+html[data-ui-theme="saas"] .tool-shortcut-row{ display:flex !important; flex-wrap:wrap !important; justify-content:center !important; gap:7px !important; margin-top:8px !important; }
+html[data-ui-theme="saas"] .tool-shortcut-row::before{ width:100% !important; color:#6b8094 !important; font-size:11px !important; font-weight:800 !important; text-transform:uppercase !important; letter-spacing:.06em !important; }
+html[data-ui-theme="saas"] #favoriteTools::before{ content:"Favoritos"; }
+html[data-ui-theme="saas"] #recentTools::before{ content:"Recentes"; }
+html[data-ui-theme="saas"] .tool-shortcut-row.hidden{ display:none !important; }
+html[data-ui-theme="saas"] .section{ content-visibility:auto; contain-intrinsic-size:700px; }
 html[data-ui-theme="saas"] :where(button,a,input,select,textarea,[role="button"]):focus-visible{ outline:none !important; box-shadow:var(--focus-ring),0 0 0 1px rgba(47,111,232,.32) !important; }
 
 html[data-ui-theme="saas"] .xp-dialog{ border:1px solid var(--stroke) !important; border-radius:24px !important; background:#fff !important; box-shadow:0 28px 90px rgba(24,50,74,.22) !important; overflow:hidden !important; color:var(--fg) !important; }
@@ -527,6 +558,7 @@ html[data-ui-theme="saas"] .saas-share-link{ border:1px solid var(--stroke) !imp
 @media (prefers-reduced-motion:reduce){ html[data-ui-theme="saas"] *, html[data-ui-theme="saas"] *::before, html[data-ui-theme="saas"] *::after{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; } }
 
 @media (max-width:760px){
+  html[data-ui-theme="saas"] body{ font-size:14px !important; }
   html[data-ui-theme="saas"] .header,
   html[data-ui-theme="saas"] .wrap{ width:calc(100% - 20px) !important; }
   html[data-ui-theme="saas"] .header{ position:relative !important; top:auto !important; margin-top:10px !important; }
@@ -543,6 +575,8 @@ html[data-ui-theme="saas"] .saas-share-link{ border:1px solid var(--stroke) !imp
   html[data-ui-theme="saas"] .main-tabs,
   html[data-ui-theme="saas"] .tool-tabs{ justify-content:flex-start !important; flex-wrap:nowrap !important; overflow-x:auto !important; -webkit-overflow-scrolling:touch !important; scrollbar-width:none !important; }
   html[data-ui-theme="saas"] .main-tabs{ width:100% !important; }
+  html[data-ui-theme="saas"] .main-tabs .tabbtn{ flex:0 0 auto !important; width:auto !important; min-width:128px !important; }
+  html[data-ui-theme="saas"] .tool-tabs .tabbtn{ flex:0 0 auto !important; min-width:150px !important; font-size:13.5px !important; }
   html[data-ui-theme="saas"] .main-tabs::-webkit-scrollbar,
   html[data-ui-theme="saas"] .tool-tabs::-webkit-scrollbar{ display:none !important; }
   html[data-ui-theme="saas"] textarea,

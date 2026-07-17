@@ -40,9 +40,9 @@ body.mt-ui-ready #mtToolsSkeleton{
   }
 })();
 </script>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/app.min.css', v='mobilefix-20260530-001') }}">
-<link id="themeStylesXp" rel="stylesheet" href="{{ url_for('static', filename='css/xp-luna.min.css', v='xp-luna-20260505-theme-003') }}">
-<link id="themeStylesSaas" rel="stylesheet" href="{{ url_for('static', filename='css/theme-saas.min.css', v='theme-switch-20260505-023') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/app.css', v='20260716-hardening1') }}">
+<link id="themeStylesXp" rel="stylesheet" href="{{ url_for('static', filename='css/xp-luna.css', v='20260716-hardening1') }}">
+<link id="themeStylesSaas" rel="stylesheet" href="{{ url_for('static', filename='css/theme-saas.css', v='20260716-hardening1') }}">
 
 <style id="theme-critical-fixes">
 html[data-ui-theme="saas"] .tool-tabs .tabbtn,
@@ -124,6 +124,7 @@ html[data-ui-theme="xp"] .tool-tabs .tabbtn.is-hidden{
 </div>
 <meta name="google-adsense-account" content="ca-pub-9686460887343092">
 <main class="wrap" id="mainContent" tabindex="-1">
+  <h1 class="sr-only">MeloTools — ferramentas online gratuitas</h1>
   <div class="card">
     <div class="xp-window-titlebar" aria-hidden="true">
       <div class="xp-window-title"><span class="xp-window-icon"></span><span>MeloTools - Painel de Ferramentas</span></div>
@@ -145,6 +146,14 @@ html[data-ui-theme="xp"] .tool-tabs .tabbtn.is-hidden{
         </button>
         <input id="toolSearchInput" type="search" placeholder="Pesquisar" autocomplete="off" spellcheck="false">
       </div>
+    </div>
+    <p class="privacy-status" role="note">
+      Seus arquivos recebem links temporários e são apagados automaticamente. Não compartilhamos o conteúdo enviado.
+    </p>
+    <div class="tool-shortcuts" aria-label="Atalhos pessoais">
+      <button type="button" class="tool-favorite-toggle" id="favoriteCurrentToolBtn" aria-pressed="false">☆ Favoritar ferramenta atual</button>
+      <div class="tool-shortcut-row hidden" id="favoriteTools" aria-label="Ferramentas favoritas"></div>
+      <div class="tool-shortcut-row hidden" id="recentTools" aria-label="Ferramentas usadas recentemente"></div>
     </div>
     <nav class="nav-shell" aria-label="Navega&ccedil;&atilde;o de ferramentas">
       <div class="main-tabs tabs" id="mainTabs">
@@ -1839,7 +1848,7 @@ window.APP_CONFIG = {
   analyticsMeasurementId: {{ analytics_measurement_id|tojson }}
 };
 </script>
-<script src="{{ url_for('static', filename='js/i18n.min.js', v='footerfix-20260517-1') }}"></script>
+<script src="{{ url_for('static', filename='js/i18n.js', v='20260716-hardening1') }}"></script>
 <!-- app.js legado desativado para evitar conflito com melotools-extra-tabs.js -->
 <script src="{{ url_for('static', filename='js/xp-effects.js', v='20260517-logo-msg3') }}"></script>
 
@@ -1858,8 +1867,9 @@ if ('serviceWorker' in navigator) {
 
 <div class="toast-container" id="toastContainer"></div>
 
-  <link rel="stylesheet" href="/static/css/melotools-extra-tabs.min.css?v=20260605-upload-unify2">
-<script src="/static/js/melotools-extra-tabs.min.js?v=20260605-upload-unify2"></script>
+  <link rel="stylesheet" href="/static/css/melotools-extra-tabs.css?v=20260716-hardening1">
+<script src="/static/js/melotools-extra-tabs.js?v=20260716-hardening1"></script>
+<script src="/static/js/tool-shortcuts.js?v=20260716-hardening1"></script>
 <script id="theme-switch-script">
 (function(){
   function applyTheme(theme){

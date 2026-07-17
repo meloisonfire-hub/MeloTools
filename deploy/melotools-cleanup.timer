@@ -1,0 +1,13 @@
+[Unit]
+Description=Clean MeloTools runtime files hourly
+
+[Timer]
+OnBootSec=10min
+OnUnitActiveSec=1h
+RandomizedDelaySec=5min
+Persistent=true
+Unit=melotools-cleanup.service
+
+[Install]
+WantedBy=timers.target
+
