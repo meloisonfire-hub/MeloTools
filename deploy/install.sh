@@ -6,6 +6,9 @@ VENV_DIR="$APP_DIR/venv"
 ENV_FILE=/etc/melotools.env
 SECRET_FILE=/etc/melotools.secret
 
+apt-get update
+apt-get install -y python3 python3-venv python3-pip ffmpeg ghostscript libreoffice poppler-utils tesseract-ocr tesseract-ocr-por libzbar0 zbar-tools whois nginx ufw
+
 if [ -n "${MELOTOOLS_PYTHON_BIN:-}" ]; then
   PYTHON_BIN="$MELOTOOLS_PYTHON_BIN"
 elif command -v python3.9 >/dev/null 2>&1; then
@@ -13,9 +16,6 @@ elif command -v python3.9 >/dev/null 2>&1; then
 else
   PYTHON_BIN=$(command -v python3)
 fi
-
-apt-get update
-apt-get install -y python3 python3-venv python3-pip ffmpeg ghostscript libreoffice poppler-utils tesseract-ocr tesseract-ocr-por libzbar0 zbar-tools whois nginx ufw
 
 if ! id melotools >/dev/null 2>&1; then
   useradd --system --home-dir "$APP_DIR" --shell /usr/sbin/nologin melotools
