@@ -37,8 +37,8 @@ from melotools.extensions import limiter
 from melotools.security import UnsafeTarget, resolve_public_host, safe_calculate, validate_public_url
 
 BASE_DIR = Path(__file__).resolve().parent
-UPLOAD_DIR = BASE_DIR / "uploads"
-RESULT_DIR = BASE_DIR / "results"
+UPLOAD_DIR = Path(os.getenv("MELOTOOLS_UPLOAD_DIR", str(BASE_DIR / "uploads")))
+RESULT_DIR = Path(os.getenv("MELOTOOLS_RESULT_DIR", str(BASE_DIR / "results")))
 
 # Runtime files must live somewhere the service user can recreate while the app is running.
 # /srv/melotools is intentionally not writable by the app user, so temp/cache/job files use

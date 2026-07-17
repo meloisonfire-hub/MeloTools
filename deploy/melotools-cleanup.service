@@ -7,10 +7,11 @@ User=melotools
 Group=melotools
 Environment="MELOTOOLS_APP_DIR=/srv/melotools"
 Environment="MELOTOOLS_RUNTIME_DIR=/var/lib/melotools"
+Environment="MELOTOOLS_UPLOAD_DIR=/var/lib/melotools/uploads"
+Environment="MELOTOOLS_RESULT_DIR=/var/lib/melotools/results"
 ExecStart=/srv/melotools/deploy/cleanup_artifacts.sh
 NoNewPrivileges=true
 PrivateTmp=true
 ProtectHome=true
 ProtectSystem=full
-ReadWritePaths=/var/lib/melotools /srv/melotools/uploads /srv/melotools/results
-
+ReadWritePaths=/var/lib/melotools

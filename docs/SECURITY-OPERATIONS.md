@@ -3,7 +3,7 @@
 ## Implantação
 
 1. Use um checkout limpo da branch `main` em `/srv/melotools`.
-2. Mantenha uploads, resultados, runtime e cookies fora do Git.
+2. Mantenha uploads, resultados, runtime e cookies fora do Git. Os dados persistentes ficam em `/var/lib/melotools`.
 3. Execute `sudo deploy/install.sh` na primeira instalação.
 4. Nas atualizações seguintes, execute `sudo deploy/deploy-release.sh main`.
 5. Valide `/ready`, Nginx e logs antes de encerrar a janela de manutenção.
@@ -46,4 +46,3 @@ curl --fail http://127.0.0.1:8090/ready
 sudo systemd-analyze security melotools.service
 sudo ufw status verbose
 ```
-

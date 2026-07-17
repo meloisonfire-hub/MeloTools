@@ -12,8 +12,8 @@ if ! id melotools >/dev/null 2>&1; then
   useradd --system --home-dir "$APP_DIR" --shell /usr/sbin/nologin melotools
 fi
 
-install -d -o melotools -g melotools -m 2770 "$APP_DIR/uploads" "$APP_DIR/results"
 install -d -o melotools -g melotools -m 0750 /var/lib/melotools
+install -d -o melotools -g melotools -m 2770 /var/lib/melotools/uploads /var/lib/melotools/results /var/lib/melotools/tmp
 
 python3 -m venv "$VENV_DIR"
 "$VENV_DIR/bin/pip" install --upgrade pip
