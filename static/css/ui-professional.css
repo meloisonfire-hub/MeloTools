@@ -65,6 +65,69 @@ html[data-ui-theme="xp"] #toolSearchMeta:empty {
   display: none !important;
 }
 
+.tool-launcher[hidden] {
+  display: none !important;
+}
+
+html[data-ui-theme="xp"] #toolSearchShortcut,
+html[data-ui-theme="xp"] .tool-launcher-footer {
+  display: none !important;
+}
+
+html[data-ui-theme="xp"] #toolLauncher.tool-launcher {
+  position: absolute !important;
+  z-index: 1200 !important;
+  top: calc(100% + 3px) !important;
+  left: 0 !important;
+  width: 100% !important;
+  padding: 4px !important;
+  border: 2px solid !important;
+  border-color: #fff #404040 #404040 #fff !important;
+  background: #ece9d8 !important;
+  color: #000 !important;
+  font: 11px Tahoma, sans-serif !important;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, .25) !important;
+}
+
+html[data-ui-theme="xp"] .tool-launcher-head {
+  display: flex !important;
+  justify-content: space-between !important;
+  padding: 3px 4px 5px !important;
+}
+
+html[data-ui-theme="xp"] .tool-launcher-option {
+  display: grid !important;
+  grid-template-columns: 32px 1fr auto !important;
+  gap: 6px !important;
+  align-items: center !important;
+  min-height: 38px !important;
+  padding: 3px 5px !important;
+  cursor: default !important;
+}
+
+html[data-ui-theme="xp"] .tool-launcher-option.is-highlighted {
+  background: #316ac5 !important;
+  color: #fff !important;
+}
+
+html[data-ui-theme="xp"] .tool-launcher-badge {
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  text-align: center !important;
+}
+
+html[data-ui-theme="xp"] .tool-launcher-copy {
+  display: grid !important;
+}
+
+html[data-ui-theme="xp"] .tool-launcher-copy small {
+  opacity: .78 !important;
+}
+
+html[data-ui-theme="xp"] .tool-launcher-action {
+  font-size: 10px !important;
+}
+
 html[data-ui-theme="saas"] {
   --ui-ink: #17324a;
   --ui-muted: #60758a;
@@ -174,32 +237,131 @@ html[data-ui-theme="saas"] .workspace-intro p {
 }
 
 html[data-ui-theme="saas"] #toolSearchWrap.tool-search {
-  width: min(680px, 100%) !important;
-  margin: 0 auto 8px !important;
+  position: relative !important;
+  z-index: 80 !important;
+  width: min(720px, 100%) !important;
+  margin: 0 auto 10px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html[data-ui-theme="saas"] #toolSearchWrap .tool-search-label {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
 }
 
 html[data-ui-theme="saas"] #toolSearchWrap .tool-search-row {
-  min-height: 48px !important;
-  gap: 7px !important;
-  padding: 5px 7px !important;
-  border: 1px solid #becddd !important;
-  background: #fff !important;
-  box-shadow: 0 6px 20px rgba(23, 50, 74, .07) !important;
+  position: relative !important;
+  z-index: 2 !important;
+  min-height: 56px !important;
+  gap: 8px !important;
+  padding: 7px 9px !important;
+  border: 1px solid #b9c9da !important;
+  border-radius: 17px !important;
+  background: rgba(255, 255, 255, .98) !important;
+  box-shadow: 0 10px 30px rgba(23, 50, 74, .09), inset 0 1px 0 #fff !important;
+  transition: border-color .16s ease, box-shadow .16s ease, transform .16s ease !important;
 }
 
 html[data-ui-theme="saas"] #toolSearchWrap .tool-search-row:focus-within {
-  border-color: #7da3ed !important;
-  box-shadow: 0 0 0 4px rgba(37, 99, 235, .1), 0 7px 22px rgba(23, 50, 74, .08) !important;
+  border-color: #6f99ed !important;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, .11), 0 14px 34px rgba(23, 50, 74, .12) !important;
+}
+
+html[data-ui-theme="saas"] #toolSearchWrap.is-open .tool-search-row {
+  border-color: #6f99ed !important;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, .11), 0 14px 34px rgba(23, 50, 74, .12) !important;
+}
+
+html[data-ui-theme="saas"] #toolSearchWrap .tool-search-submit {
+  display: inline-grid !important;
+  width: 40px !important;
+  min-width: 40px !important;
+  height: 40px !important;
+  padding: 0 !important;
+  place-items: center !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  background: linear-gradient(145deg, #edf4ff, #e4edff) !important;
+  color: var(--ui-blue) !important;
+  box-shadow: inset 0 0 0 1px rgba(37, 99, 235, .08) !important;
+  cursor: pointer !important;
+}
+
+html[data-ui-theme="saas"] #toolSearchWrap .tool-search-submit svg {
+  width: 20px !important;
+  height: 20px !important;
+  fill: currentColor !important;
 }
 
 html[data-ui-theme="saas"] #toolSearchWrap #toolSearchInput {
+  width: 100% !important;
   min-width: 0 !important;
-  font-size: 15px !important;
+  min-height: 40px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  color: var(--ui-ink) !important;
+  font-size: 15.5px !important;
+  font-weight: 620 !important;
+  box-shadow: none !important;
+  appearance: none !important;
+}
+
+html[data-ui-theme="saas"] #toolSearchWrap #toolSearchInput::placeholder {
+  color: #75899c !important;
+  font-weight: 520 !important;
+  opacity: 1 !important;
+}
+
+html[data-ui-theme="saas"] #toolSearchWrap #toolSearchInput::-webkit-search-cancel-button {
+  display: none !important;
+}
+
+html[data-ui-theme="saas"] .tool-search-shortcut {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 3px !important;
+  color: #718398 !important;
+  white-space: nowrap !important;
+}
+
+html[data-ui-theme="saas"] .tool-search-shortcut kbd,
+html[data-ui-theme="saas"] .tool-launcher-footer kbd {
+  display: inline-grid !important;
+  min-width: 23px !important;
+  height: 23px !important;
+  padding: 0 5px !important;
+  place-items: center !important;
+  border: 1px solid #d4dfeb !important;
+  border-bottom-color: #bccbd9 !important;
+  border-radius: 6px !important;
+  background: #f7f9fc !important;
+  color: #526b81 !important;
+  font: 700 10px/1 ui-sans-serif, system-ui, sans-serif !important;
+  box-shadow: 0 1px 0 #e0e8f0 !important;
+}
+
+html[data-ui-theme="saas"] #toolSearchWrap.has-query .tool-search-shortcut {
+  display: none !important;
 }
 
 html[data-ui-theme="saas"] #toolSearchClear:not([hidden]) {
   display: inline-flex !important;
+  width: auto !important;
+  min-width: 0 !important;
   min-height: 34px !important;
+  flex: 0 0 auto !important;
   align-items: center !important;
   padding: 0 12px !important;
   border: 0 !important;
@@ -216,17 +378,194 @@ html[data-ui-theme="saas"] #toolSearchClear[hidden] {
 }
 
 html[data-ui-theme="saas"] #toolSearchMeta.tool-search-meta {
-  display: block !important;
+  display: inline !important;
   min-height: 0 !important;
-  margin: 5px 13px 0 !important;
-  color: var(--ui-muted) !important;
-  font-size: 11.5px !important;
-  line-height: 1.35 !important;
-  text-align: left !important;
+  margin: 0 !important;
+  color: #718398 !important;
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: .035em !important;
+  line-height: 1.2 !important;
+  text-align: right !important;
+  text-transform: uppercase !important;
 }
 
 html[data-ui-theme="saas"] #toolSearchMeta:empty {
   display: none !important;
+}
+
+html[data-ui-theme="saas"] #toolLauncher.tool-launcher {
+  position: absolute !important;
+  z-index: 1 !important;
+  top: calc(100% + 9px) !important;
+  left: 0 !important;
+  width: 100% !important;
+  padding: 9px !important;
+  border: 1px solid rgba(162, 180, 199, .72) !important;
+  border-radius: 19px !important;
+  background: rgba(255, 255, 255, .98) !important;
+  box-shadow: 0 24px 60px rgba(22, 48, 72, .2), 0 6px 16px rgba(22, 48, 72, .08) !important;
+  animation: tool-launcher-in .15s ease-out both !important;
+}
+
+@keyframes tool-launcher-in {
+  from { opacity: 0; transform: translateY(-5px) scale(.99); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+html[data-ui-theme="saas"] .tool-launcher-head {
+  display: flex !important;
+  min-height: 30px !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  padding: 3px 8px 7px !important;
+}
+
+html[data-ui-theme="saas"] .tool-launcher-head strong {
+  color: #496278 !important;
+  font-size: 10.5px !important;
+  font-weight: 850 !important;
+  letter-spacing: .075em !important;
+  text-transform: uppercase !important;
+}
+
+html[data-ui-theme="saas"] .tool-launcher-results {
+  display: grid !important;
+  gap: 3px !important;
+  max-height: min(420px, 52vh) !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: #c2cfdd transparent !important;
+}
+
+html[data-ui-theme="saas"] .tool-launcher-option {
+  display: grid !important;
+  grid-template-columns: 40px minmax(0, 1fr) auto !important;
+  gap: 11px !important;
+  min-height: 52px !important;
+  align-items: center !important;
+  padding: 6px 9px !important;
+  border: 1px solid transparent !important;
+  border-radius: 12px !important;
+  color: #28435b !important;
+  cursor: pointer !important;
+  transition: background-color .12s ease, border-color .12s ease, color .12s ease !important;
+}
+
+html[data-ui-theme="saas"] .tool-launcher-option.is-highlighted {
+  border-color: #c9daf8 !important;
+  background: linear-gradient(100deg, #edf4ff, #f5f8ff) !important;
+  color: var(--ui-blue-dark) !important;
+}
+
+html[data-ui-theme="saas"] .tool-launcher-badge {
+  display: inline-grid !important;
+  width: 40px !important;
+  height: 40px !important;
+  place-items: center !important;
+  border: 1px solid #d5e1ed !important;
+  border-radius: 11px !important;
+  background: #f2f6fa !important;
+  color: #547087 !important;
+  font-size: 9px !important;
+  font-weight: 900 !important;
+  letter-spacing: -.01em !important;
+}
+
+html[data-ui-theme="saas"] .tool-launcher-option[data-category="pdf"] .tool-launcher-badge { background: #fff1f2 !important; border-color: #fecdd3 !important; color: #be123c !important; }
+html[data-ui-theme="saas"] .tool-launcher-option[data-category="image"] .tool-launcher-badge { background: #f3e8ff !important; border-color: #e9d5ff !important; color: #7e22ce !important; }
+html[data-ui-theme="saas"] .tool-launcher-option[data-category="dev"] .tool-launcher-badge { background: #ecfeff !important; border-color: #bae6fd !important; color: #0369a1 !important; }
+html[data-ui-theme="saas"] .tool-launcher-option[data-category="links"] .tool-launcher-badge { background: #ecfdf5 !important; border-color: #bbf7d0 !important; color: #15803d !important; }
+html[data-ui-theme="saas"] .tool-launcher-option[data-category="video"] .tool-launcher-badge,
+html[data-ui-theme="saas"] .tool-launcher-option[data-category="media"] .tool-launcher-badge { background: #fff7ed !important; border-color: #fed7aa !important; color: #c2410c !important; }
+
+html[data-ui-theme="saas"] .tool-launcher-copy {
+  display: grid !important;
+  min-width: 0 !important;
+  gap: 2px !important;
+}
+
+html[data-ui-theme="saas"] .tool-launcher-copy strong {
+  overflow: hidden !important;
+  color: inherit !important;
+  font-size: 13px !important;
+  font-weight: 780 !important;
+  line-height: 1.25 !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+html[data-ui-theme="saas"] .tool-launcher-copy small {
+  overflow: hidden !important;
+  color: #718398 !important;
+  font-size: 10.5px !important;
+  line-height: 1.25 !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+html[data-ui-theme="saas"] .tool-launcher-action {
+  padding-right: 3px !important;
+  color: #7d8ea0 !important;
+  font-size: 10.5px !important;
+  font-weight: 720 !important;
+  opacity: 0 !important;
+  transform: translateX(-3px) !important;
+  transition: opacity .12s ease, transform .12s ease !important;
+}
+
+html[data-ui-theme="saas"] .tool-launcher-option.is-highlighted .tool-launcher-action {
+  opacity: 1 !important;
+  transform: translateX(0) !important;
+}
+
+html[data-ui-theme="saas"] .tool-launcher-empty {
+  display: grid !important;
+  min-height: 112px !important;
+  place-content: center !important;
+  gap: 5px !important;
+  padding: 20px !important;
+  border-radius: 12px !important;
+  background: #f7f9fc !important;
+  color: #61778b !important;
+  text-align: center !important;
+}
+
+html[data-ui-theme="saas"] .tool-launcher-empty strong {
+  color: #38536b !important;
+  font-size: 13px !important;
+}
+
+html[data-ui-theme="saas"] .tool-launcher-empty span {
+  font-size: 11.5px !important;
+}
+
+html[data-ui-theme="saas"] .tool-launcher-footer {
+  display: flex !important;
+  min-height: 32px !important;
+  align-items: flex-end !important;
+  justify-content: flex-end !important;
+  gap: 14px !important;
+  padding: 7px 7px 1px !important;
+  border-top: 1px solid #edf1f5 !important;
+  color: #7b8d9e !important;
+  font-size: 9.5px !important;
+}
+
+html[data-ui-theme="saas"] .tool-launcher-footer span {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 3px !important;
+}
+
+html[data-ui-theme="saas"] .tool-launcher-footer kbd {
+  min-width: 19px !important;
+  height: 19px !important;
+  padding: 0 4px !important;
+  border-radius: 5px !important;
+  font-size: 9px !important;
 }
 
 html[data-ui-theme="saas"] .privacy-status {
@@ -472,7 +811,51 @@ html[data-ui-theme="saas"] .section.show .mt-card-form small {
   }
 
   html[data-ui-theme="saas"] #toolSearchWrap .tool-search-row {
-    min-height: 46px !important;
+    min-height: 50px !important;
+    padding: 5px 7px !important;
+    border-radius: 15px !important;
+  }
+
+  html[data-ui-theme="saas"] #toolSearchWrap .tool-search-submit {
+    width: 38px !important;
+    min-width: 38px !important;
+    height: 38px !important;
+  }
+
+  html[data-ui-theme="saas"] #toolSearchWrap #toolSearchInput {
+    min-height: 38px !important;
+    font-size: 14px !important;
+  }
+
+  html[data-ui-theme="saas"] .tool-search-shortcut {
+    display: none !important;
+  }
+
+  html[data-ui-theme="saas"] #toolLauncher.tool-launcher {
+    top: calc(100% + 7px) !important;
+    padding: 7px !important;
+    border-radius: 16px !important;
+  }
+
+  html[data-ui-theme="saas"] .tool-launcher-option {
+    grid-template-columns: 36px minmax(0, 1fr) auto !important;
+    gap: 9px !important;
+    min-height: 48px !important;
+    padding: 5px 7px !important;
+  }
+
+  html[data-ui-theme="saas"] .tool-launcher-badge {
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 10px !important;
+  }
+
+  html[data-ui-theme="saas"] .tool-launcher-action {
+    display: none !important;
+  }
+
+  html[data-ui-theme="saas"] .tool-launcher-footer {
+    display: none !important;
   }
 
   html[data-ui-theme="saas"] .privacy-status {
@@ -522,5 +905,9 @@ html[data-ui-theme="saas"] .section.show .mt-card-form small {
   html[data-ui-theme="saas"] .main-tabs,
   html[data-ui-theme="saas"] .tool-tabs {
     scroll-behavior: auto !important;
+  }
+
+  html[data-ui-theme="saas"] #toolLauncher.tool-launcher {
+    animation: none !important;
   }
 }

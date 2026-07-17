@@ -13,32 +13,72 @@
     var searchInput = byId('toolSearchInput');
     var searchClear = byId('toolSearchClear');
     var searchMeta = byId('toolSearchMeta');
+    var launcher = byId('toolLauncher');
+    var launcherTitle = byId('toolLauncherTitle');
+    var launcherResults = byId('toolSearchResults');
+    var searchShortcut = byId('toolSearchShortcut');
     var searchQuery = '';
+    var launcherItems = [];
+    var highlightedIndex = -1;
     var categoryClasses = mainTabs.map(function(tab){ return 'mt-category-' + tab.dataset.category; });
+    var toolAliases = {
+      'tab-youtube': 'baixar download youtube audio mp3 link online',
+      'tab-youtube-clip': 'recortar trecho baixar download youtube clipe',
+      'tab-instagram-tools': 'baixar download instagram reels stories threads tiktok foto video',
+      'tab-removebg': 'apagar tirar remover fundo background foto imagem transparente',
+      'tab-compress': 'diminuir reduzir tamanho arquivo pdf leve',
+      'tab-word2pdf': 'converter word doc docx documento pdf',
+      'tab-img-compress': 'diminuir reduzir tamanho foto imagem leve',
+      'tab-img-resize': 'mudar tamanho dimensao foto imagem',
+      'tab-video-extract-audio': 'converter video mp3 extrair audio som',
+      'tab-dev-password': 'criar gerar senha segura password',
+      'tab-dev-json': 'validar organizar embelezar formatar json',
+      'tab-links-qr-generate': 'criar gerar qr code qrcode link pix',
+      'tab-links-qr-read': 'ler escanear abrir qr code qrcode',
+      'tab-calc-percent': 'calcular desconto acrescimo porcentagem percentual'
+    };
 
     function normalize(text){
       return String(text || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
     }
 
+    function rawToolLabel(tab){
+      return String(tab.textContent || tab.getAttribute('data-i18n') || tab.dataset.tab || '').trim();
+    }
+
     function toolLabel(tab){
-      return normalize(tab.textContent || tab.getAttribute('data-i18n') || tab.dataset.tab || '');
+      return normalize(rawToolLabel(tab));
     }
 
     var categoryLabelMap = {};
-    mainTabs.forEach(function(tab){
-      categoryLabelMap[tab.dataset.category] = normalize(tab.textContent || tab.dataset.category || '');
-    });
+    var categorySearchMap = {};
+    function refreshCategoryLabels(){
+      mainTabs.forEach(function(tab){
+        var label = String(tab.textContent || tab.dataset.category || '').trim();
+        categoryLabelMap[tab.dataset.category] = label;
+        categorySearchMap[tab.dataset.category] = normalize(label);
+      });
+    }
+    refreshCategoryLabels();
 
-    function toolMatch(tab){
-      if(!searchQuery) return true;
-      var txt = toolLabel(tab);
-      var cat = categoryLabelMap[tab.dataset.category] || '';
-      return txt.indexOf(searchQuery) !== -1 || cat.indexOf(searchQuery) !== -1;
+    function toolSearchScore(tab){
+      var label = toolLabel(tab);
+      var category = categorySearchMap[tab.dataset.category] || '';
+      var aliases = normalize(toolAliases[tab.dataset.tab] || tab.getAttribute('data-search') || '');
+      var haystack = label + ' ' + category + ' ' + aliases;
+      var tokens = searchQuery.split(/\s+/).filter(Boolean);
+      if(!tokens.every(function(token){ return haystack.indexOf(token) !== -1; })) return Infinity;
+      if(label === searchQuery) return 0;
+      if(label.indexOf(searchQuery) === 0) return 10 + label.length;
+      if(label.indexOf(searchQuery) !== -1) return 30 + label.indexOf(searchQuery);
+      if(aliases.indexOf(searchQuery) !== -1) return 60 + aliases.indexOf(searchQuery);
+      if(category.indexOf(searchQuery) !== -1) return 90 + category.indexOf(searchQuery);
+      return 120 + tokens.reduce(function(total, token){ return total + haystack.indexOf(token); }, 0);
     }
 
     function toolTabsFor(category){
       return toolTabs.filter(function(tab){
-        return tab.dataset.category === category && toolMatch(tab);
+        return tab.dataset.category === category;
       });
     }
 
@@ -48,18 +88,6 @@
         if(toolTabsFor(category).length) return category;
       }
       return null;
-    }
-
-    function updateSearchMeta(){
-      if(!searchMeta) return;
-      if(!searchQuery){
-        searchMeta.textContent = '';
-        return;
-      }
-      var count = toolTabs.filter(toolMatch).length;
-      searchMeta.textContent = count === 0
-        ? 'Nenhuma ferramenta encontrada.'
-        : count + (count === 1 ? ' ferramenta encontrada.' : ' ferramentas encontradas.');
     }
 
     function centerActiveTab(tab){
@@ -99,7 +127,7 @@
 
     function applyToolVisibility(category){
       toolTabs.forEach(function(tab){
-        var hidden = tab.dataset.category !== category || !toolMatch(tab);
+        var hidden = tab.dataset.category !== category;
         tab.classList.toggle('is-hidden', hidden);
       });
     }
@@ -128,52 +156,241 @@
       var next = visible.find(function(tab){ return tab.dataset.tab === saved; }) || visible[0];
       try { localStorage.setItem('melotools-active-category', category); } catch(_e) {}
       if(next) activateTool(next.dataset.tab);
-      updateSearchMeta();
+    }
+
+    function readSavedTools(key){
+      try {
+        var value = JSON.parse(localStorage.getItem(key) || '[]');
+        return Array.isArray(value) ? value : [];
+      } catch(_e) {
+        return [];
+      }
+    }
+
+    function quickLauncherItems(){
+      var items = [];
+      var seen = {};
+      function add(tabId, reason){
+        if(!tabId || seen[tabId] || items.length >= 7) return;
+        var tab = toolTabs.find(function(candidate){ return candidate.dataset.tab === tabId; });
+        if(!tab) return;
+        seen[tabId] = true;
+        items.push({ tab: tab, reason: reason });
+      }
+      readSavedTools('melotools-favorite-tools-v1').slice(0, 3).forEach(function(item){ add(item.id, 'Favorito'); });
+      readSavedTools('melotools-recent-tools-v1').slice(0, 3).forEach(function(item){ add(item.id, 'Recente'); });
+      var activeCategory = mainTabs.find(function(tab){ return tab.classList.contains('active'); });
+      if(activeCategory){
+        toolTabsFor(activeCategory.dataset.category).slice(0, 4).forEach(function(tab){ add(tab.dataset.tab, 'Nesta categoria'); });
+      }
+      ['tab-compress', 'tab-removebg', 'tab-dev-json', 'tab-links-qr-generate'].forEach(function(tabId){ add(tabId, 'Sugestão'); });
+      return items;
+    }
+
+    function matchingLauncherItems(){
+      return toolTabs.map(function(tab){ return { tab: tab, score: toolSearchScore(tab), reason: '' }; })
+        .filter(function(item){ return item.score !== Infinity; })
+        .sort(function(a, b){
+          if(a.score !== b.score) return a.score - b.score;
+          return rawToolLabel(a.tab).localeCompare(rawToolLabel(b.tab), 'pt-BR');
+        });
+    }
+
+    function setHighlightedResult(index){
+      var options = launcherResults ? Array.prototype.slice.call(launcherResults.querySelectorAll('[role="option"]')) : [];
+      if(!options.length){
+        highlightedIndex = -1;
+        if(searchInput) searchInput.removeAttribute('aria-activedescendant');
+        return;
+      }
+      highlightedIndex = Math.max(0, Math.min(index, options.length - 1));
+      options.forEach(function(option, optionIndex){
+        var selected = optionIndex === highlightedIndex;
+        option.classList.toggle('is-highlighted', selected);
+        option.setAttribute('aria-selected', selected ? 'true' : 'false');
+      });
+      if(searchInput) searchInput.setAttribute('aria-activedescendant', options[highlightedIndex].id);
+      options[highlightedIndex].scrollIntoView({ block: 'nearest' });
+    }
+
+    function renderLauncher(){
+      if(!launcherResults) return;
+      var allMatches = searchQuery ? matchingLauncherItems() : quickLauncherItems();
+      launcherItems = allMatches.slice(0, 7);
+      launcherResults.replaceChildren();
+      if(launcherTitle){
+        launcherTitle.textContent = searchQuery
+          ? 'Melhores resultados'
+          : (readSavedTools('melotools-recent-tools-v1').length ? 'Continue de onde parou' : 'Comece por aqui');
+      }
+      if(searchMeta){
+        var count = allMatches.length;
+        searchMeta.textContent = searchQuery
+          ? (count === 0 ? 'Nenhum resultado' : count + (count === 1 ? ' resultado' : ' resultados'))
+          : 'Acesso rápido';
+      }
+      launcherItems.forEach(function(item, index){
+        var tab = item.tab;
+        var option = document.createElement('div');
+        var badge = document.createElement('span');
+        var copy = document.createElement('span');
+        var label = document.createElement('strong');
+        var detail = document.createElement('small');
+        var action = document.createElement('span');
+        var categoryLabel = categoryLabelMap[tab.dataset.category] || tab.dataset.category;
+        option.id = 'tool-search-option-' + index;
+        option.className = 'tool-launcher-option';
+        option.setAttribute('role', 'option');
+        option.setAttribute('aria-selected', 'false');
+        option.setAttribute('data-result-index', String(index));
+        option.setAttribute('data-category', tab.dataset.category || '');
+        option.setAttribute('aria-label', rawToolLabel(tab) + ', ' + categoryLabel + (item.reason ? ', ' + item.reason : ''));
+        badge.className = 'tool-launcher-badge';
+        badge.setAttribute('aria-hidden', 'true');
+        badge.textContent = ({media:'SOC', image:'IMG', pdf:'PDF', video:'VID', text:'TXT', dev:'DEV', random:'RNG', calc:'123', wellness:'VIDA', clock:'TIME', links:'QR'})[tab.dataset.category] || 'MT';
+        copy.className = 'tool-launcher-copy';
+        label.textContent = rawToolLabel(tab);
+        detail.textContent = (item.reason ? item.reason + ' · ' : '') + categoryLabel;
+        action.className = 'tool-launcher-action';
+        action.setAttribute('aria-hidden', 'true');
+        action.textContent = 'Abrir ↵';
+        copy.appendChild(label);
+        copy.appendChild(detail);
+        option.appendChild(badge);
+        option.appendChild(copy);
+        option.appendChild(action);
+        launcherResults.appendChild(option);
+      });
+      if(!launcherItems.length){
+        var empty = document.createElement('div');
+        empty.className = 'tool-launcher-empty';
+        empty.setAttribute('role', 'presentation');
+        empty.innerHTML = '<strong>Nada por aqui ainda.</strong><span>Tente descrever a tarefa de outro jeito.</span>';
+        launcherResults.appendChild(empty);
+      }
+      setHighlightedResult(launcherItems.length ? 0 : -1);
+    }
+
+    function openLauncher(){
+      if(!launcher || !searchInput) return;
+      launcher.hidden = false;
+      if(searchWrap) searchWrap.classList.add('is-open');
+      searchInput.setAttribute('aria-expanded', 'true');
+      renderLauncher();
+    }
+
+    function closeLauncher(clearQuery){
+      if(!launcher || !searchInput) return;
+      launcher.hidden = true;
+      if(searchWrap) searchWrap.classList.remove('is-open');
+      searchInput.setAttribute('aria-expanded', 'false');
+      searchInput.removeAttribute('aria-activedescendant');
+      highlightedIndex = -1;
+      if(clearQuery){
+        searchInput.value = '';
+        searchQuery = '';
+        if(searchClear) searchClear.hidden = true;
+        if(searchWrap) searchWrap.classList.remove('has-query');
+      }
+    }
+
+    function selectLauncherResult(index){
+      var item = launcherItems[index];
+      if(!item || !item.tab) return;
+      item.tab.click();
+      closeLauncher(true);
+      searchInput.focus();
     }
 
     function refreshSearch(){
       searchQuery = normalize(searchInput ? searchInput.value : '');
       if(searchClear) searchClear.hidden = !searchQuery;
-      var current = mainTabs.find(function(tab){ return tab.classList.contains('active'); });
-      var activeCategory = current ? current.dataset.category : null;
-      if(!activeCategory || !toolTabsFor(activeCategory).length){
-        activeCategory = firstCategoryWithResults();
-      }
-      if(activeCategory){
-        activateCategory(activeCategory);
-      } else {
-        mainTabs.forEach(function(tab){ tab.classList.add('is-hidden'); tab.classList.remove('active'); });
-        toolTabs.forEach(function(tab){ tab.classList.add('is-hidden'); tab.classList.remove('active'); });
-        sections.forEach(function(section){ section.classList.remove('show'); });
-        setActiveShellState('', '');
-        updateSearchMeta();
-      }
+      if(searchWrap) searchWrap.classList.toggle('has-query', !!searchQuery);
+      openLauncher();
     }
 
-    mainTabs.forEach(function(tab){ tab.addEventListener('click', function(){ activateCategory(tab.dataset.category); }); });
+    mainTabs.forEach(function(tab){ tab.addEventListener('click', function(){ activateCategory(tab.dataset.category); closeLauncher(true); }); });
     toolTabs.forEach(function(tab){ tab.addEventListener('click', function(){ activateCategory(tab.dataset.category, tab.dataset.tab); }); });
 
     if(searchToggle){
       searchToggle.addEventListener('click', function(){
-        if(searchInput){ searchInput.focus(); refreshSearch(); }
+        if(searchInput){ searchInput.focus(); openLauncher(); }
       });
     }
 
     if(searchInput){
       searchInput.addEventListener('input', refreshSearch);
       searchInput.addEventListener('search', refreshSearch);
+      searchInput.addEventListener('focus', openLauncher);
+      searchInput.addEventListener('click', function(){
+        if(launcher.hidden) openLauncher();
+      });
       searchInput.addEventListener('keydown', function(event){
-        if(event.key !== 'Escape' || !searchInput.value) return;
-        searchInput.value = '';
-        refreshSearch();
+        if(event.key === 'ArrowDown'){
+          event.preventDefault();
+          if(launcher.hidden) openLauncher();
+          else setHighlightedResult(highlightedIndex + 1);
+        } else if(event.key === 'ArrowUp'){
+          event.preventDefault();
+          if(launcher.hidden) openLauncher();
+          else setHighlightedResult(highlightedIndex - 1);
+        } else if(event.key === 'Enter' && !launcher.hidden && highlightedIndex >= 0){
+          event.preventDefault();
+          selectLauncherResult(highlightedIndex);
+        } else if(event.key === 'Escape' && !launcher.hidden){
+          event.preventDefault();
+          closeLauncher(true);
+        }
       });
     }
     if(searchClear){
       searchClear.addEventListener('click', function(){
         if(searchInput) searchInput.value = '';
-        refreshSearch();
+        searchQuery = '';
+        if(searchClear) searchClear.hidden = true;
+        if(searchWrap) searchWrap.classList.remove('has-query');
+        openLauncher();
         if(searchInput) searchInput.focus();
       });
+    }
+    if(launcherResults){
+      launcherResults.addEventListener('mousemove', function(event){
+        var option = event.target.closest && event.target.closest('[data-result-index]');
+        if(option) setHighlightedResult(Number(option.dataset.resultIndex));
+      });
+      launcherResults.addEventListener('mousedown', function(event){
+        var option = event.target.closest && event.target.closest('[data-result-index]');
+        if(!option) return;
+        event.preventDefault();
+        selectLauncherResult(Number(option.dataset.resultIndex));
+      });
+    }
+    document.addEventListener('mousedown', function(event){
+      if(searchWrap && !searchWrap.contains(event.target)) closeLauncher(false);
+    });
+    document.addEventListener('click', function(event){
+      if(!event.target.closest || !event.target.closest('[data-lang-option]')) return;
+      window.setTimeout(function(){
+        refreshCategoryLabels();
+        if(launcher && !launcher.hidden) renderLauncher();
+      }, 0);
+    });
+    document.addEventListener('keydown', function(event){
+      var key = String(event.key || '').toLowerCase();
+      var editable = event.target && (event.target.matches('input, textarea, select') || event.target.isContentEditable);
+      if((event.ctrlKey || event.metaKey) && key === 'k'){
+        event.preventDefault();
+        searchInput.focus();
+        openLauncher();
+      } else if(key === '/' && !editable && !event.ctrlKey && !event.metaKey && !event.altKey){
+        event.preventDefault();
+        searchInput.focus();
+        openLauncher();
+      }
+    });
+    if(searchShortcut && /mac|iphone|ipad|ipod/i.test(navigator.userAgent || '')){
+      var shortcutKeys = searchShortcut.querySelectorAll('kbd');
+      if(shortcutKeys[0]) shortcutKeys[0].textContent = '⌘';
     }
 
     var initial = 'media';

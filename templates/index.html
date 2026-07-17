@@ -44,7 +44,7 @@ body.mt-ui-ready #mtToolsSkeleton{
 <link id="themeStylesXp" rel="stylesheet" href="{{ url_for('static', filename='css/xp-luna.css', v='20260716-hardening1') }}">
 <link id="themeStylesSaas" rel="stylesheet" href="{{ url_for('static', filename='css/theme-saas.css', v='20260716-hardening1') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/melotools-extra-tabs.css', v='20260717-uiux3') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/ui-professional.css', v='20260717-uiux3') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ui-professional.css', v='20260717-command2') }}">
 
 <style id="theme-critical-fixes">
 html[data-ui-theme="saas"] .tool-tabs .tabbtn,
@@ -143,17 +143,29 @@ html[data-ui-theme="xp"] .tool-tabs .tabbtn.is-hidden{
       <p>Converta arquivos, edite m&iacute;dia, trabalhe com textos e use utilidades r&aacute;pidas sem instalar nada.</p>
     </section>
     <div class="tool-search" id="toolSearchWrap">
-      <label class="tool-search-label" for="toolSearchInput">Pesquisar</label>
-      <div class="tool-search-row">
-        <button type="button" class="tool-search-submit" id="toolSearchToggle" aria-label="Pesquisar" title="Pesquisar">
+      <label class="tool-search-label" for="toolSearchInput">Encontrar uma ferramenta</label>
+      <div class="tool-search-row" id="toolSearchCombobox">
+        <button type="button" class="tool-search-submit" id="toolSearchToggle" aria-label="Abrir busca de ferramentas" title="Pesquisar ferramentas">
           <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
             <path d="M11 4a7 7 0 1 0 4.49 12.37l3.57 3.57a1 1 0 0 0 1.41-1.41l-3.57-3.57A7 7 0 0 0 11 4Zm0 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10Z"/>
           </svg>
         </button>
-        <input id="toolSearchInput" type="search" placeholder="Pesquisar" autocomplete="off" spellcheck="false">
+        <input id="toolSearchInput" type="search" placeholder="O que voc&ecirc; precisa fazer?" autocomplete="off" spellcheck="false" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="toolSearchResults" aria-haspopup="listbox">
+        <span class="tool-search-shortcut" id="toolSearchShortcut" aria-hidden="true"><kbd>Ctrl</kbd><kbd>K</kbd></span>
         <button type="button" class="tool-search-clear" id="toolSearchClear" aria-label="Limpar pesquisa" hidden>Limpar</button>
       </div>
-      <div class="tool-search-meta" id="toolSearchMeta" role="status" aria-live="polite"></div>
+      <div class="tool-launcher" id="toolLauncher" hidden>
+        <div class="tool-launcher-head">
+          <strong id="toolLauncherTitle">Acesso r&aacute;pido</strong>
+          <span class="tool-search-meta" id="toolSearchMeta" role="status" aria-live="polite"></span>
+        </div>
+        <div class="tool-launcher-results" id="toolSearchResults" role="listbox" aria-label="Ferramentas encontradas"></div>
+        <div class="tool-launcher-footer" aria-hidden="true">
+          <span><kbd>&uarr;</kbd><kbd>&darr;</kbd> navegar</span>
+          <span><kbd>&crarr;</kbd> abrir</span>
+          <span><kbd>Esc</kbd> fechar</span>
+        </div>
+      </div>
     </div>
     <p class="privacy-status" role="note">
       Seus arquivos recebem links temporários e são apagados automaticamente. Não compartilhamos o conteúdo enviado.
@@ -1868,7 +1880,7 @@ if ('serviceWorker' in navigator) {
 
 <div class="toast-container" id="toastContainer"></div>
 
-<script src="/static/js/melotools-extra-tabs.js?v=20260717-uiux3"></script>
+<script src="/static/js/melotools-extra-tabs.js?v=20260717-command2"></script>
 <script src="/static/js/tool-shortcuts.js?v=20260716-hardening1"></script>
 <script id="theme-switch-script">
 (function(){
