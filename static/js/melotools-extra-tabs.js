@@ -51,7 +51,26 @@
     }
 
     function updateSearchMeta(){
-      if(searchMeta) searchMeta.textContent = '';
+      if(!searchMeta) return;
+      if(!searchQuery){
+        searchMeta.textContent = '';
+        return;
+      }
+      var count = toolTabs.filter(toolMatch).length;
+      searchMeta.textContent = count === 0
+        ? 'Nenhuma ferramenta encontrada.'
+        : count + (count === 1 ? ' ferramenta encontrada.' : ' ferramentas encontradas.');
+    }
+
+    function centerActiveTab(tab){
+      if(!tab || !tab.parentElement) return;
+      var rail = tab.parentElement;
+      if(rail.scrollWidth <= rail.clientWidth) return;
+      var targetLeft = tab.offsetLeft - ((rail.clientWidth - tab.offsetWidth) / 2);
+      var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.requestAnimationFrame(function(){
+        rail.scrollTo({ left: Math.max(0, targetLeft), behavior: reducedMotion ? 'auto' : 'smooth' });
+      });
     }
 
     function setActiveShellState(category, tabId){
@@ -65,11 +84,16 @@
       var target = toolTabs.find(function(tab){ return tab.dataset.tab === tabId; });
       if(!target) return;
       var category = target.dataset.category;
-      toolTabs.forEach(function(tab){ tab.classList.toggle('active', tab === target); });
+      toolTabs.forEach(function(tab){
+        var active = tab === target;
+        tab.classList.toggle('active', active);
+        tab.setAttribute('aria-pressed', active ? 'true' : 'false');
+      });
       sections.forEach(function(section){
         section.classList.toggle('show', section.id === tabId && section.dataset.category === category);
       });
       setActiveShellState(category, tabId);
+      centerActiveTab(target);
       try { localStorage.setItem('melotools-active-tool', tabId); } catch(_e) {}
     }
 
@@ -92,7 +116,10 @@
       mainTabs.forEach(function(tab){
         var hasTools = toolTabsFor(tab.dataset.category).length > 0;
         tab.classList.toggle('is-hidden', !hasTools);
-        tab.classList.toggle('active', tab.dataset.category === category);
+        var active = tab.dataset.category === category;
+        tab.classList.toggle('active', active);
+        tab.setAttribute('aria-pressed', active ? 'true' : 'false');
+        if(active) centerActiveTab(tab);
       });
       applyToolVisibility(category);
 
@@ -106,6 +133,7 @@
 
     function refreshSearch(){
       searchQuery = normalize(searchInput ? searchInput.value : '');
+      if(searchClear) searchClear.hidden = !searchQuery;
       var current = mainTabs.find(function(tab){ return tab.classList.contains('active'); });
       var activeCategory = current ? current.dataset.category : null;
       if(!activeCategory || !toolTabsFor(activeCategory).length){
@@ -134,6 +162,11 @@
     if(searchInput){
       searchInput.addEventListener('input', refreshSearch);
       searchInput.addEventListener('search', refreshSearch);
+      searchInput.addEventListener('keydown', function(event){
+        if(event.key !== 'Escape' || !searchInput.value) return;
+        searchInput.value = '';
+        refreshSearch();
+      });
     }
     if(searchClear){
       searchClear.addEventListener('click', function(){

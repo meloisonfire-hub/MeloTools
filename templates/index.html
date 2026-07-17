@@ -43,6 +43,8 @@ body.mt-ui-ready #mtToolsSkeleton{
 <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css', v='20260716-hardening1') }}">
 <link id="themeStylesXp" rel="stylesheet" href="{{ url_for('static', filename='css/xp-luna.css', v='20260716-hardening1') }}">
 <link id="themeStylesSaas" rel="stylesheet" href="{{ url_for('static', filename='css/theme-saas.css', v='20260716-hardening1') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/melotools-extra-tabs.css', v='20260717-uiux3') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ui-professional.css', v='20260717-uiux3') }}">
 
 <style id="theme-critical-fixes">
 html[data-ui-theme="saas"] .tool-tabs .tabbtn,
@@ -124,7 +126,6 @@ html[data-ui-theme="xp"] .tool-tabs .tabbtn.is-hidden{
 </div>
 <meta name="google-adsense-account" content="ca-pub-9686460887343092">
 <main class="wrap" id="mainContent" tabindex="-1">
-  <h1 class="sr-only">MeloTools — ferramentas online gratuitas</h1>
   <div class="card">
     <div class="xp-window-titlebar" aria-hidden="true">
       <div class="xp-window-title"><span class="xp-window-icon"></span><span>MeloTools - Painel de Ferramentas</span></div>
@@ -136,6 +137,11 @@ html[data-ui-theme="xp"] .tool-tabs .tabbtn.is-hidden{
       <span class="mt-tools-badge-dot" aria-label="78 ferramentas totalmente grátis" title="78 ferramentas totalmente grátis">78</span>
     </div>
         {% endif %}
+    <section class="workspace-intro" aria-labelledby="workspaceTitle">
+      <span class="workspace-kicker">78 ferramentas gratuitas</span>
+      <h1 id="workspaceTitle">Resolva tarefas online em poucos cliques.</h1>
+      <p>Converta arquivos, edite m&iacute;dia, trabalhe com textos e use utilidades r&aacute;pidas sem instalar nada.</p>
+    </section>
     <div class="tool-search" id="toolSearchWrap">
       <label class="tool-search-label" for="toolSearchInput">Pesquisar</label>
       <div class="tool-search-row">
@@ -145,7 +151,9 @@ html[data-ui-theme="xp"] .tool-tabs .tabbtn.is-hidden{
           </svg>
         </button>
         <input id="toolSearchInput" type="search" placeholder="Pesquisar" autocomplete="off" spellcheck="false">
+        <button type="button" class="tool-search-clear" id="toolSearchClear" aria-label="Limpar pesquisa" hidden>Limpar</button>
       </div>
+      <div class="tool-search-meta" id="toolSearchMeta" role="status" aria-live="polite"></div>
     </div>
     <p class="privacy-status" role="note">
       Seus arquivos recebem links temporários e são apagados automaticamente. Não compartilhamos o conteúdo enviado.
@@ -156,9 +164,10 @@ html[data-ui-theme="xp"] .tool-tabs .tabbtn.is-hidden{
       <div class="tool-shortcut-row hidden" id="recentTools" aria-label="Ferramentas usadas recentemente"></div>
     </div>
     <nav class="nav-shell" aria-label="Navega&ccedil;&atilde;o de ferramentas">
+      <div class="nav-rail-label"><strong>Categorias</strong><span>Escolha o tipo de tarefa</span></div>
       <div class="main-tabs tabs" id="mainTabs">
-        <button class="main-tab tabbtn active" type="button" data-category="media">
-          <span class="main-tab-label" data-i18n="nav_media">YouTube, Instagram e TikTok</span>
+        <button class="main-tab tabbtn active" type="button" data-category="media" aria-label="YouTube, Instagram, Threads e TikTok">
+          <span class="main-tab-label" data-i18n="nav_media">Redes sociais</span>
         </button>
         <button class="main-tab tabbtn" type="button" data-category="image">
           <span class="main-tab-label" data-i18n="nav_image">Imagem</span>
@@ -173,24 +182,25 @@ html[data-ui-theme="xp"] .tool-tabs .tabbtn.is-hidden{
           <span class="main-tab-label">Texto</span>
         </button>
         <button class="main-tab tabbtn" type="button" data-category="dev">
-          <span class="main-tab-label">TI e Dev</span>
+          <span class="main-tab-label">Dev</span>
         </button>
         <button class="main-tab tabbtn" type="button" data-category="random">
-          <span class="main-tab-label">Sorteadores</span>
+          <span class="main-tab-label">Sorteios</span>
         </button>
         <button class="main-tab tabbtn" type="button" data-category="calc">
-          <span class="main-tab-label">Calculadoras</span>
+          <span class="main-tab-label">C&aacute;lculos</span>
         </button>
         <button class="main-tab tabbtn" type="button" data-category="wellness">
-          <span class="main-tab-label">Bem-estar e sa&uacute;de</span>
+          <span class="main-tab-label">Sa&uacute;de</span>
         </button>
         <button class="main-tab tabbtn" type="button" data-category="clock">
           <span class="main-tab-label">Rel&oacute;gio</span>
         </button>
         <button class="main-tab tabbtn" type="button" data-category="links">
-          <span class="main-tab-label">Links e QR Code</span>
+          <span class="main-tab-label">QR Code</span>
         </button>
       </div>
+      <div class="nav-rail-label nav-rail-label-tools"><strong>Ferramentas</strong><span>Selecione o que deseja fazer</span></div>
       <div class="tool-tabs tabs" id="toolTabs">
         <button class="tool-tab tabbtn active" type="button" data-category="media" data-tab="tab-youtube" data-i18n="tab_youtube">Processar v&iacute;deos</button>
         <button class="tool-tab tabbtn" type="button" data-category="media" data-tab="tab-youtube-clip">Clipar v&iacute;deos</button>
@@ -1073,15 +1083,6 @@ html[data-ui-theme="xp"] .tool-tabs .tabbtn.is-hidden{
   <p class="note">Suporta imagens comuns como PNG e JPG.</p>
 </section>
 
-  <h2 class="title"></h2>
-  
-  <div class="drop mt-drop">
-    <div class="mt-card-form"><div class="inputs"><span class="small">Nenhuma ferramenta publicada nesta categoria at&eacute; o momento.</span></div></div>
-  </div>
-  <div class="note mt-extra-result" role="status"></div>
-  <p class="note">Esta &aacute;rea foi preservada para expans&atilde;o futura do painel.</p>
-</section>
-
 <section id="tab-text-chars" class="section" data-category="text">
   <h2 class="title">Contador de caracteres</h2>
   <p class="sub">Conte rapidamente o total de caracteres do texto informado.</p>
@@ -1848,7 +1849,7 @@ window.APP_CONFIG = {
   analyticsMeasurementId: {{ analytics_measurement_id|tojson }}
 };
 </script>
-<script src="{{ url_for('static', filename='js/i18n.js', v='20260716-hardening1') }}"></script>
+<script src="{{ url_for('static', filename='js/i18n.js', v='20260717-uiux3') }}"></script>
 <!-- app.js legado desativado para evitar conflito com melotools-extra-tabs.js -->
 <script src="{{ url_for('static', filename='js/xp-effects.js', v='20260517-logo-msg3') }}"></script>
 
@@ -1867,8 +1868,7 @@ if ('serviceWorker' in navigator) {
 
 <div class="toast-container" id="toastContainer"></div>
 
-  <link rel="stylesheet" href="/static/css/melotools-extra-tabs.css?v=20260716-hardening1">
-<script src="/static/js/melotools-extra-tabs.js?v=20260716-hardening1"></script>
+<script src="/static/js/melotools-extra-tabs.js?v=20260717-uiux3"></script>
 <script src="/static/js/tool-shortcuts.js?v=20260716-hardening1"></script>
 <script id="theme-switch-script">
 (function(){

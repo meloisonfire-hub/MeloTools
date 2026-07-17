@@ -18,6 +18,20 @@ def test_health_and_service_worker_routes_exist():
     assert any(rule.rule == "/sw.js" for rule in app.url_map.iter_rules())
 
 
+def test_home_has_valid_professional_workspace_shell():
+    app.config.update(TESTING=True)
+    response = app.test_client().get("/")
+    html = response.get_data(as_text=True)
+    assert response.status_code == 200
+    assert 'class="workspace-intro"' in html
+    assert 'class="nav-rail-label"' in html
+    assert 'id="toolSearchClear"' in html
+    assert "ui-professional.css" in html
+    assert html.count("<h1") == 1
+    assert html.count("<section") == html.count("</section>")
+    assert '<h2 class="title"></h2>' not in html
+
+
 def test_private_port_scan_is_rejected():
     app.config.update(TESTING=True)
     response = app.test_client().post("/api/dev/port-test", data={"host": "127.0.0.1", "port": "80"})

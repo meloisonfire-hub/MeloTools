@@ -75,9 +75,9 @@ def check_status(name, resp, expected_status):
 # Health
 check('health', c.get('/health'))
 
-# Online videos
-check('online-download', c.post('/api/online/download', data={'url':'mock://video','mode':'video','quality':'720'}))
-check('online-clip', c.post('/api/online/clip', data={'url':'mock://video','start':'0','end':'1'}))
+# Online videos: unsupported protocols must be rejected before reaching yt-dlp.
+check_status('online-download-blocks-unsupported-protocol', c.post('/api/online/download', data={'url':'mock://video','mode':'video','quality':'720'}), 400)
+check_status('online-clip-blocks-unsupported-protocol', c.post('/api/online/clip', data={'url':'mock://video','start':'0','end':'1'}), 400)
 check_status('instagram-invalid-post', c.post('/api/online/instagram-tools', data={'url':'https://instagram.com/p/abc/'}), 400)
 check('online-link-qr', c.post('/api/links/qr-generate', data={'text':'https://example.com/v'}))
 
