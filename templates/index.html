@@ -93,7 +93,7 @@ html[data-ui-theme="xp"] .tool-tabs .tabbtn.is-hidden{
     <div class="saas-header-spacer" aria-hidden="true"></div>
     <div class="saas-brand" aria-label="MeloTools">
       <img class="saas-brand-logo" src="{{ url_for('static', filename='logo-saas.png') }}" alt="MeloTools">
-      <span class="mt-tools-badge-dot mt-tools-badge-dot-saas" aria-label="78 ferramentas totalmente grátis" title="78 ferramentas totalmente grátis">78</span>
+      <span class="mt-tools-badge-dot mt-tools-badge-dot-saas" aria-label="78 ferramentas totalmente gr&aacute;tis" title="78 ferramentas totalmente gr&aacute;tis"><strong>78</strong> ferramentas</span>
     </div>
     <div class="theme-switcher" role="group" aria-label="Escolher tema do site">
       <button class="theme-option" type="button" data-theme-choice="xp" aria-pressed="false">Retr&ocirc;</button>
@@ -124,7 +124,6 @@ html[data-ui-theme="xp"] .tool-tabs .tabbtn.is-hidden{
 </div>
 <meta name="google-adsense-account" content="ca-pub-9686460887343092">
 <main class="wrap" id="mainContent" tabindex="-1">
-  <h1 class="sr-only">MeloTools — ferramentas online gratuitas</h1>
   <div class="card">
     <div class="xp-window-titlebar" aria-hidden="true">
       <div class="xp-window-title"><span class="xp-window-icon"></span><span>MeloTools - Painel de Ferramentas</span></div>
@@ -136,6 +135,19 @@ html[data-ui-theme="xp"] .tool-tabs .tabbtn.is-hidden{
       <span class="mt-tools-badge-dot" aria-label="78 ferramentas totalmente grátis" title="78 ferramentas totalmente grátis">78</span>
     </div>
         {% endif %}
+    <section class="workspace-hero" aria-labelledby="workspaceTitle">
+      <div class="workspace-hero-copy">
+        <span class="workspace-eyebrow">Seu kit digital, em um s&oacute; lugar</span>
+        <h1 id="workspaceTitle">Resolva tarefas online sem instalar nada.</h1>
+        <p>Arquivos, m&iacute;dia, texto, c&aacute;lculos e utilidades r&aacute;pidas &mdash; com uma experi&ecirc;ncia simples, gratuita e direta.</p>
+      </div>
+      <div class="workspace-proof" aria-label="Diferenciais do MeloTools">
+        <span><strong>78</strong> ferramentas</span>
+        <span><strong>Gr&aacute;tis</strong> para usar</span>
+        <span><strong>Privado</strong> por padr&atilde;o</span>
+      </div>
+    </section>
+    <div class="discovery-panel">
     <div class="tool-search" id="toolSearchWrap">
       <label class="tool-search-label" for="toolSearchInput">Pesquisar</label>
       <div class="tool-search-row">
@@ -155,42 +167,60 @@ html[data-ui-theme="xp"] .tool-tabs .tabbtn.is-hidden{
       <div class="tool-shortcut-row hidden" id="favoriteTools" aria-label="Ferramentas favoritas"></div>
       <div class="tool-shortcut-row hidden" id="recentTools" aria-label="Ferramentas usadas recentemente"></div>
     </div>
+    </div>
+    <div class="workspace-grid">
     <nav class="nav-shell" aria-label="Navega&ccedil;&atilde;o de ferramentas">
+      <div class="workspace-nav-heading">
+        <span>Explorar</span>
+        <small>Escolha uma categoria</small>
+      </div>
       <div class="main-tabs tabs" id="mainTabs">
         <button class="main-tab tabbtn active" type="button" data-category="media">
+          <span class="main-tab-icon" aria-hidden="true">▶</span>
           <span class="main-tab-label" data-i18n="nav_media">YouTube, Instagram e TikTok</span>
         </button>
         <button class="main-tab tabbtn" type="button" data-category="image">
+          <span class="main-tab-icon" aria-hidden="true">◇</span>
           <span class="main-tab-label" data-i18n="nav_image">Imagem</span>
         </button>
         <button class="main-tab tabbtn" type="button" data-category="pdf">
+          <span class="main-tab-icon" aria-hidden="true">▤</span>
           <span class="main-tab-label" data-i18n="nav_pdf">PDF</span>
         </button>
         <button class="main-tab tabbtn" type="button" data-category="video">
+          <span class="main-tab-icon" aria-hidden="true">●</span>
           <span class="main-tab-label" data-i18n="nav_video">V&iacute;deos</span>
         </button>
         <button class="main-tab tabbtn" type="button" data-category="text">
+          <span class="main-tab-icon" aria-hidden="true">¶</span>
           <span class="main-tab-label">Texto</span>
         </button>
         <button class="main-tab tabbtn" type="button" data-category="dev">
+          <span class="main-tab-icon main-tab-icon-code" aria-hidden="true">{}</span>
           <span class="main-tab-label">TI e Dev</span>
         </button>
         <button class="main-tab tabbtn" type="button" data-category="random">
+          <span class="main-tab-icon" aria-hidden="true">✦</span>
           <span class="main-tab-label">Sorteadores</span>
         </button>
         <button class="main-tab tabbtn" type="button" data-category="calc">
+          <span class="main-tab-icon" aria-hidden="true">+</span>
           <span class="main-tab-label">Calculadoras</span>
         </button>
         <button class="main-tab tabbtn" type="button" data-category="wellness">
+          <span class="main-tab-icon" aria-hidden="true">♡</span>
           <span class="main-tab-label">Bem-estar e sa&uacute;de</span>
         </button>
         <button class="main-tab tabbtn" type="button" data-category="clock">
+          <span class="main-tab-icon" aria-hidden="true">◷</span>
           <span class="main-tab-label">Rel&oacute;gio</span>
         </button>
         <button class="main-tab tabbtn" type="button" data-category="links">
+          <span class="main-tab-icon" aria-hidden="true">⌁</span>
           <span class="main-tab-label">Links e QR Code</span>
         </button>
       </div>
+      <div class="workspace-tools-heading">Ferramentas</div>
       <div class="tool-tabs tabs" id="toolTabs">
         <button class="tool-tab tabbtn active" type="button" data-category="media" data-tab="tab-youtube" data-i18n="tab_youtube">Processar v&iacute;deos</button>
         <button class="tool-tab tabbtn" type="button" data-category="media" data-tab="tab-youtube-clip">Clipar v&iacute;deos</button>
@@ -286,6 +316,7 @@ html[data-ui-theme="xp"] .tool-tabs .tabbtn.is-hidden{
       <div class="mt-sk-card"></div>
       <div class="mt-sk-card"></div>
     </div>
+    <div class="tool-stage">
 
     <section id="tab-ocr" class="section" data-category="pdf">
       <h2 class="title" data-i18n="ocr_title">Converta PDFs e imagens em documentos pesquis&aacute;veis (OCR)
@@ -1833,6 +1864,8 @@ html[data-ui-theme="xp"] .tool-tabs .tabbtn.is-hidden{
   <p class="note mt-clock-link-row">Link <a id="obs_sw_link" href="/cronometro" target="_blank" rel="noopener noreferrer">/cronometro</a></p>
 </section>
 <!-- MELOTOOLS_EXTRA_SECTIONS_END -->
+    </div>
+    </div>
   </div>
   <div class="footer" id="footerContent">{{ footer }}</div>
 </main>
@@ -1868,6 +1901,7 @@ if ('serviceWorker' in navigator) {
 <div class="toast-container" id="toastContainer"></div>
 
   <link rel="stylesheet" href="/static/css/melotools-extra-tabs.css?v=20260716-hardening1">
+  <link rel="stylesheet" href="/static/css/ui-refinement.css?v=20260717-ui4">
 <script src="/static/js/melotools-extra-tabs.js?v=20260716-hardening1"></script>
 <script src="/static/js/tool-shortcuts.js?v=20260716-hardening1"></script>
 <script id="theme-switch-script">
