@@ -31,6 +31,7 @@ def test_home_has_valid_professional_workspace_shell():
     assert 'role="listbox"' in html
     assert 'aria-controls="toolSearchResults"' in html
     assert "ui-professional.css" in html
+    assert "ui-polish.css" in html
     assert html.count("<h1") == 1
     assert html.count("<section") == html.count("</section>")
     assert '<h2 class="title"></h2>' not in html

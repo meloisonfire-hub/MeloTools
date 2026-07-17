@@ -1,0 +1,203 @@
+/*
+ * MeloTools visual polish.
+ *
+ * Deliberately limited to the default SaaS theme: this layer refines the
+ * existing interface without changing its layout, density or interaction
+ * model. The retro theme remains untouched.
+ */
+
+html[data-ui-theme="saas"] {
+  --polish-line: #cbd9e6;
+  --polish-line-strong: #b7c9da;
+  --polish-surface: rgba(255, 255, 255, .98);
+  --polish-soft: #f7faff;
+  --polish-shadow: 0 22px 58px rgba(23, 50, 74, .085),
+                   0 2px 8px rgba(23, 50, 74, .035);
+}
+
+html[data-ui-theme="saas"] .header-top {
+  border-color: rgba(190, 207, 223, .72) !important;
+  background: rgba(255, 255, 255, .94) !important;
+  box-shadow: 0 14px 38px rgba(23, 50, 74, .08),
+              0 1px 0 rgba(255, 255, 255, .94) inset !important;
+}
+
+html[data-ui-theme="saas"] .card {
+  border-color: rgba(190, 207, 223, .64) !important;
+  background: var(--polish-surface) !important;
+  box-shadow: var(--polish-shadow) !important;
+}
+
+html[data-ui-theme="saas"] .workspace-intro h1,
+html[data-ui-theme="saas"] .section.show > .title {
+  text-wrap: balance;
+}
+
+html[data-ui-theme="saas"] .workspace-intro p,
+html[data-ui-theme="saas"] .section.show > .sub {
+  text-wrap: pretty;
+}
+
+html[data-ui-theme="saas"] .workspace-kicker {
+  border-color: #bfd3f7 !important;
+  background: #f0f5ff !important;
+  box-shadow: 0 1px 0 #fff inset !important;
+}
+
+html[data-ui-theme="saas"] #toolSearchWrap .tool-search-row {
+  border-color: var(--polish-line-strong) !important;
+  box-shadow: 0 12px 32px rgba(23, 50, 74, .09),
+              0 1px 0 #fff inset !important;
+}
+
+html[data-ui-theme="saas"] #toolSearchWrap .tool-search-submit,
+html[data-ui-theme="saas"] #toolSearchClear,
+html[data-ui-theme="saas"] .main-tabs .tabbtn,
+html[data-ui-theme="saas"] .tool-tabs .tabbtn,
+html[data-ui-theme="saas"] .btn {
+  transition: background-color .16s ease,
+              border-color .16s ease,
+              box-shadow .16s ease,
+              color .16s ease,
+              transform .16s ease !important;
+}
+
+html[data-ui-theme="saas"] #toolSearchWrap .tool-search-submit:hover {
+  background: #e2edff !important;
+  box-shadow: inset 0 0 0 1px rgba(37, 99, 235, .14),
+              0 4px 12px rgba(37, 99, 235, .09) !important;
+}
+
+html[data-ui-theme="saas"] .privacy-status {
+  border: 1px solid rgba(134, 239, 172, .34) !important;
+  border-radius: 999px !important;
+  background: rgba(240, 253, 244, .72) !important;
+  color: #4e6b60 !important;
+}
+
+html[data-ui-theme="saas"] .nav-rail-label {
+  padding-inline: 6px !important;
+}
+
+html[data-ui-theme="saas"] .main-tabs,
+html[data-ui-theme="saas"] .tool-tabs,
+html[data-ui-theme="saas"] body.mt-category-media .tool-tabs {
+  border-color: var(--polish-line) !important;
+  box-shadow: 0 1px 0 #fff inset,
+              0 4px 14px rgba(23, 50, 74, .035) !important;
+  scroll-padding-inline: 8px;
+}
+
+html[data-ui-theme="saas"] .main-tabs .tabbtn:hover,
+html[data-ui-theme="saas"] .tool-tabs .tabbtn:hover {
+  border-color: #c4d3e1 !important;
+  background: #fff !important;
+  box-shadow: 0 3px 10px rgba(23, 50, 74, .055) !important;
+}
+
+html[data-ui-theme="saas"] .main-tabs .tabbtn.active {
+  box-shadow: 0 7px 17px rgba(37, 99, 235, .2),
+              0 1px 0 rgba(255, 255, 255, .2) inset !important;
+}
+
+html[data-ui-theme="saas"] .tool-tabs .tabbtn.active,
+html[data-ui-theme="saas"] body.mt-category-media .tool-tabs .tool-tab.active {
+  border-color: #9fbaf0 !important;
+  background: #eaf2ff !important;
+  box-shadow: 0 3px 10px rgba(37, 99, 235, .07),
+              inset 0 0 0 1px rgba(37, 99, 235, .04) !important;
+}
+
+html[data-ui-theme="saas"] .section.show {
+  padding-top: 10px !important;
+}
+
+html[data-ui-theme="saas"] .section.show > .title {
+  margin-bottom: 7px !important;
+  letter-spacing: -.025em !important;
+}
+
+html[data-ui-theme="saas"] .section.show > .sub {
+  margin-bottom: 18px !important;
+}
+
+html[data-ui-theme="saas"] .drop,
+html[data-ui-theme="saas"] .mt-drop {
+  border-color: var(--polish-line-strong) !important;
+  border-radius: 22px !important;
+  background: linear-gradient(180deg, #fff 0%, var(--polish-soft) 100%) !important;
+  box-shadow: 0 14px 34px rgba(23, 50, 74, .055) !important;
+  transition: border-color .18s ease,
+              box-shadow .18s ease,
+              transform .18s ease !important;
+}
+
+html[data-ui-theme="saas"] .drop:hover,
+html[data-ui-theme="saas"] .mt-drop:hover {
+  border-color: #97b3cf !important;
+  box-shadow: 0 17px 38px rgba(23, 50, 74, .075) !important;
+}
+
+html[data-ui-theme="saas"] .mt-card-form input,
+html[data-ui-theme="saas"] .mt-card-form select,
+html[data-ui-theme="saas"] .mt-card-form textarea {
+  border-color: var(--polish-line-strong) !important;
+  background-color: #fff !important;
+  box-shadow: 0 1px 0 rgba(23, 50, 74, .025) inset !important;
+  transition: border-color .16s ease, box-shadow .16s ease !important;
+}
+
+html[data-ui-theme="saas"] .btn:hover {
+  box-shadow: 0 12px 25px rgba(47, 111, 232, .21) !important;
+}
+
+html[data-ui-theme="saas"] .btn:active,
+html[data-ui-theme="saas"] .main-tabs .tabbtn:active,
+html[data-ui-theme="saas"] .tool-tabs .tabbtn:active {
+  transform: translateY(0) scale(.985) !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  html[data-ui-theme="saas"] #toolSearchWrap .tool-search-submit:hover,
+  html[data-ui-theme="saas"] .main-tabs .tabbtn:hover,
+  html[data-ui-theme="saas"] .tool-tabs .tabbtn:hover {
+    transform: translateY(-1px) !important;
+  }
+}
+
+@media (max-width: 720px) {
+  html[data-ui-theme="saas"] .header-top {
+    box-shadow: 0 9px 24px rgba(23, 50, 74, .07) !important;
+  }
+
+  html[data-ui-theme="saas"] .card {
+    box-shadow: 0 14px 34px rgba(23, 50, 74, .07) !important;
+  }
+
+  html[data-ui-theme="saas"] .privacy-status {
+    border-radius: 14px !important;
+    padding: 7px 9px !important;
+  }
+
+  html[data-ui-theme="saas"] .section.show {
+    padding-top: 7px !important;
+  }
+
+  html[data-ui-theme="saas"] .drop,
+  html[data-ui-theme="saas"] .mt-drop {
+    border-radius: 18px !important;
+    box-shadow: 0 10px 25px rgba(23, 50, 74, .05) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-ui-theme="saas"] #toolSearchWrap .tool-search-submit,
+  html[data-ui-theme="saas"] #toolSearchClear,
+  html[data-ui-theme="saas"] .main-tabs .tabbtn,
+  html[data-ui-theme="saas"] .tool-tabs .tabbtn,
+  html[data-ui-theme="saas"] .drop,
+  html[data-ui-theme="saas"] .mt-drop,
+  html[data-ui-theme="saas"] .btn {
+    transition: none !important;
+  }
+}
