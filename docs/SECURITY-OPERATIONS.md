@@ -10,7 +10,8 @@
 
 ## Segredos
 
-Os arquivos `/etc/melotools.env` e `/etc/melotools.secret` devem pertencer a `root:root` e usar modo `0600`.
+O arquivo `/etc/melotools.env` deve pertencer a `root:root` e usar modo `0600`.
+O segredo `/etc/melotools.secret` deve pertencer a `root:melotools` e usar modo `0640`, para ser legivel apenas pelo systemd e pelo processo da aplicacao.
 Nunca copie cookies, chaves SSH, certificados ou o conteúdo desse arquivo para o repositório.
 
 ## Firewall

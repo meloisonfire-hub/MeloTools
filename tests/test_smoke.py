@@ -1,4 +1,14 @@
-from app import RESULT_SIGNER, app
+import pytest
+
+from app import RESULT_SIGNER, app, load_secret_key
+
+
+def test_production_requires_a_readable_secret(tmp_path, monkeypatch):
+    monkeypatch.delenv("MELOTOOLS_SECRET_KEY", raising=False)
+    monkeypatch.setenv("MELOTOOLS_SECRET_KEY_FILE", str(tmp_path / "missing-secret"))
+    monkeypatch.setenv("MELOTOOLS_REQUIRE_SECRET", "1")
+    with pytest.raises(RuntimeError, match="Segredo de producao indisponivel"):
+        load_secret_key()
 
 
 def test_health_and_service_worker_routes_exist():

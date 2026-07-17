@@ -22,9 +22,9 @@ python3 -m venv "$VENV_DIR"
 
 if [ ! -f "$SECRET_FILE" ]; then
   openssl rand -out "$SECRET_FILE" -hex 48
-  chown root:root "$SECRET_FILE"
-  chmod 0600 "$SECRET_FILE"
 fi
+chown root:melotools "$SECRET_FILE"
+chmod 0640 "$SECRET_FILE"
 
 if [ ! -f "$ENV_FILE" ]; then
   install -m 0600 -o root -g root "$APP_DIR/deploy/melotools.env.example" "$ENV_FILE"

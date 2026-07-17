@@ -91,6 +91,8 @@ def load_secret_key() -> str:
             return value
     except OSError:
         pass
+    if os.getenv("MELOTOOLS_REQUIRE_SECRET", "").strip().lower() in {"1", "true", "yes"}:
+        raise RuntimeError(f"Segredo de producao indisponivel em {secret_file}")
     return "development-key-change-in-production"
 
 
