@@ -12,10 +12,10 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
         with:
-          python-version: "3.12"
+          python-version: "3.9"
           cache: pip
       - name: Install system packages
         run: sudo apt-get update && sudo apt-get install -y ffmpeg libzbar0 poppler-utils tesseract-ocr
@@ -27,4 +27,3 @@ jobs:
         env:
           MELOTOOLS_SECRET_KEY: ci-only-secret
         run: pytest
-
