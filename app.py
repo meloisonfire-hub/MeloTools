@@ -80,9 +80,23 @@ def open_image_checked(path: Path):
 for d in (UPLOAD_DIR, RESULT_DIR, TMP_DIR, JOB_DIR, DOWNLOAD_CACHE_DIR, FORMAT_CACHE_DIR):
     make_dir(d)
 
+def load_secret_key() -> str:
+    configured = os.getenv("MELOTOOLS_SECRET_KEY", "").strip()
+    if configured:
+        return configured
+    secret_file = Path(os.getenv("MELOTOOLS_SECRET_KEY_FILE", "/etc/melotools.secret"))
+    try:
+        value = secret_file.read_text(encoding="utf-8").strip()
+        if value:
+            return value
+    except OSError:
+        pass
+    return "development-key-change-in-production"
+
+
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
-app.config["SECRET_KEY"] = os.getenv("MELOTOOLS_SECRET_KEY", "development-key-change-in-production")
+app.config["SECRET_KEY"] = load_secret_key()
 app.config["MAX_CONTENT_LENGTH"] = int(os.getenv("MELOTOOLS_MAX_UPLOAD_MB", "250")) * 1024 * 1024
 app.config["RESULT_TOKEN_MAX_AGE"] = int(os.getenv("MELOTOOLS_RESULT_TTL_SECONDS", "86400"))
 app.config["MAX_IMAGE_PIXELS"] = int(os.getenv("MELOTOOLS_MAX_IMAGE_PIXELS", "40000000"))

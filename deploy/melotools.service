@@ -11,6 +11,7 @@ WorkingDirectory=/srv/melotools
 EnvironmentFile=-/etc/melotools.env
 Environment="PATH=/srv/melotools/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 Environment="HOME=/var/lib/melotools"
+Environment="MELOTOOLS_SECRET_KEY_FILE=/etc/melotools.secret"
 Environment="MELOTOOLS_RUNTIME_DIR=/var/lib/melotools"
 Environment="MELOTOOLS_UPLOAD_DIR=/var/lib/melotools/uploads"
 Environment="MELOTOOLS_RESULT_DIR=/var/lib/melotools/results"

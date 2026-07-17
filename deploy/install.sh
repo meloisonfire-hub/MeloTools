@@ -4,6 +4,7 @@ set -euo pipefail
 APP_DIR=/srv/melotools
 VENV_DIR="$APP_DIR/venv"
 ENV_FILE=/etc/melotools.env
+SECRET_FILE=/etc/melotools.secret
 
 apt-get update
 apt-get install -y python3 python3-venv python3-pip ffmpeg ghostscript libreoffice poppler-utils tesseract-ocr tesseract-ocr-por libzbar0 zbar-tools whois nginx ufw
@@ -19,11 +20,14 @@ python3 -m venv "$VENV_DIR"
 "$VENV_DIR/bin/pip" install --upgrade pip
 "$VENV_DIR/bin/pip" install -r "$APP_DIR/requirements.txt"
 
+if [ ! -f "$SECRET_FILE" ]; then
+  openssl rand -hex 48 -out "$SECRET_FILE"
+  chown root:root "$SECRET_FILE"
+  chmod 0600 "$SECRET_FILE"
+fi
+
 if [ ! -f "$ENV_FILE" ]; then
-  secret=$(openssl rand -hex 48)
-  install -m 0600 -o root -g root /dev/null "$ENV_FILE"
-  printf 'MELOTOOLS_SECRET_KEY=%s\n' "$secret" > "$ENV_FILE"
-  cat "$APP_DIR/deploy/melotools.env.example" | grep -v '^MELOTOOLS_SECRET_KEY=' >> "$ENV_FILE"
+  install -m 0600 -o root -g root "$APP_DIR/deploy/melotools.env.example" "$ENV_FILE"
 fi
 
 install -m 0644 "$APP_DIR/deploy/melotools.service" /etc/systemd/system/melotools.service
