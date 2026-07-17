@@ -6,6 +6,14 @@ VENV_DIR="$APP_DIR/venv"
 ENV_FILE=/etc/melotools.env
 SECRET_FILE=/etc/melotools.secret
 
+if [ -n "${MELOTOOLS_PYTHON_BIN:-}" ]; then
+  PYTHON_BIN="$MELOTOOLS_PYTHON_BIN"
+elif command -v python3.9 >/dev/null 2>&1; then
+  PYTHON_BIN=$(command -v python3.9)
+else
+  PYTHON_BIN=$(command -v python3)
+fi
+
 apt-get update
 apt-get install -y python3 python3-venv python3-pip ffmpeg ghostscript libreoffice poppler-utils tesseract-ocr tesseract-ocr-por libzbar0 zbar-tools whois nginx ufw
 
@@ -16,7 +24,7 @@ fi
 install -d -o melotools -g melotools -m 0750 /var/lib/melotools
 install -d -o melotools -g melotools -m 2770 /var/lib/melotools/uploads /var/lib/melotools/results /var/lib/melotools/tmp
 
-python3 -m venv "$VENV_DIR"
+"$PYTHON_BIN" -m venv --copies "$VENV_DIR"
 "$VENV_DIR/bin/pip" install --upgrade pip
 "$VENV_DIR/bin/pip" install -r "$APP_DIR/requirements.txt"
 
