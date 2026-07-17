@@ -26,4 +26,15 @@ jobs:
       - name: Test
         env:
           MELOTOOLS_SECRET_KEY: ci-only-secret
-        run: pytest
+        shell: bash
+        run: |
+          set +e
+          pytest -vv 2>&1 | tee pytest-output.txt
+          status=${PIPESTATUS[0]}
+          {
+            echo '### pytest output'
+            echo '```text'
+            cat pytest-output.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"
