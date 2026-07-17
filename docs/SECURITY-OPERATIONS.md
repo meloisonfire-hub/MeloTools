@@ -16,7 +16,8 @@ Nunca copie cookies, chaves SSH, certificados ou o conteúdo desse arquivo para 
 
 ## Firewall
 
-`deploy/configure-firewall.sh` preserva SSH e libera somente 22, 80 e 443. Confirme também o firewall do provedor da VPS.
+`deploy/configure-firewall.sh` preserva SSH, HTTP/HTTPS e o DNS-over-TLS existente nas portas 22, 80, 443 e 853.
+Como o host também executa VPN e Pi-hole, revise regras de encaminhamento e DNS antes de habilitar o UFW. Confirme também o firewall do provedor da VPS.
 
 ## Arquivos temporários
 
