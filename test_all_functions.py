@@ -30,7 +30,8 @@ def mk_docx(name='a.docx'):
 
 
 def mk_video(name='v.mp4'):
-    tmp = Path(tempfile.gettempdir()) / 'melotools-test-video.mp4'
+    with tempfile.NamedTemporaryFile(prefix='melotools-test-video-', suffix='.mp4', delete=False) as handle:
+        tmp = Path(handle.name)
     ffmpeg = imageio_ffmpeg.get_ffmpeg_exe()
     cmd = [
         ffmpeg, '-y',
@@ -40,8 +41,11 @@ def mk_video(name='v.mp4'):
         '-c:v', 'libx264', '-c:a', 'aac',
         str(tmp)
     ]
-    subprocess.run(cmd, check=True, capture_output=True, text=True)
-    data = tmp.read_bytes()
+    try:
+        subprocess.run(cmd, check=True, capture_output=True, text=True)
+        data = tmp.read_bytes()
+    finally:
+        tmp.unlink(missing_ok=True)
     b = io.BytesIO(data)
     b.seek(0)
     return (b, name)

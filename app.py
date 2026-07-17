@@ -2,7 +2,6 @@ import io
 import hashlib
 import json
 import logging
-import math
 import os
 import random
 import re
@@ -11,23 +10,21 @@ import socket
 import string
 import subprocess
 import sys
-import tempfile
 import uuid
 import urllib.parse
 import urllib.request
 import zipfile
 from datetime import date, datetime, timedelta
 from pathlib import Path
-from typing import Iterable, List, Optional
+from typing import List, Optional
 from concurrent.futures import ThreadPoolExecutor
 from threading import BoundedSemaphore
 
-from flask import Flask, abort, g, jsonify, render_template, request, send_from_directory, url_for
-from PIL import Image, ImageOps, ImageFilter, ImageDraw
+from flask import Flask, abort, g, jsonify, render_template, request, send_from_directory
+from PIL import Image, ImageOps, ImageDraw
 import segno
 from pypdf import PdfReader, PdfWriter
 from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import letter
 import imageio_ffmpeg
 from markupsafe import Markup
 from itsdangerous import BadSignature, SignatureExpired, URLSafeTimedSerializer
@@ -1150,10 +1147,10 @@ def get_files(field: str, kind: str):
 @app.route("/")
 def index():
     languages = [
-        {"code": "pt-BR", "flag_url": "https://flagcdn.com/w40/br.png", "label": "Português"},
-        {"code": "en", "flag_url": "https://flagcdn.com/w40/us.png", "label": "English"},
-        {"code": "es", "flag_url": "https://flagcdn.com/w40/es.png", "label": "Español"},
-        {"code": "ko", "flag_url": "https://flagcdn.com/w40/kr.png", "label": "한국어"},
+        {"code": "pt", "flag": "\U0001f1e7\U0001f1f7", "label": "Português"},
+        {"code": "en", "flag": "\U0001f1fa\U0001f1f8", "label": "English"},
+        {"code": "es", "flag": "\U0001f1ea\U0001f1f8", "label": "Español"},
+        {"code": "ko", "flag": "\U0001f1f0\U0001f1f7", "label": "한국어"},
     ]
     footer = Markup(
         'Me pague um café - <span class="footer-pix">pix@melotools.com.br</span><br>'
@@ -1163,7 +1160,7 @@ def index():
         "index.html",
         brand="#2563eb",
         has_logo=LOGO_PATH.exists(),
-        current_lang="pt-BR",
+        current_lang="pt",
         max_mb=200,
         analytics_measurement_id="",
         languages=languages,
@@ -2713,15 +2710,25 @@ def calc_cycle_support():
         fertile_start = max(1, ovulation_day - 4)
         fertile_end = min(cycle_length, ovulation_day + 1)
         pms_start = max(1, cycle_length - 4)
-        phase = "neutral"; label = "Fase estável"; tip = "Bom período para planejar atividades juntos."
+        phase = "neutral"
+        label = "Fase estável"
+        tip = "Bom período para planejar atividades juntos."
         if 1 <= cycle_day <= period_length:
-            phase = "period"; label = "Menstruação"; tip = "Priorize acolhimento, descanso e ajuda prática no dia a dia."
+            phase = "period"
+            label = "Menstruação"
+            tip = "Priorize acolhimento, descanso e ajuda prática no dia a dia."
         elif cycle_day == ovulation_day:
-            phase = "ovulation"; label = "Ovulação"; tip = "Dia de maior fertilidade. Comunicação e parceria contam bastante."
+            phase = "ovulation"
+            label = "Ovulação"
+            tip = "Dia de maior fertilidade. Comunicação e parceria contam bastante."
         elif fertile_start <= cycle_day <= fertile_end:
-            phase = "fertile"; label = "Janela fértil"; tip = "Boa fase para combinados de rotina e cuidado compartilhado."
+            phase = "fertile"
+            label = "Janela fértil"
+            tip = "Boa fase para combinados de rotina e cuidado compartilhado."
         elif pms_start <= cycle_day <= cycle_length:
-            phase = "pms"; label = "Sensibilidade pré-menstrual"; tip = "Seja paciente e gentil. Pequenos gestos podem fazer diferença."
+            phase = "pms"
+            label = "Sensibilidade pré-menstrual"
+            tip = "Seja paciente e gentil. Pequenos gestos podem fazer diferença."
         days.append({"date": current.isoformat(), "date_br": current.strftime("%d/%m"), "phase": phase, "label": label, "tip": tip})
     suggestions = [
         "Fase menstrual: ofereça apoio prático (água, bolsa térmica, tarefas).",

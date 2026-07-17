@@ -30,6 +30,9 @@ def test_home_has_valid_professional_workspace_shell():
     assert 'id="toolLauncher"' in html
     assert 'role="listbox"' in html
     assert 'aria-controls="toolSearchResults"' in html
+    assert 'id="toolNavigationStatus"' in html
+    assert 'id="copyCurrentToolLinkBtn"' in html
+    assert 'role="toolbar"' in html
     assert "ui-professional.css" in html
     assert html.count("<h1") == 1
     assert html.count("<section") == html.count("</section>")

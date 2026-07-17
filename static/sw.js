@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'melotools-';
-const CACHE_NAME = 'melotools-static-20260717-command2';
+const CACHE_NAME = 'melotools-static-20260718-sensacional2';
 
 self.addEventListener('install', (event) => {
   event.waitUntil(self.skipWaiting());

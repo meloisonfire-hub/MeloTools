@@ -4,18 +4,29 @@
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9686460887343092"
      crossorigin="anonymous"></script>
 <meta charset="utf-8">
-<title>Melotools | Sem propagandas, sem limites.</title>
+<title>MeloTools | 82 ferramentas online gratuitas</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="82 ferramentas online gratuitas para PDF, imagens, vídeos, textos, redes sociais, cálculos, desenvolvimento e muito mais.">
+<meta name="robots" content="index,follow,max-image-preview:large">
 <meta name="theme-color" content="#2563eb">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Melotools">
 <link rel="icon" href="/favicon.ico">
+<link rel="canonical" href="https://melotools.com.br/">
 <link rel="manifest" href="/static/manifest.json">
 <link rel="apple-touch-icon" href="/static/icons/pwa-192.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MeloTools">
+<meta property="og:title" content="MeloTools | 82 ferramentas online gratuitas">
+<meta property="og:description" content="Resolva tarefas com PDF, imagens, vídeos, textos e utilidades rápidas sem instalar nada.">
+<meta property="og:url" content="https://melotools.com.br/">
+<meta property="og:image" content="https://melotools.com.br/static/icons/pwa-512.png">
+<meta name="twitter:card" content="summary">
 <style>:root{ --brand: {{ brand }}; }</style>
 <style id="mt-critical-loading-style">
 body.mt-ui-loading .nav-shell,
+body.mt-ui-loading .tool-shortcuts,
 body.mt-ui-loading .section{
   visibility:hidden !important;
 }
@@ -44,7 +55,7 @@ body.mt-ui-ready #mtToolsSkeleton{
 <link id="themeStylesXp" rel="stylesheet" href="{{ url_for('static', filename='css/xp-luna.css', v='20260716-hardening1') }}">
 <link id="themeStylesSaas" rel="stylesheet" href="{{ url_for('static', filename='css/theme-saas.css', v='20260716-hardening1') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/melotools-extra-tabs.css', v='20260717-uiux3') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/ui-professional.css', v='20260717-command2') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ui-professional.css', v='20260718-sensacional2') }}">
 
 <style id="theme-critical-fixes">
 html[data-ui-theme="saas"] .tool-tabs .tabbtn,
@@ -94,8 +105,8 @@ html[data-ui-theme="xp"] .tool-tabs .tabbtn.is-hidden{
   <div class="header-top">
     <div class="saas-header-spacer" aria-hidden="true"></div>
     <div class="saas-brand" aria-label="MeloTools">
-      <img class="saas-brand-logo" src="{{ url_for('static', filename='logo-saas.png') }}" alt="MeloTools">
-      <span class="mt-tools-badge-dot mt-tools-badge-dot-saas" aria-label="78 ferramentas totalmente grátis" title="78 ferramentas totalmente grátis">78</span>
+      <img class="saas-brand-logo" src="{{ url_for('static', filename='logo-saas.png') }}" width="1339" height="456" alt="MeloTools">
+      <span class="mt-tools-badge-dot mt-tools-badge-dot-saas" data-tool-count aria-label="82 ferramentas totalmente grátis" title="82 ferramentas totalmente grátis">82</span>
     </div>
     <div class="theme-switcher" role="group" aria-label="Escolher tema do site">
       <button class="theme-option" type="button" data-theme-choice="xp" aria-pressed="false">Retr&ocirc;</button>
@@ -106,18 +117,18 @@ html[data-ui-theme="xp"] .tool-tabs .tabbtn.is-hidden{
       Baixar App
     </button>
     <div class="lang-picker" id="langPicker">
-      <button class="lang-current" id="langToggle" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Selecionar idioma">
+      <button class="lang-current" id="langToggle" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="langMenu" aria-label="Selecionar idioma">
         {% for item in languages %}
           {% if item.code == current_lang %}
-          <img class="lang-flag-img" src="{{ item.flag_url }}" alt="{{ item.label }}" loading="lazy">
+          <span class="lang-flag" aria-hidden="true">{{ item.flag }}</span>
           {% endif %}
 
               {% endfor %}
       </button>
-      <div class="lang-menu hidden" id="langMenu">
+      <div class="lang-menu hidden" id="langMenu" role="menu" aria-label="Idiomas disponíveis">
         {% for item in languages %}
-        <button class="lang-option{% if item.code == current_lang %} active{% endif %}" type="button" data-lang-option="{{ item.code }}" aria-label="{{ item.label }}">
-          <img class="lang-flag-img" src="{{ item.flag_url }}" alt="{{ item.label }}" loading="lazy">
+        <button class="lang-option{% if item.code == current_lang %} active{% endif %}" type="button" role="menuitemradio" aria-checked="{% if item.code == current_lang %}true{% else %}false{% endif %}" data-lang-option="{{ item.code }}" aria-label="{{ item.label }}">
+          <span class="lang-flag" aria-hidden="true">{{ item.flag }}</span>
         </button>
         {% endfor %}
       </div>
@@ -133,12 +144,12 @@ html[data-ui-theme="xp"] .tool-tabs .tabbtn.is-hidden{
     {% if has_logo %}
     <div class="logo-wrap">
       <img src="/logo" class="logo logo-xp" alt="MeloTools">
-      <img src="{{ url_for('static', filename='logo-saas.png') }}" class="logo logo-saas" alt="MeloTools">
-      <span class="mt-tools-badge-dot" aria-label="78 ferramentas totalmente grátis" title="78 ferramentas totalmente grátis">78</span>
+      <img src="{{ url_for('static', filename='logo-saas.png') }}" width="1339" height="456" class="logo logo-saas" alt="MeloTools">
+      <span class="mt-tools-badge-dot" data-tool-count aria-label="82 ferramentas totalmente grátis" title="82 ferramentas totalmente grátis">82</span>
     </div>
         {% endif %}
     <section class="workspace-intro" aria-labelledby="workspaceTitle">
-      <span class="workspace-kicker">78 ferramentas gratuitas</span>
+      <span class="workspace-kicker"><span data-tool-count>82</span>&nbsp;ferramentas gratuitas</span>
       <h1 id="workspaceTitle">Resolva tarefas online em poucos cliques.</h1>
       <p>Converta arquivos, edite m&iacute;dia, trabalhe com textos e use utilidades r&aacute;pidas sem instalar nada.</p>
     </section>
@@ -170,14 +181,9 @@ html[data-ui-theme="xp"] .tool-tabs .tabbtn.is-hidden{
     <p class="privacy-status" role="note">
       Seus arquivos recebem links temporários e são apagados automaticamente. Não compartilhamos o conteúdo enviado.
     </p>
-    <div class="tool-shortcuts" aria-label="Atalhos pessoais">
-      <button type="button" class="tool-favorite-toggle" id="favoriteCurrentToolBtn" aria-pressed="false">☆ Favoritar ferramenta atual</button>
-      <div class="tool-shortcut-row hidden" id="favoriteTools" aria-label="Ferramentas favoritas"></div>
-      <div class="tool-shortcut-row hidden" id="recentTools" aria-label="Ferramentas usadas recentemente"></div>
-    </div>
     <nav class="nav-shell" aria-label="Navega&ccedil;&atilde;o de ferramentas">
       <div class="nav-rail-label"><strong>Categorias</strong><span>Escolha o tipo de tarefa</span></div>
-      <div class="main-tabs tabs" id="mainTabs">
+      <div class="main-tabs tabs" id="mainTabs" role="toolbar" aria-label="Categorias de ferramentas">
         <button class="main-tab tabbtn active" type="button" data-category="media" aria-label="YouTube, Instagram, Threads e TikTok">
           <span class="main-tab-label" data-i18n="nav_media">Redes sociais</span>
         </button>
@@ -213,7 +219,7 @@ html[data-ui-theme="xp"] .tool-tabs .tabbtn.is-hidden{
         </button>
       </div>
       <div class="nav-rail-label nav-rail-label-tools"><strong>Ferramentas</strong><span>Selecione o que deseja fazer</span></div>
-      <div class="tool-tabs tabs" id="toolTabs">
+      <div class="tool-tabs tabs" id="toolTabs" role="toolbar" aria-label="Ferramentas da categoria selecionada">
         <button class="tool-tab tabbtn active" type="button" data-category="media" data-tab="tab-youtube" data-i18n="tab_youtube">Processar v&iacute;deos</button>
         <button class="tool-tab tabbtn" type="button" data-category="media" data-tab="tab-youtube-clip">Clipar v&iacute;deos</button>
         <button class="tool-tab tabbtn" type="button" data-category="media" data-tab="tab-instagram-tools">Ferramentas Instagram</button>
@@ -302,6 +308,21 @@ html[data-ui-theme="xp"] .tool-tabs .tabbtn.is-hidden{
         <button class="tool-tab tabbtn" type="button" data-category="links" data-tab="tab-links-qr-read">Leitor de QR Code</button>
       </div>
     </nav>
+    <div class="tool-shortcuts" aria-label="Ferramenta atual e atalhos pessoais">
+      <div class="tool-context-bar">
+        <div class="tool-context-copy">
+          <span>Ferramenta atual</span>
+          <strong id="currentToolName">Carregando…</strong>
+        </div>
+        <div class="tool-context-actions">
+          <button type="button" class="tool-favorite-toggle" id="favoriteCurrentToolBtn" aria-pressed="false">☆ Favoritar</button>
+          <button type="button" class="tool-share-toggle" id="copyCurrentToolLinkBtn">Copiar link</button>
+        </div>
+      </div>
+      <div class="tool-shortcut-row hidden" id="favoriteTools" aria-label="Ferramentas favoritas"></div>
+      <div class="tool-shortcut-row hidden" id="recentTools" aria-label="Ferramentas usadas recentemente"></div>
+    </div>
+    <div class="sr-only" id="toolNavigationStatus" role="status" aria-live="polite" aria-atomic="true"></div>
     <div class="mt-tools-skeleton" id="mtToolsSkeleton" aria-hidden="true">
       <div class="mt-sk-row mt-sk-main"></div>
       <div class="mt-sk-row mt-sk-sub"></div>
@@ -1826,7 +1847,7 @@ html[data-ui-theme="xp"] .tool-tabs .tabbtn.is-hidden{
           <input id="calc_timer_sec" type="range" min="10" max="3600" step="10" value="60" data-output="calc_timer_sec_value">
           <div class="mt-range-value"><span id="calc_timer_sec_value">60</span><small>Tempo em segundos. Arraste a barra at&eacute; o valor desejado.</small></div>
         </div>
-        <div class="mt-action-row"><button class="btn" id="run_calc_timer" type="button">Iniciar</button><button class="btn alt" id="stop_calc_timer" type="button">Parar</button></div>
+        <div class="mt-action-row"><button class="btn" id="run_calc_timer" type="button">Iniciar</button><button class="btn alt" id="stop_calc_timer" type="button">Pausar</button><button class="btn alt" id="reset_calc_timer" type="button">Reiniciar</button></div>
       </div>
     </div>
   </div>
@@ -1839,10 +1860,10 @@ html[data-ui-theme="xp"] .tool-tabs .tabbtn.is-hidden{
   <h2 class="title">Cron&ocirc;metro</h2>
   <p class="sub">Use um cron&ocirc;metro simples para medi&ccedil;&otilde;es r&aacute;pidas.</p>
   <div class="drop mt-drop">
-    <div class="mt-card-form"><div class="inputs mt-form-row"><button class="btn" id="run_calc_sw" type="button">Iniciar</button><button class="btn alt" id="stop_calc_sw" type="button">Parar</button><button class="btn alt" id="reset_calc_sw" type="button">Resetar</button></div></div>
+    <div class="mt-card-form"><div class="inputs mt-form-row"><button class="btn" id="run_calc_sw" type="button">Iniciar</button><button class="btn alt" id="stop_calc_sw" type="button">Pausar</button><button class="btn alt" id="reset_calc_sw" type="button">Resetar</button></div></div>
   </div>
   <p class="note mt-inline-result" id="out_calc_sw"></p>
-  <p class="note">Voc&ecirc; pode iniciar, parar e resetar o contador.</p>
+  <p class="note">Voc&ecirc; pode iniciar, pausar e resetar o contador.</p>
   <p class="note mt-clock-link-row">Link <a id="obs_sw_link" href="/cronometro" target="_blank" rel="noopener noreferrer">/cronometro</a></p>
 </section>
 <!-- MELOTOOLS_EXTRA_SECTIONS_END -->
@@ -1861,27 +1882,23 @@ window.APP_CONFIG = {
   analyticsMeasurementId: {{ analytics_measurement_id|tojson }}
 };
 </script>
-<script src="{{ url_for('static', filename='js/i18n.js', v='20260717-uiux3') }}"></script>
+<script src="{{ url_for('static', filename='js/i18n.js', v='20260718-sensacional2') }}"></script>
 <!-- app.js legado desativado para evitar conflito com melotools-extra-tabs.js -->
 <script src="{{ url_for('static', filename='js/xp-effects.js', v='20260517-logo-msg3') }}"></script>
 
 <script>
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js').then(function(reg){ if(reg && reg.update){ reg.update(); } return reg; })
-    .then(function(reg) {
-      console.log('Service Worker registrado:', reg);
-    })
-    .catch(function(err) {
-      console.error('Erro ao registrar Service Worker:', err);
-    });
+  navigator.serviceWorker.register('/sw.js')
+    .then(function(reg){ if(reg && reg.update){ return reg.update(); } })
+    .catch(function(){ /* O site continua funcional sem cache offline. */ });
 }
 </script>
 </div>
 
-<div class="toast-container" id="toastContainer"></div>
+<div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
-<script src="/static/js/melotools-extra-tabs.js?v=20260717-command2"></script>
-<script src="/static/js/tool-shortcuts.js?v=20260716-hardening1"></script>
+<script src="/static/js/melotools-extra-tabs.js?v=20260718-sensacional2"></script>
+<script src="/static/js/tool-shortcuts.js?v=20260718-sensacional2"></script>
 <script id="theme-switch-script">
 (function(){
   function applyTheme(theme){

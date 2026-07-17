@@ -17,6 +17,7 @@
     var launcherTitle = byId('toolLauncherTitle');
     var launcherResults = byId('toolSearchResults');
     var searchShortcut = byId('toolSearchShortcut');
+    var navigationStatus = byId('toolNavigationStatus');
     var searchQuery = '';
     var launcherItems = [];
     var highlightedIndex = -1;
@@ -37,6 +38,28 @@
       'tab-links-qr-read': 'ler escanear abrir qr code qrcode',
       'tab-calc-percent': 'calcular desconto acrescimo porcentagem percentual'
     };
+
+    document.querySelectorAll('[data-tool-count]').forEach(function(node){
+      node.textContent = String(toolTabs.length);
+      if(node.classList.contains('mt-tools-badge-dot')){
+        var countLabel = toolTabs.length + ' ferramentas totalmente grátis';
+        node.setAttribute('aria-label', countLabel);
+        node.setAttribute('title', countLabel);
+      }
+    });
+    mainTabs.forEach(function(tab, index){
+      tab.id = tab.id || 'tool-category-' + tab.dataset.category;
+      tab.setAttribute('tabindex', index === 0 ? '0' : '-1');
+    });
+    toolTabs.forEach(function(tab){
+      tab.id = tab.id || 'tool-nav-' + tab.dataset.tab;
+      tab.setAttribute('aria-controls', tab.dataset.tab);
+      tab.setAttribute('tabindex', '-1');
+    });
+    sections.forEach(function(section){
+      var controller = toolTabs.find(function(tab){ return tab.dataset.tab === section.id; });
+      if(controller) section.setAttribute('aria-labelledby', controller.id);
+    });
 
     function normalize(text){
       return String(text || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
@@ -108,7 +131,26 @@
       document.body.classList.toggle('instagram-tools-active', tabId === 'tab-instagram-tools');
     }
 
-    function activateTool(tabId){
+    function announceTool(target){
+      if(!navigationStatus || !target) return;
+      var categoryLabel = categoryLabelMap[target.dataset.category] || target.dataset.category;
+      navigationStatus.textContent = '';
+      window.setTimeout(function(){
+        navigationStatus.textContent = rawToolLabel(target) + ' aberta. Categoria ' + categoryLabel + '.';
+      }, 20);
+    }
+
+    function updateToolHistory(tabId, replace){
+      if(!window.history || !window.URL) return;
+      var url = new URL(window.location.href);
+      url.hash = tabId;
+      var method = replace ? 'replaceState' : 'pushState';
+      if(window.location.hash === '#' + tabId && !replace) return;
+      try { window.history[method]({ tool: tabId }, '', url.pathname + url.search + url.hash); } catch(_e) {}
+    }
+
+    function activateTool(tabId, options){
+      options = options || {};
       var target = toolTabs.find(function(tab){ return tab.dataset.tab === tabId; });
       if(!target) return;
       var category = target.dataset.category;
@@ -116,13 +158,26 @@
         var active = tab === target;
         tab.classList.toggle('active', active);
         tab.setAttribute('aria-pressed', active ? 'true' : 'false');
+        tab.setAttribute('tabindex', active ? '0' : '-1');
       });
       sections.forEach(function(section){
-        section.classList.toggle('show', section.id === tabId && section.dataset.category === category);
+        var active = section.id === tabId && section.dataset.category === category;
+        section.classList.toggle('show', active);
+        section.hidden = !active;
+        section.setAttribute('aria-hidden', active ? 'false' : 'true');
+        if('inert' in section) section.inert = !active;
       });
       setActiveShellState(category, tabId);
       centerActiveTab(target);
       try { localStorage.setItem('melotools-active-tool', tabId); } catch(_e) {}
+      if(options.updateHistory) updateToolHistory(tabId, false);
+      if(options.replaceHistory) updateToolHistory(tabId, true);
+      if(options.announce) announceTool(target);
+      document.dispatchEvent(new CustomEvent('melotools:toolchange', { detail: {
+        id: tabId,
+        label: rawToolLabel(target),
+        category: category
+      }}));
     }
 
     function applyToolVisibility(category){
@@ -132,7 +187,8 @@
       });
     }
 
-    function activateCategory(category, preferredTool){
+    function activateCategory(category, preferredTool, options){
+      options = options || {};
       var visible = toolTabsFor(category);
       if(!visible.length){
         var fallback = firstCategoryWithResults();
@@ -147,6 +203,7 @@
         var active = tab.dataset.category === category;
         tab.classList.toggle('active', active);
         tab.setAttribute('aria-pressed', active ? 'true' : 'false');
+        tab.setAttribute('tabindex', active ? '0' : '-1');
         if(active) centerActiveTab(tab);
       });
       applyToolVisibility(category);
@@ -155,7 +212,7 @@
       if(!saved){ try { saved = localStorage.getItem('melotools-active-tool'); } catch(_e) {} }
       var next = visible.find(function(tab){ return tab.dataset.tab === saved; }) || visible[0];
       try { localStorage.setItem('melotools-active-category', category); } catch(_e) {}
-      if(next) activateTool(next.dataset.tab);
+      if(next) activateTool(next.dataset.tab, options);
     }
 
     function readSavedTools(key){
@@ -309,8 +366,34 @@
       openLauncher();
     }
 
-    mainTabs.forEach(function(tab){ tab.addEventListener('click', function(){ activateCategory(tab.dataset.category); closeLauncher(true); }); });
-    toolTabs.forEach(function(tab){ tab.addEventListener('click', function(){ activateCategory(tab.dataset.category, tab.dataset.tab); }); });
+    function handleRovingNavigation(event, candidates){
+      var visible = candidates.filter(function(tab){ return !tab.classList.contains('is-hidden'); });
+      if(!visible.length) return;
+      var current = visible.indexOf(event.currentTarget);
+      var next = current;
+      if(event.key === 'ArrowRight' || event.key === 'ArrowDown') next = (current + 1) % visible.length;
+      else if(event.key === 'ArrowLeft' || event.key === 'ArrowUp') next = (current - 1 + visible.length) % visible.length;
+      else if(event.key === 'Home') next = 0;
+      else if(event.key === 'End') next = visible.length - 1;
+      else return;
+      event.preventDefault();
+      visible[next].click();
+      visible[next].focus({ preventScroll: true });
+    }
+
+    mainTabs.forEach(function(tab){
+      tab.addEventListener('click', function(){
+        activateCategory(tab.dataset.category, null, { updateHistory: true, announce: true });
+        closeLauncher(true);
+      });
+      tab.addEventListener('keydown', function(event){ handleRovingNavigation(event, mainTabs); });
+    });
+    toolTabs.forEach(function(tab){
+      tab.addEventListener('click', function(){
+        activateCategory(tab.dataset.category, tab.dataset.tab, { updateHistory: true, announce: true });
+      });
+      tab.addEventListener('keydown', function(event){ handleRovingNavigation(event, toolTabs); });
+    });
 
     if(searchToggle){
       searchToggle.addEventListener('click', function(){
@@ -393,10 +476,25 @@
       if(shortcutKeys[0]) shortcutKeys[0].textContent = '⌘';
     }
 
-    var initial = 'media';
-    try { initial = localStorage.getItem('melotools-active-category') || 'media'; } catch(_e) {}
+    var hashToolId = decodeURIComponent(String(window.location.hash || '').replace(/^#/, ''));
+    var hashTool = toolTabs.find(function(tab){ return tab.dataset.tab === hashToolId; });
+    var initial = hashTool ? hashTool.dataset.category : 'media';
+    if(!hashTool){ try { initial = localStorage.getItem('melotools-active-category') || 'media'; } catch(_e) {} }
     if(!toolTabsFor(initial).length) initial = firstCategoryWithResults() || 'media';
-    activateCategory(initial);
+    activateCategory(initial, hashTool ? hashTool.dataset.tab : null, { replaceHistory: !!hashTool });
+    try {
+      if(!hashTool && window.history && window.history.replaceState){
+        var landingTool = document.querySelector('.tool-tab.active[data-tab]');
+        window.history.replaceState({ tool: landingTool ? landingTool.dataset.tab : null }, '', window.location.href);
+      }
+    } catch(_e) {}
+    window.addEventListener('popstate', function(event){
+      var stateToolId = event.state && event.state.tool;
+      var locationToolId = decodeURIComponent(String(window.location.hash || '').replace(/^#/, ''));
+      var nextToolId = locationToolId || stateToolId;
+      var nextTool = toolTabs.find(function(tab){ return tab.dataset.tab === nextToolId; });
+      if(nextTool) activateCategory(nextTool.dataset.category, nextTool.dataset.tab, { announce: true });
+    });
     document.body.classList.remove('mt-ui-loading');
     document.body.classList.add('mt-ui-ready');
   }
@@ -2167,8 +2265,10 @@ function bindQaFlowTweaks(){
       clearInterval(timerRef);
       var sec = parseInt((byId('calc_timer_sec') || {}).value || '0', 10);
       if(!sec || sec < 1){ set('out_calc_timer', 'Informe segundos válidos.'); return false; }
-      timerTotalMs = sec * 1000;
-      timerRemainingMs = timerTotalMs;
+      var selectedMs = sec * 1000;
+      var canResume = timerRemainingMs > 0 && timerRemainingMs < timerTotalMs && selectedMs === timerTotalMs;
+      timerTotalMs = selectedMs;
+      if(!canResume) timerRemainingMs = timerTotalMs;
       timerEndAt = performance.now() + timerRemainingMs;
       setTimerOutput(timerRemainingMs);
       timerRef = setInterval(tickTimer, 31);
@@ -2372,6 +2472,8 @@ function bindQaFlowTweaks(){
     if(startTimer){ startTimer.addEventListener('click', startTimerAction); }
     var stopTimer = byId('stop_calc_timer');
     if(stopTimer){ stopTimer.addEventListener('click', pauseTimerAction); }
+    var resetTimer = byId('reset_calc_timer');
+    if(resetTimer){ resetTimer.addEventListener('click', resetTimerAction); }
 
     var timerRange = byId('calc_timer_sec');
     if(timerRange){

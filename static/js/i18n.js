@@ -769,10 +769,18 @@ window.I18N_APP = (() => {
     const current = options.find((item) => item.code === lang);
     const toggle = document.getElementById('langToggle');
     if (toggle && current) {
-      toggle.innerHTML = `<img class="lang-flag-img" src="${current.flag_url}" alt="${current.label}" loading="lazy">`;
+      const flag = document.createElement('span');
+      flag.className = 'lang-flag';
+      flag.setAttribute('aria-hidden', 'true');
+      flag.textContent = current.flag || '';
+      toggle.replaceChildren(flag);
+      toggle.setAttribute('aria-label', `Selecionar idioma, atual: ${current.label}`);
     }
     document.querySelectorAll('[data-lang-option]').forEach((btn) => {
-      btn.classList.toggle('active', btn.dataset.langOption === lang);
+      const active = btn.dataset.langOption === lang;
+      btn.classList.toggle('active', active);
+      btn.setAttribute('aria-checked', active ? 'true' : 'false');
+      btn.setAttribute('tabindex', active ? '0' : '-1');
     });
   }
 
@@ -792,20 +800,60 @@ window.I18N_APP = (() => {
     const menu = document.getElementById('langMenu');
     const root = document.getElementById('langPicker');
     if (!toggle || !menu || !root) return;
-    toggle.addEventListener('click', () => {
-      const hidden = menu.classList.toggle('hidden');
-      toggle.setAttribute('aria-expanded', String(!hidden));
+    const options = Array.from(menu.querySelectorAll('[data-lang-option]'));
+    const closeMenu = (restoreFocus) => {
+      menu.classList.add('hidden');
+      toggle.setAttribute('aria-expanded', 'false');
+      if (restoreFocus) toggle.focus();
+    };
+    const openMenu = (focusIndex) => {
+      menu.classList.remove('hidden');
+      toggle.setAttribute('aria-expanded', 'true');
+      if (typeof focusIndex === 'number' && options.length) {
+        options[Math.max(0, Math.min(focusIndex, options.length - 1))].focus();
+      }
+    };
+    toggle.addEventListener('click', (event) => {
+      if (menu.classList.contains('hidden')) {
+        const activeIndex = options.findIndex((item) => item.getAttribute('aria-checked') === 'true');
+        openMenu(event.detail === 0 ? Math.max(0, activeIndex) : undefined);
+      } else {
+        closeMenu(false);
+      }
+    });
+    toggle.addEventListener('keydown', (event) => {
+      if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
+      event.preventDefault();
+      openMenu(event.key === 'ArrowUp' ? options.length - 1 : 0);
+    });
+    menu.addEventListener('keydown', (event) => {
+      const current = options.indexOf(document.activeElement);
+      let next = current;
+      if (event.key === 'ArrowDown' || event.key === 'ArrowRight') next = (current + 1) % options.length;
+      else if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') next = (current - 1 + options.length) % options.length;
+      else if (event.key === 'Home') next = 0;
+      else if (event.key === 'End') next = options.length - 1;
+      else if (event.key === 'Escape') {
+        event.preventDefault();
+        closeMenu(true);
+        return;
+      } else if (event.key === 'Tab') {
+        closeMenu(false);
+        return;
+      } else {
+        return;
+      }
+      event.preventDefault();
+      if (options[next]) options[next].focus();
     });
     document.addEventListener('click', (event) => {
       if (root.contains(event.target)) return;
-      menu.classList.add('hidden');
-      toggle.setAttribute('aria-expanded', 'false');
+      closeMenu(false);
     });
-    document.querySelectorAll('[data-lang-option]').forEach((btn) => {
+    options.forEach((btn) => {
       btn.addEventListener('click', () => {
         setLanguage(btn.dataset.langOption);
-        menu.classList.add('hidden');
-        toggle.setAttribute('aria-expanded', 'false');
+        closeMenu(true);
       });
     });
   }

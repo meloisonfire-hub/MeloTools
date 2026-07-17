@@ -1,7 +1,7 @@
 {
-  "name": "Melotools",
-  "short_name": "Melotools",
-  "description": "Ferramentas online r?pidas para m?dia, PDF, imagem, texto e utilidades.",
+  "name": "MeloTools — ferramentas online gratuitas",
+  "short_name": "MeloTools",
+  "description": "82 ferramentas online gratuitas para PDF, imagens, vídeos, textos, cálculos e utilidades.",
   "id": "/",
   "start_url": "/?source=pwa",
   "scope": "/",
