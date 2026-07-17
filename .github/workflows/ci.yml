@@ -29,7 +29,7 @@ jobs:
         shell: bash
         run: |
           set +e
-          pytest -vv 2>&1 | tee pytest-output.txt
+          python -m pytest -vv 2>&1 | tee pytest-output.txt
           status=${PIPESTATUS[0]}
           {
             echo '### pytest output'
