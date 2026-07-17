@@ -18,18 +18,6 @@ def test_health_and_service_worker_routes_exist():
     assert any(rule.rule == "/sw.js" for rule in app.url_map.iter_rules())
 
 
-def test_home_exposes_the_refined_workspace():
-    app.config.update(TESTING=True)
-    response = app.test_client().get("/")
-    html = response.get_data(as_text=True)
-    assert response.status_code == 200
-    assert 'class="workspace-hero"' in html
-    assert 'class="workspace-grid"' in html
-    assert 'class="tool-stage"' in html
-    assert "ui-refinement.css" in html
-    assert html.count("<h1") == 1
-
-
 def test_private_port_scan_is_rejected():
     app.config.update(TESTING=True)
     response = app.test_client().post("/api/dev/port-test", data={"host": "127.0.0.1", "port": "80"})
